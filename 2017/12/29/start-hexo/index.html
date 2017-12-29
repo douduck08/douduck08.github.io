@@ -86,7 +86,7 @@
 <meta property="og:site_name" content="鴨仔開發日記">
 <meta property="og:description" content="這是第一篇用 Hexo 發佈的文章，用來熟悉操作，並隨便紀錄點心得。 本來我用來寫文章的部落格是使用 Ｗordpress，是一個用 php 及 SQL 資料庫建構的部落格系統。後來有了建立靜態網站的需求，才抱著嘗試的心態研究 Ｈexo，結果一試成主顧。 除了 Hexo 之外還有不少靜態部落格框架，選擇了 Hexo 的主要因素是它用 Node.js 作為開發語言，相對容易在 Windows 跟 Ma">
 <meta property="og:locale" content="zh-tw">
-<meta property="og:updated_time" content="2017-12-29T10:43:07.000Z">
+<meta property="og:updated_time" content="2017-12-29T11:07:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="開始 Hexo">
 <meta name="twitter:description" content="這是第一篇用 Hexo 發佈的文章，用來熟悉操作，並隨便紀錄點心得。 本來我用來寫文章的部落格是使用 Ｗordpress，是一個用 php 及 SQL 資料庫建構的部落格系統。後來有了建立靜態網站的需求，才抱著嘗試的心態研究 Ｈexo，結果一試成主顧。 除了 Hexo 之外還有不少靜態部落格框架，選擇了 Hexo 的主要因素是它用 Node.js 作為開發語言，相對容易在 Windows 跟 Ma">
@@ -321,19 +321,21 @@
       
         <p>這是第一篇用 Hexo 發佈的文章，用來熟悉操作，並隨便紀錄點心得。</p>
 <p>本來我用來寫文章的部落格是使用 Ｗordpress，是一個用 php 及 SQL 資料庫建構的部落格系統。後來有了建立靜態網站的需求，才抱著嘗試的心態研究 Ｈexo，結果一試成主顧。</p>
-<p>除了 Hexo 之外還有不少靜態部落格框架，選擇了 Hexo 的主要因素是它用 Node.js 作為開發語言，相對容易在 Windows 跟 Mac OSX 上見共通的開發環境。</p>
+<p>除了 Hexo 之外還有不少靜態部落格框架，選擇了 Hexo 的主要因素是它用 Node.js 作為開發語言，相對容易在 Windows 跟 Mac OSX 上建立共通的開發環境。</p>
 <a id="more"></a>
 <h3 id="安裝-Hexo"><a href="#安裝-Hexo" class="headerlink" title="安裝 Hexo"></a>安裝 Hexo</h3><p>首先要先有 git 跟 Node.js 的環境，然後用 npm 一行指令安裝：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install -g hexo-cli</span><br></pre></td></tr></table></figure></p>
 <p>我是將網站部署在 github page，所以要再另外安裝：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></p>
 <blockquote>
 <p>更多安裝相關的細節在官方文件上的內容應該就很充足了，整體來說是相當易用<br><a href="https://hexo.io/zh-tw/docs/index.html" target="_blank" rel="noopener">https://hexo.io/zh-tw/docs/index.html</a></p>
 </blockquote>
-<h3 id="使用-Google-Analytics"><a href="#使用-Google-Analytics" class="headerlink" title="使用 Google Analytics"></a>使用 Google Analytics</h3><p>如果使用的主題有支援，只要簡單地在 <code>themes/theme_name/_config.yml</code> 中找到 <code>google_analytics</code> 欄位，填上 GA追蹤ID 即可。</p>
+<h3 id="使用-Google-Analytics"><a href="#使用-Google-Analytics" class="headerlink" title="使用 Google Analytics"></a>使用 Google Analytics</h3><p>若使用的主題有支援，只要簡單地在 <code>themes/theme_name/_config.yml</code> 中找到 <code>google_analytics</code> 欄位，填上 GA追蹤ID 即可。</p>
 <p>若否，詳細可看下列這篇文章：</p>
 <blockquote>
 <p>Add Google Analytics to your hexo blog<br><a href="http://www.codeblocq.com/2015/12/Add-Google-Analytics-to-your-hexo-blog/" target="_blank" rel="noopener">http://www.codeblocq.com/2015/12/Add-Google-Analytics-to-your-hexo-blog/</a></p>
 </blockquote>
-<h3 id="使用-Disqus-建立留言功能"><a href="#使用-Disqus-建立留言功能" class="headerlink" title="使用 Disqus 建立留言功能"></a>使用 Disqus 建立留言功能</h3>
+<h3 id="使用-Disqus-建立留言功能"><a href="#使用-Disqus-建立留言功能" class="headerlink" title="使用 Disqus 建立留言功能"></a>使用 Disqus 建立留言功能</h3><p>如果跟我一樣用了一個很棒的主題有內建支援 Disqus，那就只要到 <code>themes/theme_name/_config.yml</code> 啟動並做好對應的設定即可。</p>
+<p>若否，就去 google 吧！因為我沒有實際測試，就不隨便附上我找到的參考資料了。</p>
+
       
     </div>
     
@@ -464,6 +466,26 @@
           
 
           <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/douduck08" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/douduck08" target="_blank" title="Twitter">
+                    
+                      <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.facebook.com/douduck08develop" target="_blank" title="FB Page">
+                    
+                      <i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                </span>
+              
             
           </div>
 
