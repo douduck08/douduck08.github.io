@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw,en,default">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="unity," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="這是看 Unity 官方 Youtube 頻道的影片後，留下來的筆記。 相關連結：  影片 – Unite Europe 2017 – Squeezing Unity: Tips for raising performance 投影片 – Unite Amsterdam 2017 – Squeezing Unity">
+<meta name="keywords" content="unity">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[筆記] Preview of Unite Europe 2017 – Squeezing Unity">
+<meta property="og:url" content="http://douduck08.github.io/zh-tw/2017/11/02/Preview-of-Unite-Europe-2017–Squeezing-Unity/index.html">
+<meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="這是看 Unity 官方 Youtube 頻道的影片後，留下來的筆記。 相關連結：  影片 – Unite Europe 2017 – Squeezing Unity: Tips for raising performance 投影片 – Unite Amsterdam 2017 – Squeezing Unity">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:image" content="https://i.imgur.com/unoNZFf.jpg">
+<meta property="og:image" content="https://i.imgur.com/FkMTaYn.jpg">
+<meta property="og:image" content="https://i.imgur.com/BsOOuQM.jpg">
+<meta property="og:updated_time" content="2017-12-31T09:55:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[筆記] Preview of Unite Europe 2017 – Squeezing Unity">
+<meta name="twitter:description" content="這是看 Unity 官方 Youtube 頻道的影片後，留下來的筆記。 相關連結：  影片 – Unite Europe 2017 – Squeezing Unity: Tips for raising performance 投影片 – Unite Amsterdam 2017 – Squeezing Unity">
+<meta name="twitter:image" content="https://i.imgur.com/unoNZFf.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://douduck08.github.io/zh-tw/2017/11/02/Preview-of-Unite-Europe-2017–Squeezing-Unity/"/>
+
+
+
+
+
+  <title>[筆記] Preview of Unite Europe 2017 – Squeezing Unity | 鴨仔開發日記</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-73254781-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">鴨仔開發日記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一個開發者的點點滴滴 – ABOUT AN ARTY DEVELOPER</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首頁
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            關於
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            標籤
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分類
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            歸檔
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://douduck08.github.io/zh-tw/2017/11/02/Preview-of-Unite-Europe-2017–Squeezing-Unity/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[筆記] Preview of Unite Europe 2017 – Squeezing Unity</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-11-02T01:30:28+08:00">
+                2017-11-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/note/" itemprop="url" rel="index">
+                    <span itemprop="name">note</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/2017/11/02/Preview-of-Unite-Europe-2017–Squeezing-Unity/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="zh-tw/2017/11/02/Preview-of-Unite-Europe-2017–Squeezing-Unity/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>這是看 Unity 官方 Youtube 頻道的影片後，留下來的筆記。</p>
+<p>相關連結：</p>
+<ul>
+<li>影片 – <a href="https://www.youtube.com/watch?v=_wxitgdx-UI" target="_blank" rel="noopener">Unite Europe 2017 – Squeezing Unity: Tips for raising performance</a></li>
+<li>投影片 – <a href="https://www.slideshare.net/secret/xLig7llwdlRQIp" target="_blank" rel="noopener">Unite Amsterdam 2017 – Squeezing Unity</a></li>
+</ul>
+<p><img src="https://i.imgur.com/unoNZFf.jpg" alt="outline"></p>
+<a id="more"></a>
+<h3 id="主題大綱-–-提升-Unity-效能的技巧"><a href="#主題大綱-–-提升-Unity-效能的技巧" class="headerlink" title="主題大綱 – 提升 Unity 效能的技巧"></a>主題大綱 – 提升 Unity 效能的技巧</h3><ul>
+<li>較不良的 Unity API</li>
+<li>資料結構</li>
+<li>行內 (inline) 方法</li>
+<li>Unity UI</li>
+</ul>
+<h3 id="筆記內容"><a href="#筆記內容" class="headerlink" title="筆記內容"></a>筆記內容</h3><p>講者講在最前頭的：(唉?!)</p>
+<p><img src="https://i.imgur.com/FkMTaYn.jpg" alt="Unity APIs you cannot trust"></p>
+<h4 id="Particle-System"><a href="#Particle-System" class="headerlink" title="Particle System"></a>Particle System</h4><ul>
+<li>Start、Stop 等諸多 APIs 預設會對 所有的子物件 作遞迴呼叫，假如有 100 個子物件，就會導致 100 次 GetComponent，相當傷害效能。建議永遠傳入參數 withChildren = false；如果有子系統需要控制，改用事先自行 Cache 所有粒子系統並手動控制。</li>
+<li>Stop 跟 Simulate 兩個 API 在呼叫的時候都會有嚴重的 GC 問題，開發者無法自行解決。這問題在 2017.2 將會修正。</li>
+</ul>
+<h4 id="Array-returning-API"><a href="#Array-returning-API" class="headerlink" title="Array-returning API"></a>Array-returning API</h4><ul>
+<li>為了資料結構的安全考量，所有回傳 Array 的 API 方法或 getter 欄位都會 產生一份新的 copy，考量記憶體配置，這類 API 盡可能減少使用。如：GetComponents、Input.Touches。</li>
+<li>Input.Touches 應該用 Input.touchCount 與 Input.GetTouch 取代。</li>
+<li>Physics 底下的 xxxCastAll 也因類似原因建議避開，改用新的 NonAlloc 版本。</li>
+</ul>
+<h4 id="資料結構"><a href="#資料結構" class="headerlink" title="資料結構"></a>資料結構</h4><ul>
+<li>常見的資料結構中，Array 跟 List 適合遍歷 (iteration)，Dictionary 跟 HashSet 適合做 index/key 的查詢；反過來當然不建議用 Dictionary 做遍歷。</li>
+<li>但如果需要遍歷也需要查詢時？兩個都用。同時維護兩組資料結構，以記憶體空間換取運算時間。</li>
+<li>一般比較 GameObject 是否為同一物件時，C# 會比照一般類別去比較最底層的實體配置，如果要進一步優化，可以透過 Unity 的 Instance Id 來比較。</li>
+<li>Object.GetInstanceID 本身需要時間，因此這個優化手段要配合 Cached Instance Id 才會明顯。另外規模不大的比較也別做這件事了。</li>
+</ul>
+<h4 id="行內方法-inline-method"><a href="#行內方法-inline-method" class="headerlink" title="行內方法 (inline method)"></a>行內方法 (inline method)</h4><ul>
+<li>行內方法可以優化方法呼叫的時間，C# 有 AggressiveInliningAttribute 可以使用，不過目前這在 Unity 不支援 IL2CPP (筆者個人覺得既然如此還是就先別用了)</li>
+<li>同樣的理由，把不必要的 property getter/setter 封裝改成 public 成員也會有優化效果。</li>
+</ul>
+<h4 id="Unity-UI"><a href="#Unity-UI" class="headerlink" title="Unity UI"></a>Unity UI</h4><p>接下來的 Unity UI，佔了整個講座一半。這邊內容很多，加上把講者的話轉譯過來後，沒有特別實驗確認細節，如果謬誤麻煩告訴我。</p>
+<p><img src="https://i.imgur.com/BsOOuQM.jpg" alt="ugui"></p>
+<h4 id="Unity-UI-相關的優化-–-Rebuild"><a href="#Unity-UI-相關的優化-–-Rebuild" class="headerlink" title="Unity UI 相關的優化 – Rebuild"></a>Unity UI 相關的優化 – Rebuild</h4><ul>
+<li>UI 以 Canvas 為單位，有兩個重大的運算：Draw 跟 Generate Mesh。<ul>
+<li>Draw 固定每個 Frame 運作一次。</li>
+<li>Generate Mesh 會在底下元件有改變時運算，為優化重點。</li>
+</ul>
+</li>
+<li>Generate Mesh 的動作在 UI 稱為 Rebuild，過程大致如下：<ul>
+<li>計算 Auto layout</li>
+<li>重建 所有 enable 的元件對應 mesh (即使 Alpha = 0 也會重建)</li>
+<li>準備 Batch 所需要的 Material</li>
+<li>依照深度進行排序 (所有 UI 元件都是透明渲染，所以這步驟很重要)</li>
+<li>Batch Mesh</li>
+</ul>
+</li>
+<li>Rebuild 過程中，深度排序因為排序演算法的極限，子物件越多，越會以 超過線性遞增 的速度增加消耗。</li>
+<li>為了減少 Rebuild 次數，建議將 UI 切成多個 Canvas，讓動態元件跟靜態元件分開，變動頻率接近的 UI 為一組，節省部分元件的重建次數。這個動作同時也會破壞 UI 的 Batch，兩者要視情況尋求平衡。</li>
+<li>另外減少 Rebuild 次數的手段，是控制 Input 對 UI 的影響，過小的變動則過濾掉。比如放任原生的 Scroll View 運作，最後幾個 Frame 可能會只剩下 0.0001 的位移，是完全不必要的 Rebuild。</li>
+</ul>
+<h4 id="Unity-UI-相關的優化-–-Graphic-Raycaster"><a href="#Unity-UI-相關的優化-–-Graphic-Raycaster" class="headerlink" title="Unity UI 相關的優化 – Graphic Raycaster"></a>Unity UI 相關的優化 – Graphic Raycaster</h4><ul>
+<li>Graphic Raycaster 每個 Canvas 都會有一個，用於接受輸入訊號，判斷該傳遞何事件給予 UI 元件。</li>
+<li>如果 UI 元件本身沒有互動的需要，可以關閉 raycast target，節省 Raycaster 檢查的元件數量。</li>
+<li>World Space 的 Canvas 會有個 Event Camera 用於 Graphic Raycaster，如果這個位置留下 null，Graphic Raycaster 會每個 Frame 自動用 Camera.main 補上。</li>
+<li>Camera.main 本身是透過 GameObject.FindWithTag 運作，每次呼叫都會重新執行，所以不論如何，Event Camera 不要留白。</li>
+<li>Camera.main 不只在 UI，整個專案都應該盡量避免呼叫，當場景中有越多 Tagged GameObject，消耗就越大。</li>
+<li>如果整個 Canvas 都不需要有玩家互動，直接關閉 Graphic Raycaster。</li>
+</ul>
+<h4 id="Unity-UI-相關的優化-–-SetDirty"><a href="#Unity-UI-相關的優化-–-SetDirty" class="headerlink" title="Unity UI 相關的優化 – SetDirty"></a>Unity UI 相關的優化 – SetDirty</h4><ul>
+<li>UI 的 Auto Layout 是否重新計算，取決於 LayoutElement.SetDirty 是否觸發，SetDirty 本身就會造成效能瓶頸。</li>
+<li>UI LayoutGroup 每次 SetDirty 都會把所有 parent 一起處理過，有時會在一個 Frame 多執行到 7.8 次，所以巢狀 LayoutGroup 很傷效能，LayoutGroup 應該盡量避免，或用 RectTransform.Anchor 來代替。</li>
+<li>Layout SetDirty 的觸發來自於元件 Enable/Disable、Reparant、Property 變動等，基本上可以當作有操作變化就會觸發。</li>
+<li>Canvas 本身的 Enable/Disable 不會觸發 SetDirty，所以是用來隱藏整組 UI 的好手段，只是因為沒有關閉 GameObject 本身，所以子物件有的 Update 等方法也要自行追蹤並手動開關。</li>
+<li>Animator 不論是否有 Animation 的變化，都會每個 Frame 觸發 SetDirty，所以除非確定有如此高頻率的動畫需要，應該避開使用 Animator 在 UI 上。</li>
+</ul>
+<h3 id="後記"><a href="#後記" class="headerlink" title="後記"></a>後記</h3><p>這段講座沒有對應完整的投影片，只有其中的部分內容，但已經是滿滿的資訊量噴湧而出了，是相當值得觀看的一場講座。</p>
+<p>其中有提到幾個可以透過呼叫、修改底層 dll 的優化，因為相對極端，就沒有筆記下來。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/unity/" rel="tag"># unity</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/zh-tw/2017/11/05/practicing-of-service-locator/" rel="prev" title="[C#/Unity] 這不叫 Singleton，叫 Service Locator">
+                [C#/Unity] 這不叫 Singleton，叫 Service Locator <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+  
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">douduck08</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">文章</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">分類</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">標籤</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/douduck08" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/douduck08" target="_blank" title="Twitter">
+                    
+                      <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://www.facebook.com/douduck08develop" target="_blank" title="FB Page">
+                    
+                      <i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#主題大綱-–-提升-Unity-效能的技巧"><span class="nav-number">1.</span> <span class="nav-text">主題大綱 – 提升 Unity 效能的技巧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#筆記內容"><span class="nav-number">2.</span> <span class="nav-text">筆記內容</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Particle-System"><span class="nav-number">2.1.</span> <span class="nav-text">Particle System</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Array-returning-API"><span class="nav-number">2.2.</span> <span class="nav-text">Array-returning API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#資料結構"><span class="nav-number">2.3.</span> <span class="nav-text">資料結構</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#行內方法-inline-method"><span class="nav-number">2.4.</span> <span class="nav-text">行內方法 (inline method)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Unity-UI"><span class="nav-number">2.5.</span> <span class="nav-text">Unity UI</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Unity-UI-相關的優化-–-Rebuild"><span class="nav-number">2.6.</span> <span class="nav-text">Unity UI 相關的優化 – Rebuild</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Unity-UI-相關的優化-–-Graphic-Raycaster"><span class="nav-number">2.7.</span> <span class="nav-text">Unity UI 相關的優化 – Graphic Raycaster</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Unity-UI-相關的優化-–-SetDirty"><span class="nav-number">2.8.</span> <span class="nav-text">Unity UI 相關的優化 – SetDirty</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#後記"><span class="nav-number">3.</span> <span class="nav-text">後記</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 強力驅動</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主題 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://douduck-hexo-blog.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://douduck08.github.io/zh-tw/2017/11/02/Preview-of-Unite-Europe-2017–Squeezing-Unity/';
+          this.page.identifier = 'zh-tw/2017/11/02/Preview-of-Unite-Europe-2017–Squeezing-Unity/';
+          this.page.title = '[筆記] Preview of Unite Europe 2017 – Squeezing Unity';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://douduck-hexo-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

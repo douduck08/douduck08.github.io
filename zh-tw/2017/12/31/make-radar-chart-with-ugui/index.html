@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="unity,video," />
 
 
 
@@ -79,13 +79,18 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="鴨仔開發日記">
-<meta property="og:url" content="http://douduck08.github.io/archives/2017/index.html">
+<meta name="description" content="前幾天用 Unity 的 uGUI 元件組合出了雷達圖效果，同時也能夠及時的修改數值，表現在圖表上，是個蠻有趣的嘗試。 如果要完整表達內容，可能要搭配大量的圖片，所以這次嘗試使用影片的方式來分享實作。">
+<meta name="keywords" content="unity,video">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Unity] 利用 UI 元件製作雷達圖">
+<meta property="og:url" content="http://douduck08.github.io/zh-tw/2017/12/31/make-radar-chart-with-ugui/index.html">
 <meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="前幾天用 Unity 的 uGUI 元件組合出了雷達圖效果，同時也能夠及時的修改數值，表現在圖表上，是個蠻有趣的嘗試。 如果要完整表達內容，可能要搭配大量的圖片，所以這次嘗試使用影片的方式來分享實作。">
 <meta property="og:locale" content="zh-tw">
+<meta property="og:updated_time" content="2017-12-30T16:24:44.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="鴨仔開發日記">
+<meta name="twitter:title" content="[Unity] 利用 UI 元件製作雷達圖">
+<meta name="twitter:description" content="前幾天用 Unity 的 uGUI 元件組合出了雷達圖效果，同時也能夠及時的修改數值，表現在圖表上，是個蠻有趣的嘗試。 如果要完整表達內容，可能要搭配大量的圖片，所以這次嘗試使用影片的方式來分享實作。">
 
 
 
@@ -115,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://douduck08.github.io/archives/2017/"/>
+  <link rel="canonical" href="http://douduck08.github.io/zh-tw/2017/12/31/make-radar-chart-with-ugui/"/>
 
 
 
 
 
-  <title>歸檔 | 鴨仔開發日記</title>
+  <title>[Unity] 利用 UI 元件製作雷達圖 | 鴨仔開發日記</title>
   
 
 
@@ -149,7 +154,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -253,259 +258,198 @@
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://douduck08.github.io/zh-tw/2017/12/31/make-radar-chart-with-ugui/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h1 class="post-title" itemprop="name headline">[Unity] 利用 UI 元件製作雷達圖</h1>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-12-31T00:19:11+08:00">
+                2017-12-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
           
-        
-        嗯..! 目前共計 6 篇文章。 繼續努力。
-      </span>
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/game-develop/" itemprop="url" rel="index">
+                    <span itemprop="name">game-develop</span>
+                  </a>
+                </span>
 
-      
-
-        
-        
-        
-
-        
+                
+                
+              
+            </span>
           
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2017">2017</h1>
-          </div>
-        
-        
 
-        
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/2017/12/31/make-radar-chart-with-ugui/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="zh-tw/2017/12/31/make-radar-chart-with-ugui/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
 
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+          
+          
 
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/zh-tw/2017/12/31/after-watching-geed/" itemprop="url">
-              
-                <span itemprop="name">[雜談] 聊聊奧特曼，再扯一點數位市場的變化</span>
-              
-            </a>
-        
-      </h2>
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-31T17:57:14+08:00"
-              content="2017-12-31" >
-          12-31
-        </time>
-      </div>
+          
 
-    </header>
-  </article>
+          
 
+        </div>
+      </header>
+    
 
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/zh-tw/2017/12/29/start-hexo/" itemprop="url">
-              
-                <span itemprop="name">開始 Hexo</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-29T16:11:42+08:00"
-              content="2017-12-29" >
-          12-29
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/zh-tw/2017/12/29/unity-learning-totally-review-1/" itemprop="url">
-              
-                <span itemprop="name">[Unity] 從零開始的學習心得 #1 – Unity 如何動起來</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-29T02:05:42+08:00"
-              content="2017-12-29" >
-          12-29
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/zh-tw/2017/12/02/make-radar-chart-with-ugui/" itemprop="url">
-              
-                <span itemprop="name">[Unity] 利用 UI 元件製作雷達圖</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-12-02T00:19:11+08:00"
-              content="2017-12-02" >
-          12-02
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <p>前幾天用 Unity 的 uGUI 元件組合出了雷達圖效果，同時也能夠及時的修改數值，表現在圖表上，是個蠻有趣的嘗試。</p>
+<p>如果要完整表達內容，可能要搭配大量的圖片，所以這次嘗試使用影片的方式來分享實作。</p>
+<div class="video-container"><iframe src="//www.youtube.com/embed/tLTUqNIw9SM" frameborder="0" allowfullscreen></iframe></div>
+<a id="more"></a>
+<h3 id="觀看重點"><a href="#觀看重點" class="headerlink" title="觀看重點"></a>觀看重點</h3><ul>
+<li>利用 uGUI 元件製作的雷達圖，可以跟其他 UI 配合得很好。</li>
+<li>使用父子物件的結構來擴充縮放的軸向。</li>
+<li>利用修改 Pivot 來方便元件的排列與使用。</li>
+<li>使用腳本來同步修改多個 Image 的長寬，表現出雷達圖的數值變化。</li>
+<li>加上其他圖片來強化表現。</li>
+</ul>
+<blockquote>
+<p>專案 Github：<a href="https://github.com/douduck08/UnityDemo-UIRadarChart" target="_blank" rel="noopener">https://github.com/douduck08/UnityDemo-UIRadarChart</a></p>
+</blockquote>
+<h3 id="後話"><a href="#後話" class="headerlink" title="後話"></a>後話</h3><p>整個影片一鏡到底！雖然說應該沒有必要這樣。</p>
+<p>因為懶得剪輯，所以在事先擬好大致的大綱後，決定一次錄完，幸好沒有必須重錄的重大失誤。長度比我預想的要久，因為沒事先預估要說到多細，所以不自覺的話嘮補充，後來才發現連續講了半個小時。</p>
+<p>對於一些特別的實作，不是通例的原理，或許影片示範會比較清晰，如果反應 OK，以後可以多多嘗試這類內容，順利的話其實產出會比寫文章還快。</p>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/zh-tw/2017/11/05/practicing-of-service-locator/" itemprop="url">
-              
-                <span itemprop="name">[C#/Unity] 這不叫 Singleton，叫 Service Locator</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-05T00:27:34+08:00"
-              content="2017-11-05" >
-          11-05
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h2 class="post-title">
-        
-            <a class="post-title-link" href="/zh-tw/2017/11/02/Preview-of-Unite-Europe-2017–Squeezing-Unity/" itemprop="url">
-              
-                <span itemprop="name">[筆記] Preview of Unite Europe 2017 – Squeezing Unity</span>
-              
-            </a>
-        
-      </h2>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated"
-              datetime="2017-11-02T01:30:28+08:00"
-              content="2017-11-02" >
-          11-02
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/unity/" rel="tag"># unity</a>
+          
+            <a href="/tags/video/" rel="tag"># video</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/zh-tw/2017/12/29/start-hexo/" rel="next" title="開始 Hexo">
+                <i class="fa fa-chevron-left"></i> 開始 Hexo
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -513,6 +457,17 @@
 
 
           
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+  
+
 
         </div>
         
@@ -533,8 +488,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -549,7 +513,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">文章</span>
                 </a>
               </div>
@@ -560,7 +524,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-count">1</span>
                   <span class="site-state-item-name">分類</span>
                 </a>
               </div>
@@ -571,7 +535,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">2</span>
                   <span class="site-state-item-name">標籤</span>
                 </a>
               </div>
@@ -616,6 +580,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#觀看重點"><span class="nav-number">1.</span> <span class="nav-text">觀看重點</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#後話"><span class="nav-number">2.</span> <span class="nav-text">後話</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -735,6 +715,10 @@
   
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
 
   
 
@@ -752,6 +736,18 @@
       <script id="dsq-count-scr" src="https://douduck-hexo-blog.disqus.com/count.js" async></script>
     
 
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://douduck08.github.io/zh-tw/2017/12/31/make-radar-chart-with-ugui/';
+          this.page.identifier = 'zh-tw/2017/12/31/make-radar-chart-with-ugui/';
+          this.page.title = '[Unity] 利用 UI 元件製作雷達圖';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://douduck-hexo-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
     
 
   
