@@ -20,6 +20,9 @@
 
 
 
+
+
+
 <meta http-equiv="Cache-Control" content="no-transform" />
 <meta http-equiv="Cache-Control" content="no-siteapp" />
 
@@ -38,10 +41,6 @@
 
 
 
-  
-  
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
-
 
 
 
@@ -50,46 +49,25 @@
 
 <link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
 
-<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=6.0.1" rel="stylesheet" type="text/css" />
 
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.1">
 
 
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.1">
 
 
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.1">
 
 
-  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
-
-
-
-
-
-  <meta name="keywords" content="Hexo, NexT" />
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.1" color="#222">
 
 
 
 
 
 
-
-
-
-
-<meta name="description" content="這是第一篇用 Hexo 發佈的文章，用來熟悉操作，並隨便紀錄點心得。 本來我用來寫文章的部落格是使用 Ｗordpress，是一個用 php 及 SQL 資料庫建構的部落格系統。後來有了建立靜態網站的需求，才抱著嘗試的心態研究 Ｈexo，結果一試成主顧。 除了 Hexo 之外還有不少靜態部落格框架，選擇了 Hexo 的主要因素是它用 Node.js 作為開發語言，相對容易在 Windows 跟 Ma">
-<meta property="og:type" content="article">
-<meta property="og:title" content="開始 Hexo">
-<meta property="og:url" content="http://douduck08.github.io/zh-tw/2017/12/29/start-hexo/index.html">
-<meta property="og:site_name" content="鴨仔開發日記">
-<meta property="og:description" content="這是第一篇用 Hexo 發佈的文章，用來熟悉操作，並隨便紀錄點心得。 本來我用來寫文章的部落格是使用 Ｗordpress，是一個用 php 及 SQL 資料庫建構的部落格系統。後來有了建立靜態網站的需求，才抱著嘗試的心態研究 Ｈexo，結果一試成主顧。 除了 Hexo 之外還有不少靜態部落格框架，選擇了 Hexo 的主要因素是它用 Node.js 作為開發語言，相對容易在 Windows 跟 Ma">
-<meta property="og:locale" content="zh-tw">
-<meta property="og:updated_time" content="2017-12-30T16:28:00.000Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="開始 Hexo">
-<meta name="twitter:description" content="這是第一篇用 Hexo 發佈的文章，用來熟悉操作，並隨便紀錄點心得。 本來我用來寫文章的部落格是使用 Ｗordpress，是一個用 php 及 SQL 資料庫建構的部落格系統。後來有了建立靜態網站的需求，才抱著嘗試的心態研究 Ｈexo，結果一試成主顧。 除了 Hexo 之外還有不少靜態部落格框架，選擇了 Hexo 的主要因素是它用 Node.js 作為開發語言，相對容易在 Windows 跟 Ma">
 
 
 
@@ -98,15 +76,13 @@
   var CONFIG = {
     root: '/',
     scheme: 'Muse',
-    version: '5.1.3',
+    version: '6.0.1',
     sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
     tabs: true,
     motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    duoshuo: {
-      userId: '0',
-      author: '博主'
-    },
     algolia: {
       applicationID: '',
       apiKey: '',
@@ -118,11 +94,33 @@
 </script>
 
 
-
-  <link rel="canonical" href="http://douduck08.github.io/zh-tw/2017/12/29/start-hexo/"/>
-
+  
 
 
+
+
+  
+  <meta name="keywords" content="鴨子, 鴨仔, 開發日記, 遊戲開發" />
+
+
+<meta name="description" content="這是第一篇用 Hexo 發佈的文章，用來熟悉操作，並隨便紀錄點心得。 本來我用來寫文章的部落格是使用 Ｗordpress，是一個用 php 及 SQL 資料庫建構的部落格系統。後來有了建立靜態網站的需求，才抱著嘗試的心態研究 Ｈexo，結果一試成主顧。 除了 Hexo 之外還有不少靜態部落格框架，選擇了 Hexo 的主要因素是它用 Node.js 作為開發語言，相對容易在 Windows 跟 Ma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="開始 Hexo">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/2017/12/29/start-hexo/index.html">
+<meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="這是第一篇用 Hexo 發佈的文章，用來熟悉操作，並隨便紀錄點心得。 本來我用來寫文章的部落格是使用 Ｗordpress，是一個用 php 及 SQL 資料庫建構的部落格系統。後來有了建立靜態網站的需求，才抱著嘗試的心態研究 Ｈexo，結果一試成主顧。 除了 Hexo 之外還有不少靜態部落格框架，選擇了 Hexo 的主要因素是它用 Node.js 作為開發語言，相對容易在 Windows 跟 Ma">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:updated_time" content="2018-01-19T12:45:10.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="開始 Hexo">
+<meta name="twitter:description" content="這是第一篇用 Hexo 發佈的文章，用來熟悉操作，並隨便紀錄點心得。 本來我用來寫文章的部落格是使用 Ｗordpress，是一個用 php 及 SQL 資料庫建構的部落格系統。後來有了建立靜態網站的需求，才抱著嘗試的心態研究 Ｈexo，結果一試成主顧。 除了 Hexo 之外還有不少靜態部落格框架，選擇了 Hexo 的主要因素是它用 Node.js 作為開發語言，相對容易在 Windows 跟 Ma">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.douduck08.com/zh-tw/2017/12/29/start-hexo/"/>
 
 
   <title>開始 Hexo | 鴨仔開發日記</title>
@@ -131,18 +129,46 @@
 
 
 
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-73254781-1', 'auto');
-  ga('send', 'pageview');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-73254781-1');
 </script>
 
 
 
 
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
 
 </head>
 
@@ -157,7 +183,7 @@
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
+      <div class="header-inner"> <div class="site-brand-wrapper">
   <div class="site-meta ">
     
 
@@ -191,51 +217,13 @@
         
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首頁
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            關於
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
-            
-            標籤
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分類
-          </a>
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首頁</a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            歸檔
-          </a>
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />歸檔</a>
         </li>
       
 
@@ -247,9 +235,15 @@
 </nav>
 
 
+  
+
+
 
  </div>
     </header>
+
+    
+
 
     <main id="main" class="main">
       <div class="main-inner">
@@ -266,12 +260,14 @@
   
   
 
+  
+
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
   
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://douduck08.github.io/zh-tw/2017/12/29/start-hexo/">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/2017/12/29/start-hexo/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="douduck08">
@@ -300,11 +296,10 @@
               
                 <span class="post-meta-item-text">發表於</span>
               
-              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-12-29T16:11:42+08:00">
-                2017-12-29
-              </time>
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-12-29T16:11:42+08:00">2017-12-29</time>
             
 
+            
             
 
             
@@ -313,17 +308,6 @@
           
 
           
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/zh-tw/2017/12/29/start-hexo/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="zh-tw/2017/12/29/start-hexo/" itemprop="commentCount"></span>
-                </a>
-              </span>
             
           
 
@@ -377,6 +361,24 @@
     
 
     
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author：</strong>
+    douduck08
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link：</strong>
+    <a href="http://www.douduck08.com/zh-tw/2017/12/29/start-hexo/" title="開始 Hexo">http://www.douduck08.com/zh-tw/2017/12/29/start-hexo/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice： </strong>
+    All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> unless stating additionally.
+  </li>
+</ul>
+
+      </div>
+    
 
     <footer class="post-footer">
       
@@ -398,6 +400,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/zh-tw/2018/01/19/unity-learning-totally-review-2/" rel="prev" title="[Unity] 從零開始的學習心得 #2 – Unity 的基本組成">
+                [Unity] 從零開始的學習心得 #2 – Unity 的基本組成 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -423,18 +429,8 @@
           </div>
           
 
+  
 
-          
-  
-    <div class="comments" id="comments">
-      <div id="disqus_thread">
-        <noscript>
-          Please enable JavaScript to view the
-          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
-        </noscript>
-      </div>
-    </div>
-  
 
 
         </div>
@@ -474,68 +470,46 @@
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
-          <nav class="site-state motion-element">
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">文章</span>
+                  </a>
+                </div>
+              
 
-            
-              <div class="site-state-item site-state-posts">
               
-                <a href="/archives/">
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分類</span>
+                  </a>
+                </div>
               
-                  <span class="site-state-item-count">6</span>
-                  <span class="site-state-item-name">文章</span>
-                </a>
-              </div>
-            
 
-            
               
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">標籤</span>
+                  </a>
+                </div>
               
-              <div class="site-state-item site-state-categories">
-                <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
-                  <span class="site-state-item-name">分類</span>
-                </a>
-              </div>
-            
-
-            
-              
-              
-              <div class="site-state-item site-state-tags">
-                <a href="/tags/index.html">
-                  <span class="site-state-item-count">3</span>
-                  <span class="site-state-item-name">標籤</span>
-                </a>
-              </div>
-            
-
-          </nav>
+            </nav>
+          
 
           
 
-          <div class="links-of-author motion-element">
-            
-              
-                <span class="links-of-author-item">
-                  <a href="https://github.com/douduck08" target="_blank" title="GitHub">
-                    
-                      <i class="fa fa-fw fa-github"></i>GitHub</a>
-                </span>
-              
-                <span class="links-of-author-item">
-                  <a href="https://twitter.com/douduck08" target="_blank" title="Twitter">
-                    
-                      <i class="fa fa-fw fa-twitter"></i>Twitter</a>
-                </span>
-              
-                <span class="links-of-author-item">
-                  <a href="https://www.facebook.com/douduck08develop" target="_blank" title="FB Page">
-                    
-                      <i class="fa fa-fw fa-facebook"></i>FB Page</a>
-                </span>
-              
-            
-          </div>
+          
 
           
           
@@ -543,6 +517,9 @@
           
           
 
+          
+            
+          
           
 
         </div>
@@ -585,18 +562,14 @@
   <span class="author" itemprop="copyrightHolder">douduck08</span>
 
   
+
+  
 </div>
 
 
-  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 強力驅動</div>
 
 
 
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">主題 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
 
 
 
@@ -620,6 +593,8 @@
       </div>
     
 
+    
+
   </div>
 
   
@@ -638,7 +613,6 @@
 
 
 
-  
 
 
 
@@ -651,75 +625,53 @@
 
 
 
-  
-  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-
-  
-  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
 
 
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
 
 
 
   
   
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
-
-
-
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
   
 
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.1"></script>
 
 
 
   
 
 
-  
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.1"></script>
 
-    
-      <script id="dsq-count-scr" src="https://douduck-hexo-blog.disqus.com/count.js" async></script>
-    
 
-    
-      <script type="text/javascript">
-        var disqus_config = function () {
-          this.page.url = 'http://douduck08.github.io/zh-tw/2017/12/29/start-hexo/';
-          this.page.identifier = 'zh-tw/2017/12/29/start-hexo/';
-          this.page.title = '開始 Hexo';
-        };
-        var d = document, s = d.createElement('script');
-        s.src = 'https://douduck-hexo-blog.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', '' + +new Date());
-        (d.head || d.body).appendChild(s);
-      </script>
-    
 
   
-
 
 
 
@@ -735,6 +687,12 @@
 
 
 
+  
+
+
+
+
+
 
 
 
@@ -750,6 +708,12 @@
 
   
 
+  
+
+  
+
+
+  
   
 
   

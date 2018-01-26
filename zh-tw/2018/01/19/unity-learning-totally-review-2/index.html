@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw,en,default">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.1" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="unity," />
+
+
+<meta name="description" content="此篇文章是延續 [Unity] 從零開始的學習心得 #1 – Unity 如何動起來 的寫作目標，整個系列的第二篇文章。 這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。 這次主要重點放在 場景、物件、組件 的關係，以及撰寫 MonoBehaiour 腳本時可能會用上的一些經驗談。">
+<meta name="keywords" content="unity">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Unity] 從零開始的學習心得 #2 – Unity 的基本組成">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/2018/01/19/unity-learning-totally-review-2/index.html">
+<meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="此篇文章是延續 [Unity] 從零開始的學習心得 #1 – Unity 如何動起來 的寫作目標，整個系列的第二篇文章。 這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。 這次主要重點放在 場景、物件、組件 的關係，以及撰寫 MonoBehaiour 腳本時可能會用上的一些經驗談。">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:image" content="https://i.imgur.com/XnPmZHt.jpg">
+<meta property="og:updated_time" content="2018-01-25T13:48:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Unity] 從零開始的學習心得 #2 – Unity 的基本組成">
+<meta name="twitter:description" content="此篇文章是延續 [Unity] 從零開始的學習心得 #1 – Unity 如何動起來 的寫作目標，整個系列的第二篇文章。 這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。 這次主要重點放在 場景、物件、組件 的關係，以及撰寫 MonoBehaiour 腳本時可能會用上的一些經驗談。">
+<meta name="twitter:image" content="https://i.imgur.com/XnPmZHt.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.douduck08.com/zh-tw/2018/01/19/unity-learning-totally-review-2/"/>
+
+
+  <title>[Unity] 從零開始的學習心得 #2 – Unity 的基本組成 | 鴨仔開發日記</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-73254781-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">鴨仔開發日記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一個開發者的點點滴滴 – ABOUT AN ARTY DEVELOPER</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首頁</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />歸檔</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/2018/01/19/unity-learning-totally-review-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[Unity] 從零開始的學習心得 #2 – Unity 的基本組成</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2018-01-19T20:43:34+08:00">2018-01-19</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>此篇文章是延續 <a href="/zh-tw/2017/12/29/unity-learning-totally-review-1/" title="[Unity] 從零開始的學習心得 #1 – Unity 如何動起來">[Unity] 從零開始的學習心得 #1 – Unity 如何動起來</a> 的寫作目標，整個系列的第二篇文章。</p>
+<p>這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。</p>
+<p>這次主要重點放在 <strong>場景、物件、組件</strong> 的關係，以及撰寫 MonoBehaiour 腳本時可能會用上的一些經驗談。</p>
+<p><img src="https://i.imgur.com/XnPmZHt.jpg" alt="unity-learning-totally-review-2"></p>
+<a id="more"></a>
+<h3 id="Unity-的跨平台特性"><a href="#Unity-的跨平台特性" class="headerlink" title="Unity 的跨平台特性"></a>Unity 的跨平台特性</h3><p>Unity 作為商業引擎的一個特色，就是它並不止針對一個系統平台去設計，一個 Unity 專案可以在極小的變動下，就分別發布到電腦 (Windows、OSX)、行動裝置 (Android、iOS)，甚至掌上遊樂機 (PSV)、家用主機 (XBox) 都在 Unity 的守備範圍內。雖然做不到不改動就可以無痛轉換，但跨平台算是 Unity 的一大特色。</p>
+<p>簡單解釋這個跨平台特性的原理，可以把 Unity 輸出的遊戲可分成兩個部分：Unity Player 以及 Unity Assets。</p>
+<p>就像播放器之於影片一般，在不同的平台上用上的不同的播放器，可以播放同一段影片，呈現出基本相同的內容；Unity 在輸出專案時，會針對平台提供一個 Unity Player 作為啟動器，並將專案內容打包成一份或數份 Unity 專屬的 Assets 檔案，作為播放的內容。</p>
+<p>所以將 Unity，或者說所有的遊戲當成可以互動的影片，是很直觀的想像。</p>
+<h3 id="Unity-的基本組成-場景、物件、組件"><a href="#Unity-的基本組成-場景、物件、組件" class="headerlink" title="Unity 的基本組成 - 場景、物件、組件"></a>Unity 的基本組成 - 場景、物件、組件</h3><p>初接觸 Unity 開發，有幾個項目是會早期會先認識到的： </p>
+<ul>
+<li>場景(Scene)</li>
+<li>物件(GameObject)</li>
+<li>組件(Component)</li>
+</ul>
+<h4 id="場景-Scene"><a href="#場景-Scene" class="headerlink" title="場景(Scene)"></a>場景(Scene)</h4><p>在 Unity 遊戲執行時，都會有個運作中的場景。在編輯器之中，可以看到遊戲的3D模型、攝影機與燈光等物件會被佈置在場景中，<strong>場景(Scene)</strong> 就像是影像拍攝的片場一般，是作為 Unity 運作的根基。</p>
+<p>場景可以被儲存為一個檔案，使遊戲進行能在數個場景間切換，也因此在遊戲打包輸出時也需要指定一個初始場景。而 Unity 遊戲被啟動時，會先載入並啟動初始場景的運作，<strong>遊戲迴圈(Game Loop)</strong> 也會在場景完成載入後開始生效，如果沒有場景的存在，接下來提到的 物件(GameObject) 及 組件(Component) 便沒辦法加入遊戲迴圈中發生作用。</p>
+<h4 id="物件-GameObject"><a href="#物件-GameObject" class="headerlink" title="物件(GameObject)"></a>物件(GameObject)</h4><p>物件是在編輯器中，可以被看見與操作的主要實體。在場景中佈置物件，就像是在佈置舞台劇的道具一般，不同的物件會在場景中發揮不同的作用：可以打光的 Light物件、形成實體的 Mesh物件、將場景拍攝為遊戲畫面的 Camera物件。</p>
+<p>各式各樣的的功能物件，我們都可以通一稱為 <strong>GameObject</strong>，雖然很難表達這些 GameObject 在軟體原理上的地位，但可以把它想成”事物的載體”，用來表達一個遊戲中的”存在”之標的。一個最單純的 GameObject，就只是一個遊戲中的”存在”，它會在場景中有個位置，成為 Unity Game Loop 的一部分，但不代表實際的作用，實際作用的部分要由 <strong>組件(Component)</strong> 來說明。</p>
+<h4 id="組件-Component"><a href="#組件-Component" class="headerlink" title="組件(Component)"></a>組件(Component)</h4><p>我們在編輯器選取了任何一個 GameObject，就會在 <strong>Inspector 視窗</strong> 中看到一連串的欄位跟資訊，每個 GameObject 擁有的欄位跟資訊有些相同，又有些不同。</p>
+<p>這些是稱為 <strong>組件(Component)</strong> 的重要元素，用哲學一點的話來說，是它們為 GameObject 這”存在”賦予了”功能與意義”。有些組件是每個物件都有的，如 Transform；有些組件是賦予物件特殊地位的，如 Camera。我們可以從選單創建各式各樣的物件，而這些物件之所以不同，就是因為它們一開始所擁有的組件不同。</p>
+<p>用比較虛幻飄渺的用詞來比喻，場景代表了虛擬的”絕對空間”，物件代表了空間中的”存在”，組件則賦予了各自不同的”作用與身份”。</p>
+<h3 id="組件腳本的基本類別-MonoBehaviour"><a href="#組件腳本的基本類別-MonoBehaviour" class="headerlink" title="組件腳本的基本類別 - MonoBehaviour"></a>組件腳本的基本類別 - MonoBehaviour</h3><p>雖然 Uniry 已經內建了超多 Component 可以使用，但要靠這些 Component 做出所有期望的遊戲規則與設計還是有點強人所難，所以一般開發 Unity 遊戲都會需要自行撰寫程式碼腳本，設計自己所需要的 Component。</p>
+<p>自己設計 Component 最主要的目的是為了自訂遊戲的邏輯，屬於 Game Loop 中 Update 的一環，也是不同遊戲之間差別最巨大的部分；另外也有可能是為了為了將 Unity 提供的 Input Trigger (玩家輸入的觸發器) 銜接到自訂的 Update 邏輯，或者針對 Unity 的 Rendering 階段進行調整或補充，呈現特別的特效等。</p>
+<p>在上一篇文章說明 Game Loop 時有提到，Unity 就像在引擎的運作流程中留下許多空格，交由開發只去填入希望的邏輯，或者連接對應的玩皆輸入，變成期望的遊戲成品。為了能適當且合理的使用 Unity MonoBehaviour 提供的空格欄位 - <strong>Unity Event Function</strong>，閱讀文件並了解相關的運作順序有著相當大的意義。</p>
+<blockquote>
+<blockquote>
+<p>說明 Update 流程的官方文件：<a href="https://docs.unity3d.com/Manual/ExecutionOrder.html" target="_blank" rel="noopener">https://docs.unity3d.com/Manual/ExecutionOrder.html</a></p>
+</blockquote>
+</blockquote>
+<p>可以稱為百大錯誤之首的 Unity 執行意外：<strong>Null Reference Exception</strong>，除了場景設置不完善，最普遍的發生原因便是因為忽略了 MonoBehaviour 中各個事件 (Event) 的執行時機，在 runtime 時調用了還未準備完成的對象或資源。</p>
+<p>以最常使用的 Awake、Start、Update 來說明：</p>
+<ul>
+<li>對單一組件來說 Awake 必定先於 Start，然後是 Update。</li>
+<li>場景中的預先擺設物件之間， Awake 必定會在任何 Start 之前完成；也就是 Awake 會是整個場景執行完畢，然後才輪到任何 Start。</li>
+<li>用腳本 Instantiate Prefab 物件不會依照上一點邏輯。</li>
+</ul>
+<p>以這兩點來說，便可以知道 Awake 要避免去呼叫不同的物件資源，避開物件之間的互動；而 Start 可以進行物件之間的互動，但互動雙方要將事前準備工作在 Awake 全部完成。</p>
+<p>當使用到的 <strong>Unity Event Function</strong> 越多，這些內建於 Unity 的細節便有可能使你開發的遊戲產生問題。所以我會告訴一些初心者：</p>
+<blockquote>
+<blockquote>
+<p>Unity 沒有讀心晶片，只有你先去理解它的細節，並適當地傳達你的邏輯(寫好腳本，寫對程式)，Unity 才會回應你的期待。</p>
+</blockquote>
+</blockquote>
+<h3 id="常見的物件互動手段-物理系統"><a href="#常見的物件互動手段-物理系統" class="headerlink" title="常見的物件互動手段 - 物理系統"></a>常見的物件互動手段 - 物理系統</h3><p>Unity 內建了一套物理模擬系統給開發者利用，包括物理慣性運動、重力場、摩擦阻力、碰撞與觸發等功能。雖然作為物理模擬，Unity 的內建系統稱不上精確與穩定，偶爾會有令人噴飯的意外狀況，但是如果理解它的原理與適用範圍，仍舊是在遊戲開發上相當方便的內建系統。</p>
+<p>Unity 物理系統的使用網路上有相當資訊可以查詢，要一一說明也要不少的篇幅，這邊我想提的是關於 <strong>FixedUpdate</strong> 這個 Event 的三兩事。</p>
+<p>物理系統的模擬跟現實有個最大的差距：時間的連續性是無法在軟體中完美重現的，不論何種物理模擬，都只能盡量縮短模擬的時間間隔，來提高近似度與精準度，不可能真正的重現物理。而在遊戲中我們不可能無限制的提升模擬結果的精準度，因為與之相對的軟硬體效能是相當有限的。</p>
+<p>Unity 的模擬間隔可以在 Project Setting 去設定，預設值是 0.02 秒；而 <strong>FixedUpdate</strong> 辨識與之對應，每次模擬時會呼叫到的 Unity Event Function，預設每秒呼叫 50 次。</p>
+<p>光從呼叫的時間點就可以看出 <strong>FixedUpdate</strong> 與 <strong>Update</strong> 是處在兩個截然不同的時間軸上，一個是物理的循環；另一個是畫面更新的循環 (同時也是 Game Loop)。要建立橫跨兩個時間軸的遊戲邏輯，便很容易遇到奇奇怪怪的狀況，輕則畫面閃動，重則腳色直接噴飛。</p>
+<h4 id="畫面閃動意外"><a href="#畫面閃動意外" class="headerlink" title="畫面閃動意外"></a>畫面閃動意外</h4><p>如果在 FixedUpdate 之中對物體進行強制定位 (設定Postiion)，即使是配合了 <code>Time.fixedDeltaTime</code> 想製作平滑的移動，也無法避免畫面閃動的問題。因為 <strong>FixedUpdate</strong> 與 <strong>Update</strong> 的更新頻率不相同，所以 Update 每隔一段時間，就會連續執行兩次，然後才發生 FixedUpdate，本來應該平滑移動的物件，便在這瞬間發生了”突然停止移動”，也就使畫面產生卡頓或閃動。</p>
+<p>除了在物體本身發生閃動，也有可能是在兩個物體之間產生不同步，比如跑步的腳色跟追隨的 Camera 之間。解決方法很簡單，就是只要畫面中有牽涉到物理系統的任何組件，便要避免用 <code>Time.fixedDeltaTime</code> 與 <code>Time.deltaTime</code> 來設定位置，應該採用 <code>AddForce</code> 或者取用 <code>rigidbody</code> 的參數來設定物理運動。</p>
+<h4 id="在牆邊顫抖的物件"><a href="#在牆邊顫抖的物件" class="headerlink" title="在牆邊顫抖的物件"></a>在牆邊顫抖的物件</h4><p>一般來說腳色會有被障礙擋住的情況，此時玩家即使不斷按住前進鍵，腳色也應該停在原地做太空漫步，而不是瘋狂顫抖。這發生的原因是因為玩家的 輸入(Input) 在 Update 進行接收與使用，但物理的碰撞卻是在 FixedUpdate 更新，所以腳色便重複進行著 “走進牆內、被擠出牆外” 的循環，畫面上看起來就像在顫抖一般。</p>
+<p>解決方式可以視情況去做設計，常見的做法之一是在接收到玩家輸入後，還要利用 Raycast 檢查是否撞到障礙，然後才決定是否前進，而不是直接依賴碰撞框來阻止腳色的移動範圍。</p>
+<h4 id="腳色或物件噴飛"><a href="#腳色或物件噴飛" class="headerlink" title="腳色或物件噴飛"></a>腳色或物件噴飛</h4><p>這也是跟 <strong>FixedUpdate</strong> 與 <strong>Update</strong> 的更新頻率不相同有關，Unity 在實現物理模擬時，所有的運算都在 FixedUpdate 的迴圈中運作，如果你在 Update 利面對物理狀態進行了更動，那要注意 Update 可能會跑得比 FixedUpdate 快的問題，一不小心累積了兩倍分量的物理操作，在下一個 FixedUpdate 之後，你的腳色可能就不知道飛到哪裡去了。</p>
+<p>另外有個可能不是因為你 Update 的操作有誤，而是物體的提動速度過快，所以數個物件”過度深入”對方，產生的碰撞力道超乎預期，那物件可能也會噴飛；或者因為速度過快，根本來不及檢查出物件碰撞，物件穿透了應當產生阻擋效果的物件，這又是另一種噴飛了。</p>
+<p>噴飛的原因百百種，所以解決方式也各不一定。物理系統本身不是完美的 (上面有提到原因，這不全是 Unity 的錯)，所以理解它的原理跟極限，不要抱有太過度的期待，你才能順利的控制你的遊戲作品。</p>
+<h3 id="Unity-究竟好不好學？"><a href="#Unity-究竟好不好學？" class="headerlink" title="Unity 究竟好不好學？"></a>Unity 究竟好不好學？</h3><p>Unity 的使用方式很靈活，不會寫程式、不會做美術、不會建立模型，都有對應的解決方式去利用現成工具或資源。但這只代表 Unity 有著相對較低的進入門檻，想要做出與教學範例相似的遊戲相當容易，拖拉一些組件資源，剪下貼上幾段程式碼便有機會完成一個遊戲。但是如果你想做的遊戲沒有任何範例呢？</p>
+<p>如果你是夢想自由地做出自己設計的遊戲玩法與遊戲世界，那使用 Unity 並不一定會使你的目標可以輕易達成，做出一個完整自創的遊戲，需要的知識背景與投入是與之對應的。Unity 帶來了開發遊戲的可能性，但他只是幫你的開發過程進行了加速，並不是讓開發遊戲變得一蹴可及。</p>
+<p>但若你決定的遊戲主題不要太廣，玩法不要太複雜，Unity 可以讓你很快地有些初步的成果，立刻享受到自製遊戲的樂趣與成就感，如果你感受過並喜歡上這樣的一份心情，那正式踏上遊戲製作之路(坑)或許是你可以考慮的。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author：</strong>
+    douduck08
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link：</strong>
+    <a href="http://www.douduck08.com/zh-tw/2018/01/19/unity-learning-totally-review-2/" title="[Unity] 從零開始的學習心得 #2 – Unity 的基本組成">http://www.douduck08.com/zh-tw/2018/01/19/unity-learning-totally-review-2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice： </strong>
+    All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> unless stating additionally.
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/unity/" rel="tag"># unity</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/zh-tw/2017/12/29/start-hexo/" rel="next" title="開始 Hexo">
+                <i class="fa fa-chevron-left"></i> 開始 Hexo
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">douduck08</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">文章</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分類</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">標籤</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Unity-的跨平台特性"><span class="nav-number">1.</span> <span class="nav-text">Unity 的跨平台特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unity-的基本組成-場景、物件、組件"><span class="nav-number">2.</span> <span class="nav-text">Unity 的基本組成 - 場景、物件、組件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#場景-Scene"><span class="nav-number">2.1.</span> <span class="nav-text">場景(Scene)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#物件-GameObject"><span class="nav-number">2.2.</span> <span class="nav-text">物件(GameObject)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#組件-Component"><span class="nav-number">2.3.</span> <span class="nav-text">組件(Component)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#組件腳本的基本類別-MonoBehaviour"><span class="nav-number">3.</span> <span class="nav-text">組件腳本的基本類別 - MonoBehaviour</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#常見的物件互動手段-物理系統"><span class="nav-number">4.</span> <span class="nav-text">常見的物件互動手段 - 物理系統</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#畫面閃動意外"><span class="nav-number">4.1.</span> <span class="nav-text">畫面閃動意外</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在牆邊顫抖的物件"><span class="nav-number">4.2.</span> <span class="nav-text">在牆邊顫抖的物件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#腳色或物件噴飛"><span class="nav-number">4.3.</span> <span class="nav-text">腳色或物件噴飛</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unity-究竟好不好學？"><span class="nav-number">5.</span> <span class="nav-text">Unity 究竟好不好學？</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.1"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -20,6 +20,9 @@
 
 
 
+
+
+
 <meta http-equiv="Cache-Control" content="no-transform" />
 <meta http-equiv="Cache-Control" content="no-siteapp" />
 
@@ -38,10 +41,6 @@
 
 
 
-  
-  
-  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
-
 
 
 
@@ -50,49 +49,25 @@
 
 <link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
 
-<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=6.0.1" rel="stylesheet" type="text/css" />
 
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png?v=5.1.3">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.1">
 
 
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.1">
 
 
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.1">
 
 
-  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
-
-
-
-
-
-  <meta name="keywords" content="unity," />
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.1" color="#222">
 
 
 
 
 
 
-
-
-
-
-<meta name="description" content="我初次接觸 Unity 是在 2015 年 9 月左右，當時沒有任何做遊戲或互動媒體的經驗，一個基本只會 C++ 跟一點 Web 開發的畢業生加入了遊戲公司，從沒聽過 Unity 也沒寫過 C# 開始，一路學習到現在。 一路上依賴網路自學，拆解公司舊專案當參考，追趕新專案的需求，在去年 2016 的 4月前後，接觸了 Unity 相關的網路社群 (Unity 應用領域、You can make g">
-<meta name="keywords" content="unity">
-<meta property="og:type" content="article">
-<meta property="og:title" content="[Unity] 從零開始的學習心得 #1 – Unity 如何動起來">
-<meta property="og:url" content="http://douduck08.github.io/zh-tw/2017/12/29/unity-learning-totally-review-1/index.html">
-<meta property="og:site_name" content="鴨仔開發日記">
-<meta property="og:description" content="我初次接觸 Unity 是在 2015 年 9 月左右，當時沒有任何做遊戲或互動媒體的經驗，一個基本只會 C++ 跟一點 Web 開發的畢業生加入了遊戲公司，從沒聽過 Unity 也沒寫過 C# 開始，一路學習到現在。 一路上依賴網路自學，拆解公司舊專案當參考，追趕新專案的需求，在去年 2016 的 4月前後，接觸了 Unity 相關的網路社群 (Unity 應用領域、You can make g">
-<meta property="og:locale" content="zh-tw">
-<meta property="og:image" content="https://i.imgur.com/E7lAf7Z.jpg">
-<meta property="og:updated_time" content="2017-12-30T15:58:06.000Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="[Unity] 從零開始的學習心得 #1 – Unity 如何動起來">
-<meta name="twitter:description" content="我初次接觸 Unity 是在 2015 年 9 月左右，當時沒有任何做遊戲或互動媒體的經驗，一個基本只會 C++ 跟一點 Web 開發的畢業生加入了遊戲公司，從沒聽過 Unity 也沒寫過 C# 開始，一路學習到現在。 一路上依賴網路自學，拆解公司舊專案當參考，追趕新專案的需求，在去年 2016 的 4月前後，接觸了 Unity 相關的網路社群 (Unity 應用領域、You can make g">
-<meta name="twitter:image" content="https://i.imgur.com/E7lAf7Z.jpg">
 
 
 
@@ -101,15 +76,13 @@
   var CONFIG = {
     root: '/',
     scheme: 'Muse',
-    version: '5.1.3',
+    version: '6.0.1',
     sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
-    fancybox: true,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
     tabs: true,
     motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
-    duoshuo: {
-      userId: '0',
-      author: '博主'
-    },
     algolia: {
       applicationID: '',
       apiKey: '',
@@ -121,11 +94,36 @@
 </script>
 
 
-
-  <link rel="canonical" href="http://douduck08.github.io/zh-tw/2017/12/29/unity-learning-totally-review-1/"/>
-
+  
 
 
+
+
+  
+  <meta name="keywords" content="unity," />
+
+
+<meta name="description" content="我初次接觸 Unity 是在 2015 年 9 月左右，當時沒有任何做遊戲或互動媒體的經驗，一個基本只會 C++ 跟一點 Web 開發的畢業生加入了遊戲公司，從沒聽過 Unity 也沒寫過 C# 開始，一路學習到現在。 一路上依賴網路自學，拆解公司舊專案當參考，追趕新專案的需求，在去年 2016 的 4月前後，接觸了 Unity 相關的網路社群 (Unity 應用領域、You can make g">
+<meta name="keywords" content="unity">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Unity] 從零開始的學習心得 #1 – Unity 如何動起來">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/2017/12/29/unity-learning-totally-review-1/index.html">
+<meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="我初次接觸 Unity 是在 2015 年 9 月左右，當時沒有任何做遊戲或互動媒體的經驗，一個基本只會 C++ 跟一點 Web 開發的畢業生加入了遊戲公司，從沒聽過 Unity 也沒寫過 C# 開始，一路學習到現在。 一路上依賴網路自學，拆解公司舊專案當參考，追趕新專案的需求，在去年 2016 的 4月前後，接觸了 Unity 相關的網路社群 (Unity 應用領域、You can make g">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:image" content="https://i.imgur.com/r3w6vn7.jpg">
+<meta property="og:updated_time" content="2018-01-25T13:48:42.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[Unity] 從零開始的學習心得 #1 – Unity 如何動起來">
+<meta name="twitter:description" content="我初次接觸 Unity 是在 2015 年 9 月左右，當時沒有任何做遊戲或互動媒體的經驗，一個基本只會 C++ 跟一點 Web 開發的畢業生加入了遊戲公司，從沒聽過 Unity 也沒寫過 C# 開始，一路學習到現在。 一路上依賴網路自學，拆解公司舊專案當參考，追趕新專案的需求，在去年 2016 的 4月前後，接觸了 Unity 相關的網路社群 (Unity 應用領域、You can make g">
+<meta name="twitter:image" content="https://i.imgur.com/r3w6vn7.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.douduck08.com/zh-tw/2017/12/29/unity-learning-totally-review-1/"/>
 
 
   <title>[Unity] 從零開始的學習心得 #1 – Unity 如何動起來 | 鴨仔開發日記</title>
@@ -134,18 +132,46 @@
 
 
 
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-  ga('create', 'UA-73254781-1', 'auto');
-  ga('send', 'pageview');
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-73254781-1');
 </script>
 
 
 
 
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
 
 </head>
 
@@ -160,7 +186,7 @@
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-wrapper">
+      <div class="header-inner"> <div class="site-brand-wrapper">
   <div class="site-meta ">
     
 
@@ -194,51 +220,13 @@
         
         <li class="menu-item menu-item-home">
           <a href="/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
-            
-            首頁
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-about">
-          <a href="/about/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
-            
-            關於
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
-            
-            標籤
-          </a>
-        </li>
-      
-        
-        <li class="menu-item menu-item-categories">
-          <a href="/categories/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
-            
-            分類
-          </a>
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首頁</a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
           <a href="/archives/" rel="section">
-            
-              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
-            
-            歸檔
-          </a>
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />歸檔</a>
         </li>
       
 
@@ -250,9 +238,15 @@
 </nav>
 
 
+  
+
+
 
  </div>
     </header>
+
+    
+
 
     <main id="main" class="main">
       <div class="main-inner">
@@ -269,12 +263,14 @@
   
   
 
+  
+
   <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
   
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://douduck08.github.io/zh-tw/2017/12/29/unity-learning-totally-review-1/">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/2017/12/29/unity-learning-totally-review-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="douduck08">
@@ -303,11 +299,10 @@
               
                 <span class="post-meta-item-text">發表於</span>
               
-              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-12-29T02:05:42+08:00">
-                2017-12-29
-              </time>
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-12-29T02:05:42+08:00">2017-12-29</time>
             
 
+            
             
 
             
@@ -325,11 +320,14 @@
                 <span class="post-meta-item-text">分類於</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/game-develop/" itemprop="url" rel="index">
-                    <span itemprop="name">game-develop</span>
-                  </a>
-                </span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a></span>
 
                 
                 
@@ -338,17 +336,6 @@
           
 
           
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/zh-tw/2017/12/29/unity-learning-totally-review-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="zh-tw/2017/12/29/unity-learning-totally-review-1/" itemprop="commentCount"></span>
-                </a>
-              </span>
             
           
 
@@ -379,7 +366,7 @@
 <p>如今又過了一年，雖然憑著兩年實作經驗可能還只能算隻小菜鴨，更多深入專精的遊戲開發技術也尚未掌握起來，而這篇文章是想寫下到目前為止，我學習 Unity 的過程與理解。</p>
 <p>因為我是從已經有程式底子的情況來學習 Unity，所以這系列的內容會有較多的 程式視角，但我會盡量從沒基礎的角度進行補充，作為一個基本觀念的系列文章。</p>
 <p>如果這系列文章，可以作為某人進入遊戲開發的敲門磚，我想便足矣。</p>
-<p><img src="https://i.imgur.com/E7lAf7Z.jpg" alt="unity-learning-totally-review-1"></p>
+<p><img src="https://i.imgur.com/r3w6vn7.jpg" alt="unity-learning-totally-review-1"></p>
 <a id="more"></a>
 <h3 id="讓遊戲動起來-–-遊戲迴圈-Game-Loop"><a href="#讓遊戲動起來-–-遊戲迴圈-Game-Loop" class="headerlink" title="讓遊戲動起來 – 遊戲迴圈 (Game Loop)"></a>讓遊戲動起來 – 遊戲迴圈 (Game Loop)</h3><p>如果你去網路上搜尋 “遊戲迴圈” 四個中文字，跑出來的內容可能是關於遊戲體驗、遊戲企劃設計之類的內容，但這不是我說的對象；改用英文 “Game loop” 才比較容易精確找到我所想指稱的內容，精確對應的中文專有名詞應該是沒有吧。</p>
 <p>一個 Game loop 分成了三個階段：</p>
@@ -430,6 +417,24 @@
 
     
 
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author：</strong>
+    douduck08
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link：</strong>
+    <a href="http://www.douduck08.com/zh-tw/2017/12/29/unity-learning-totally-review-1/" title="[Unity] 從零開始的學習心得 #1 – Unity 如何動起來">http://www.douduck08.com/zh-tw/2017/12/29/unity-learning-totally-review-1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice： </strong>
+    All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> unless stating additionally.
+  </li>
+</ul>
+
+      </div>
     
 
     <footer class="post-footer">
@@ -487,18 +492,8 @@
           </div>
           
 
+  
 
-          
-  
-    <div class="comments" id="comments">
-      <div id="disqus_thread">
-        <noscript>
-          Please enable JavaScript to view the
-          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
-        </noscript>
-      </div>
-    </div>
-  
 
 
         </div>
@@ -538,68 +533,46 @@
               <p class="site-description motion-element" itemprop="description"></p>
           </div>
 
-          <nav class="site-state motion-element">
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">文章</span>
+                  </a>
+                </div>
+              
 
-            
-              <div class="site-state-item site-state-posts">
               
-                <a href="/archives/">
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分類</span>
+                  </a>
+                </div>
               
-                  <span class="site-state-item-count">6</span>
-                  <span class="site-state-item-name">文章</span>
-                </a>
-              </div>
-            
 
-            
               
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">標籤</span>
+                  </a>
+                </div>
               
-              <div class="site-state-item site-state-categories">
-                <a href="/categories/index.html">
-                  <span class="site-state-item-count">4</span>
-                  <span class="site-state-item-name">分類</span>
-                </a>
-              </div>
-            
-
-            
-              
-              
-              <div class="site-state-item site-state-tags">
-                <a href="/tags/index.html">
-                  <span class="site-state-item-count">3</span>
-                  <span class="site-state-item-name">標籤</span>
-                </a>
-              </div>
-            
-
-          </nav>
+            </nav>
+          
 
           
 
-          <div class="links-of-author motion-element">
-            
-              
-                <span class="links-of-author-item">
-                  <a href="https://github.com/douduck08" target="_blank" title="GitHub">
-                    
-                      <i class="fa fa-fw fa-github"></i>GitHub</a>
-                </span>
-              
-                <span class="links-of-author-item">
-                  <a href="https://twitter.com/douduck08" target="_blank" title="Twitter">
-                    
-                      <i class="fa fa-fw fa-twitter"></i>Twitter</a>
-                </span>
-              
-                <span class="links-of-author-item">
-                  <a href="https://www.facebook.com/douduck08develop" target="_blank" title="FB Page">
-                    
-                      <i class="fa fa-fw fa-facebook"></i>FB Page</a>
-                </span>
-              
-            
-          </div>
+          
 
           
           
@@ -607,6 +580,9 @@
           
           
 
+          
+            
+          
           
 
         </div>
@@ -649,18 +625,14 @@
   <span class="author" itemprop="copyrightHolder">douduck08</span>
 
   
+
+  
 </div>
 
 
-  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 強力驅動</div>
 
 
 
-  <span class="post-meta-divider">|</span>
-
-
-
-  <div class="theme-info">主題 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
 
 
 
@@ -684,6 +656,8 @@
       </div>
     
 
+    
+
   </div>
 
   
@@ -702,7 +676,6 @@
 
 
 
-  
 
 
 
@@ -715,75 +688,53 @@
 
 
 
-  
-  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
-
-  
-  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
-
-  
-  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
-
-  
-  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
 
 
-  
-
-
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
-
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
 
 
 
   
   
-
-  
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
-
-
-
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
   
 
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
 
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.1"></script>
 
 
 
   
 
 
-  
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.1"></script>
 
-    
-      <script id="dsq-count-scr" src="https://douduck-hexo-blog.disqus.com/count.js" async></script>
-    
 
-    
-      <script type="text/javascript">
-        var disqus_config = function () {
-          this.page.url = 'http://douduck08.github.io/zh-tw/2017/12/29/unity-learning-totally-review-1/';
-          this.page.identifier = 'zh-tw/2017/12/29/unity-learning-totally-review-1/';
-          this.page.title = '[Unity] 從零開始的學習心得 #1 – Unity 如何動起來';
-        };
-        var d = document, s = d.createElement('script');
-        s.src = 'https://douduck-hexo-blog.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', '' + +new Date());
-        (d.head || d.body).appendChild(s);
-      </script>
-    
 
   
-
 
 
 
@@ -799,6 +750,12 @@
 
 
 
+  
+
+
+
+
+
 
 
 
@@ -814,6 +771,12 @@
 
   
 
+  
+
+  
+
+
+  
   
 
   
