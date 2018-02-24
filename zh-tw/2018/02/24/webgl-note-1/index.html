@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw,en,default">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.1" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="webgl," />
+
+
+<meta name="description" content="前陣子在找四元樹與八元樹的資料，發現了 three.js 這個套件，被用於做四元樹相關演算法的圖像展示。 three.js 是一個重新封裝 WebGL 語法的一個 javascript library，大幅降低開發 WebGL 的難度，之前有簡單接觸過 OpenGL，這次趁著週末便來挑戰看看 WebGL 吧！">
+<meta name="keywords" content="webgl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[WebGL] three.js 學習筆記 #1">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/2018/02/24/webgl-note-1/index.html">
+<meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="前陣子在找四元樹與八元樹的資料，發現了 three.js 這個套件，被用於做四元樹相關演算法的圖像展示。 three.js 是一個重新封裝 WebGL 語法的一個 javascript library，大幅降低開發 WebGL 的難度，之前有簡單接觸過 OpenGL，這次趁著週末便來挑戰看看 WebGL 吧！">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:updated_time" content="2018-02-24T13:09:37.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[WebGL] three.js 學習筆記 #1">
+<meta name="twitter:description" content="前陣子在找四元樹與八元樹的資料，發現了 three.js 這個套件，被用於做四元樹相關演算法的圖像展示。 three.js 是一個重新封裝 WebGL 語法的一個 javascript library，大幅降低開發 WebGL 的難度，之前有簡單接觸過 OpenGL，這次趁著週末便來挑戰看看 WebGL 吧！">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.douduck08.com/zh-tw/2018/02/24/webgl-note-1/"/>
+
+
+  <title>[WebGL] three.js 學習筆記 #1 | 鴨仔開發日記</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-73254781-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">鴨仔開發日記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一個開發者的點點滴滴 – ABOUT AN ARTY DEVELOPER</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首頁</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />歸檔</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/2018/02/24/webgl-note-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[WebGL] three.js 學習筆記 #1</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2018-02-24T20:50:23+08:00">2018-02-24</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/2018/02/24/webgl-note-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="zh-tw/2018/02/24/webgl-note-1/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前陣子在找四元樹與八元樹的資料，發現了 three.js 這個套件，被用於做四元樹相關演算法的圖像展示。</p>
+<p>three.js 是一個重新封裝 WebGL 語法的一個 javascript library，大幅降低開發 WebGL 的難度，之前有簡單接觸過 OpenGL，這次趁著週末便來挑戰看看 WebGL 吧！</p>
+<a id="more"></a>
+<h3 id="WebGL-與-OpenGL-的比較感想"><a href="#WebGL-與-OpenGL-的比較感想" class="headerlink" title="WebGL 與 OpenGL 的比較感想"></a>WebGL 與 OpenGL 的比較感想</h3><h4 id="跨平台支援性高"><a href="#跨平台支援性高" class="headerlink" title="跨平台支援性高"></a>跨平台支援性高</h4><p>因為是用網頁呈現，所以只要瀏覽器有支援 WebGL，再配合文字編輯器，不需特別準備編譯環境便可以開發。</p>
+<h4 id="仍在維護的套件可以幫助開發"><a href="#仍在維護的套件可以幫助開發" class="headerlink" title="仍在維護的套件可以幫助開發"></a>仍在維護的套件可以幫助開發</h4><p>目前夠透過 three.js 可以建立配置 scene 跟 mesh，比起當初用 C 語言開發 OpenGL 要手動處理頂點資料，要方便很多。<br>OpenGL 只有找到處理數學或讀取模型的第三方 library，但沒有發現管理場景的工具可以利用。</p>
+<h4 id="網路資源多但凌亂，要注意-three-js-版本"><a href="#網路資源多但凌亂，要注意-three-js-版本" class="headerlink" title="網路資源多但凌亂，要注意 three.js 版本"></a>網路資源多但凌亂，要注意 three.js 版本</h4><p>這點跟 OpenGL 的情況類似，網路上要小心找到過舊的資料。three.js 雖為 open source，有 bug 通常不會無法解決，但更有版本演進快速，老舊語法快速被淘汰，網路資料沒有更新的問題。</p>
+<blockquote>
+<ul>
+<li>three.js Guthub：<a href="https://github.com/mrdoob/three.js/" target="_blank" rel="noopener">https://github.com/mrdoob/three.js/</a></li>
+<li>three.js 說明文件：<a href="https://threejs.org/docs/#manual/introduction/Creating-a-scene" target="_blank" rel="noopener">https://threejs.org/docs/#manual/introduction/Creating-a-scene</a></li>
+</ul>
+</blockquote>
+<h3 id="開發筆記"><a href="#開發筆記" class="headerlink" title="開發筆記"></a>開發筆記</h3><h4 id="程式碼基本模板"><a href="#程式碼基本模板" class="headerlink" title="程式碼基本模板"></a>程式碼基本模板</h4><p>javascript 可以直接嵌入 html，並且直接透過瀏覽器觀看結果</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="undefined">        var renderer, scene, camera;</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined">        init();</span></span><br><span class="line"><span class="undefined">        animate();</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined">        function init() &#123;</span></span><br><span class="line"><span class="undefined">            scene = new THREE.Scene();</span></span><br><span class="line"><span class="undefined">            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined">            // add objects to scene</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined">            renderer = new THREE.WebGLRenderer(&#123; antialias: true &#125;);</span></span><br><span class="line"><span class="undefined">            renderer.setSize(window.innerWidth, window.innerHeight);</span></span><br><span class="line"><span class="undefined">            document.body.appendChild(renderer.domElement);</span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="undefined"></span></span><br><span class="line"><span class="undefined">        function animate() &#123;</span></span><br><span class="line"><span class="undefined">            requestAnimationFrame(animate);</span></span><br><span class="line"><span class="undefined">            // update scene ...</span></span><br><span class="line"><span class="undefined">            renderer.render(scene, camera);</span></span><br><span class="line"><span class="undefined">        &#125;</span></span><br><span class="line"><span class="undefined">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="合併-Mesh"><a href="#合併-Mesh" class="headerlink" title="合併 Mesh"></a>合併 Mesh</h4><p>three.js 內建了許多 Primitive Geometry ，稍微設定數個簡單幾何的位置角度，再加以合併，就可以拼裝成簡單的測試場景。<br>合併 mesh 的方法如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> masterMesh = <span class="keyword">new</span> THREE.Mesh();</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> plane = <span class="keyword">new</span> THREE.PlaneGeometry(<span class="number">5</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">4</span>);</span><br><span class="line"><span class="keyword">var</span> planeMesh = <span class="keyword">new</span> THREE.Mesh(plane);</span><br><span class="line">planeMesh.updateMatrix();</span><br><span class="line"></span><br><span class="line">masterMesh.merge(planeMesh.geometry, planeMesh.matrix);</span><br></pre></td></tr></table></figure>
+<h4 id="Custom-shader-material"><a href="#Custom-shader-material" class="headerlink" title="Custom shader material"></a>Custom shader material</h4><p>也可以直接在 html 中嵌入一段字串作為 vertex shader 或 fragment shader 原始碼，在後續讀取為自訂的材質來使用。<br><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"x-shader/x-vertex"</span> <span class="attr">id</span>=<span class="string">"vertexShader"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// shader code</span></span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"x-shader/x-fragment"</span> <span class="attr">id</span>=<span class="string">"fragmentShader"</span>&gt;</span><span class="undefined"></span></span><br><span class="line"><span class="javascript">    <span class="comment">// shader code</span></span></span><br><span class="line"><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>讀取 shader program 的基本方式：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> vertexShader = <span class="built_in">document</span>.getElementById(<span class="string">'vertexShader'</span>).textContent;</span><br><span class="line"><span class="keyword">var</span> fragmentShader = <span class="built_in">document</span>.getElementById(<span class="string">'fragmentShader'</span>).textContent;</span><br><span class="line"><span class="keyword">var</span> uniforms = &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> shaderMat = <span class="keyword">new</span> THREE.ShaderMaterial(&#123;</span><br><span class="line">    uniforms: uniforms,</span><br><span class="line">    vertexShader: vertexShader,</span><br><span class="line">    fragmentShader: fragmentShader,</span><br><span class="line">    side: THREE.FrontSide</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure></p>
+<h4 id="shader-programing-內建變數"><a href="#shader-programing-內建變數" class="headerlink" title="shader programing 內建變數"></a>shader programing 內建變數</h4><p>three.js 的 ShaderMaterial 會內建一些變數到 shader 之中，可以直接在撰寫時調用：</p>
+<blockquote>
+<ul>
+<li><a href="https://threejs.org/docs/#api/renderers/webgl/WebGLProgram" target="_blank" rel="noopener">https://threejs.org/docs/#api/renderers/webgl/WebGLProgram</a></li>
+</ul>
+</blockquote>
+<h4 id="傳遞-uniform"><a href="#傳遞-uniform" class="headerlink" title="傳遞 uniform"></a>傳遞 uniform</h4><p>與開發 OpenGL 時一樣，我們需要頻繁地寫入 shader 的 Uniform variable 作為畫面更新的手段，three.js 也提供了相關辦法，並且會在資料有變動時自動更新到 shader 之中，相當方便</p>
+<blockquote>
+<ul>
+<li>相關文件：<a href="https://threejs.org/docs/#api/core/Uniform" target="_blank" rel="noopener">https://threejs.org/docs/#api/core/Uniform</a></li>
+</ul>
+</blockquote>
+<h4 id="遇到的小困擾"><a href="#遇到的小困擾" class="headerlink" title="遇到的小困擾"></a>遇到的小困擾</h4><p>我們時常會將 shader 所需的資料打包成 struct，此時 Uniform variable 的傳遞必須使用 array 才能正常運作，不知是否為 bug。</p>
+<p>這裡是 github 上相關的討論，我自己次是的結果是 struct 中的 vec3 等向量變數會不正常，改用 array 是個暫時的解決手段。</p>
+<blockquote>
+<ul>
+<li>相關文件：<a href="https://github.com/mrdoob/three.js/issues/10759" target="_blank" rel="noopener">https://github.com/mrdoob/three.js/issues/10759</a></li>
+</ul>
+</blockquote>
+<h3 id="幾個小-Demo"><a href="#幾個小-Demo" class="headerlink" title="幾個小 Demo"></a>幾個小 Demo</h3><p>借用 twitter 來上傳我做的幾個小測試，分別為：</p>
+<h4 id="拼裝場景，加上內建材質"><a href="#拼裝場景，加上內建材質" class="headerlink" title="拼裝場景，加上內建材質"></a>拼裝場景，加上內建材質</h4><p><blockquote class="twitter-video" data-lang="zh-tw"><p lang="zh" dir="ltr">WebGL + three.js 試驗<a href="https://twitter.com/hashtag/webgl?src=hash&amp;ref_src=twsrc%5Etfw" target="_blank" rel="noopener">#webgl</a> <a href="https://twitter.com/hashtag/threejs?src=hash&amp;ref_src=twsrc%5Etfw" target="_blank" rel="noopener">#threejs</a> <a href="https://t.co/ktqgokNFtk" target="_blank" rel="noopener">pic.twitter.com/ktqgokNFtk</a></p>&mdash; 鴨仔 (@douduck08) <a href="https://twitter.com/douduck08/status/967081845417377792?ref_src=twsrc%5Etfw" target="_blank" rel="noopener">2018年2月23日</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>  </p>
+<h4 id="利用-build-in-variable-自製-Normal-向量的展示材質"><a href="#利用-build-in-variable-自製-Normal-向量的展示材質" class="headerlink" title="利用 build-in variable 自製 Normal 向量的展示材質"></a>利用 build-in variable 自製 Normal 向量的展示材質</h4><p><blockquote class="twitter-video" data-lang="zh-tw"><p lang="en" dir="ltr">WebGL + three.js 試驗<br>Custom ShaderMaterial (Normal Display)<a href="https://twitter.com/hashtag/webgl?src=hash&amp;ref_src=twsrc%5Etfw" target="_blank" rel="noopener">#webgl</a> <a href="https://twitter.com/hashtag/threejs?src=hash&amp;ref_src=twsrc%5Etfw" target="_blank" rel="noopener">#threejs</a> <a href="https://t.co/NOrbXmeQCE" target="_blank" rel="noopener">pic.twitter.com/NOrbXmeQCE</a></p>&mdash; 鴨仔 (@douduck08) <a href="https://twitter.com/douduck08/status/967367478228664320?ref_src=twsrc%5Etfw" target="_blank" rel="noopener">2018年2月24日</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </p>
+<h4 id="進一步自行撰寫一個-Directional-Light-的材質"><a href="#進一步自行撰寫一個-Directional-Light-的材質" class="headerlink" title="進一步自行撰寫一個 Directional Light 的材質"></a>進一步自行撰寫一個 Directional Light 的材質</h4><p><blockquote class="twitter-video" data-lang="zh-tw"><p lang="en" dir="ltr">WebGL + three.js 試驗<br>Custom ShaderMaterial (Directional Light)<a href="https://twitter.com/hashtag/webgl?src=hash&amp;ref_src=twsrc%5Etfw" target="_blank" rel="noopener">#webgl</a> <a href="https://twitter.com/hashtag/threejs?src=hash&amp;ref_src=twsrc%5Etfw" target="_blank" rel="noopener">#threejs</a> <a href="https://t.co/igiuyYTR4M" target="_blank" rel="noopener">pic.twitter.com/igiuyYTR4M</a></p>&mdash; 鴨仔 (@douduck08) <a href="https://twitter.com/douduck08/status/967367832840298496?ref_src=twsrc%5Etfw" target="_blank" rel="noopener">2018年2月24日</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> </p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author：</strong>
+    douduck08
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link：</strong>
+    <a href="http://www.douduck08.com/zh-tw/2018/02/24/webgl-note-1/" title="[WebGL] three.js 學習筆記 #1">http://www.douduck08.com/zh-tw/2018/02/24/webgl-note-1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice： </strong>
+    All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> unless stating additionally.
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/webgl/" rel="tag"># webgl</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/zh-tw/2018/02/03/unity-learning-totally-review-4/" rel="next" title="[Unity] 從零開始的學習心得 #4 – Unity 與外部資源">
+                <i class="fa fa-chevron-left"></i> [Unity] 從零開始的學習心得 #4 – Unity 與外部資源
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">douduck08</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">11</span>
+                    <span class="site-state-item-name">文章</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">分類</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    <span class="site-state-item-count">4</span>
+                    <span class="site-state-item-name">標籤</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#WebGL-與-OpenGL-的比較感想"><span class="nav-number">1.</span> <span class="nav-text">WebGL 與 OpenGL 的比較感想</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#跨平台支援性高"><span class="nav-number">1.1.</span> <span class="nav-text">跨平台支援性高</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#仍在維護的套件可以幫助開發"><span class="nav-number">1.2.</span> <span class="nav-text">仍在維護的套件可以幫助開發</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#網路資源多但凌亂，要注意-three-js-版本"><span class="nav-number">1.3.</span> <span class="nav-text">網路資源多但凌亂，要注意 three.js 版本</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#開發筆記"><span class="nav-number">2.</span> <span class="nav-text">開發筆記</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#程式碼基本模板"><span class="nav-number">2.1.</span> <span class="nav-text">程式碼基本模板</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#合併-Mesh"><span class="nav-number">2.2.</span> <span class="nav-text">合併 Mesh</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Custom-shader-material"><span class="nav-number">2.3.</span> <span class="nav-text">Custom shader material</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shader-programing-內建變數"><span class="nav-number">2.4.</span> <span class="nav-text">shader programing 內建變數</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#傳遞-uniform"><span class="nav-number">2.5.</span> <span class="nav-text">傳遞 uniform</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#遇到的小困擾"><span class="nav-number">2.6.</span> <span class="nav-text">遇到的小困擾</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#幾個小-Demo"><span class="nav-number">3.</span> <span class="nav-text">幾個小 Demo</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#拼裝場景，加上內建材質"><span class="nav-number">3.1.</span> <span class="nav-text">拼裝場景，加上內建材質</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#利用-build-in-variable-自製-Normal-向量的展示材質"><span class="nav-number">3.2.</span> <span class="nav-text">利用 build-in variable 自製 Normal 向量的展示材質</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#進一步自行撰寫一個-Directional-Light-的材質"><span class="nav-number">3.3.</span> <span class="nav-text">進一步自行撰寫一個 Directional Light 的材質</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.1"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://douduck-hexo-blog.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'http://www.douduck08.com/zh-tw/2018/02/24/webgl-note-1/';
+        this.page.identifier = 'zh-tw/2018/02/24/webgl-note-1/';
+        this.page.title = '[WebGL] three.js 學習筆記 #1';
+      };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://douduck-hexo-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
