@@ -112,7 +112,7 @@
 <meta property="og:description" content="此篇文章是《從零開始的 Unity 學習心得》系列的第二篇文章，這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。完整系列的目錄可以參考：  [Unity] 從零開始的學習心得 #0 – 起頭 &amp; 目錄    這次主要重點放在 場景、物件、組件 的關係，以及撰寫 MonoBehaiour 腳本時可能會">
 <meta property="og:locale" content="zh-tw">
 <meta property="og:image" content="https://i.imgur.com/XnPmZHt.jpg">
-<meta property="og:updated_time" content="2018-02-13T12:36:11.000Z">
+<meta property="og:updated_time" content="2018-05-12T13:36:10.066Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="[Unity] 從零開始的學習心得 #2 – Unity 的基本組成">
 <meta name="twitter:description" content="此篇文章是《從零開始的 Unity 學習心得》系列的第二篇文章，這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。完整系列的目錄可以參考：  [Unity] 從零開始的學習心得 #0 – 起頭 &amp; 目錄    這次主要重點放在 場景、物件、組件 的關係，以及撰寫 MonoBehaiour 腳本時可能會">
@@ -399,7 +399,7 @@
 <h4 id="組件-Component"><a href="#組件-Component" class="headerlink" title="組件(Component)"></a>組件(Component)</h4><p>我們在編輯器選取了任何一個 GameObject，就會在 <strong>Inspector 視窗</strong> 中看到一連串的欄位跟資訊，每個 GameObject 擁有的欄位跟資訊有些相同，又有些不同。</p>
 <p>這些是稱為 <strong>組件(Component)</strong> 的重要元素，用哲學一點的話來說，是它們為 GameObject 這”存在”賦予了”功能與意義”。有些組件是每個物件都有的，如 Transform；有些組件是賦予物件特殊地位的，如 Camera。我們可以從選單創建各式各樣的物件，而這些物件之所以不同，就是因為它們一開始所擁有的組件不同。</p>
 <p>用比較虛幻飄渺的用詞來比喻，場景代表了虛擬的”絕對空間”，物件代表了空間中的”存在”，組件則賦予了各自不同的”作用與身份”。</p>
-<h3 id="組件腳本的基本類別-MonoBehaviour"><a href="#組件腳本的基本類別-MonoBehaviour" class="headerlink" title="組件腳本的基本類別 - MonoBehaviour"></a>組件腳本的基本類別 - MonoBehaviour</h3><p>雖然 Uniry 已經內建了超多 Component 可以使用，但要靠這些 Component 做出所有期望的遊戲規則與設計還是有點強人所難，所以一般開發 Unity 遊戲都會需要自行撰寫程式碼腳本，設計自己所需要的 Component。</p>
+<h3 id="組件腳本的基本類別-MonoBehaviour"><a href="#組件腳本的基本類別-MonoBehaviour" class="headerlink" title="組件腳本的基本類別 - MonoBehaviour"></a>組件腳本的基本類別 - MonoBehaviour</h3><p>雖然 Unity 已經內建了超多 Component 可以使用，但要靠這些 Component 做出所有期望的遊戲規則與設計還是有點強人所難，所以一般開發 Unity 遊戲都會需要自行撰寫程式碼腳本，設計自己所需要的 Component。</p>
 <p>自己設計 Component 最主要的目的是為了自訂遊戲的邏輯，屬於 Game Loop 中 Update 的一環，也是不同遊戲之間差別最巨大的部分；另外也有可能是為了為了將 Unity 提供的 Input Trigger (玩家輸入的觸發器) 銜接到自訂的 Update 邏輯，或者針對 Unity 的 Rendering 階段進行調整或補充，呈現特別的特效等。</p>
 <p>在上一篇文章說明 Game Loop 時有提到，Unity 就像在引擎的運作流程中留下許多空格，交由開發只去填入希望的邏輯，或者連接對應的玩皆輸入，變成期望的遊戲成品。為了能適當且合理的使用 Unity MonoBehaviour 提供的空格欄位 - <strong>Unity Event Function</strong>，閱讀文件並了解相關的運作順序有著相當大的意義。</p>
 <blockquote>
@@ -563,7 +563,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">12</span>
+                    <span class="site-state-item-count">14</span>
                     <span class="site-state-item-name">文章</span>
                   </a>
                 </div>

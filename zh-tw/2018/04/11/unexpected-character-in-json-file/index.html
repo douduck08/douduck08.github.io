@@ -100,37 +100,34 @@
 
 
   
-  <meta name="keywords" content="webgl," />
+  <meta name="keywords" content="C#," />
 
 
-<meta name="description" content="初淺地研究，嘗試自行撰寫 Physically Based Rendering shader。目前 javascript 用的還不是很習慣，非同步與事件順序常常會轉不過來，但 WebGL 作為一個練習寫 shader 的環境來說還是相對方便的。">
-<meta name="keywords" content="webgl">
+<meta name="description" content="今天在使用 Json.NET 處理讀取到的 Json 文字檔案，要反序列化為 Object 物件資料時遇到了一個錯誤： 1Unexpected character encountered while parsing value: e. Path &amp;apos;&amp;apos;, line 0, position 0. 後來找出了原因並解決了，是關於檔案在某些文字編輯器儲存時會留下的 BOM 字元，導致">
+<meta name="keywords" content="C#">
 <meta property="og:type" content="article">
-<meta property="og:title" content="[WebGL] three.js 學習筆記 #2 - 初見PBR">
-<meta property="og:url" content="http://www.douduck08.com/zh-tw/2018/02/28/webgl-note-2/index.html">
+<meta property="og:title" content="[Json.NET] DeserializeObject 檔案字串時遇到的錯誤 (Solved)">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/2018/04/11/unexpected-character-in-json-file/index.html">
 <meta property="og:site_name" content="鴨仔開發日記">
-<meta property="og:description" content="初淺地研究，嘗試自行撰寫 Physically Based Rendering shader。目前 javascript 用的還不是很習慣，非同步與事件順序常常會轉不過來，但 WebGL 作為一個練習寫 shader 的環境來說還是相對方便的。">
+<meta property="og:description" content="今天在使用 Json.NET 處理讀取到的 Json 文字檔案，要反序列化為 Object 物件資料時遇到了一個錯誤： 1Unexpected character encountered while parsing value: e. Path &amp;apos;&amp;apos;, line 0, position 0. 後來找出了原因並解決了，是關於檔案在某些文字編輯器儲存時會留下的 BOM 字元，導致">
 <meta property="og:locale" content="zh-tw">
-<meta property="og:image" content="https://i.imgur.com/gKEwrIM.png">
-<meta property="og:image" content="https://i.imgur.com/eYUr74V.png">
-<meta property="og:image" content="https://i.imgur.com/LL9mTwA.png">
-<meta property="og:image" content="https://i.imgur.com/ctY8Bi1.png">
-<meta property="og:image" content="https://i.imgur.com/v0Pk4s5.png">
-<meta property="og:updated_time" content="2018-04-03T14:38:06.000Z">
+<meta property="og:image" content="https://i.imgur.com/BVWzMGd.jpg">
+<meta property="og:image" content="https://i.imgur.com/BVWzMGd.jpg">
+<meta property="og:updated_time" content="2018-05-08T12:51:28.882Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="[WebGL] three.js 學習筆記 #2 - 初見PBR">
-<meta name="twitter:description" content="初淺地研究，嘗試自行撰寫 Physically Based Rendering shader。目前 javascript 用的還不是很習慣，非同步與事件順序常常會轉不過來，但 WebGL 作為一個練習寫 shader 的環境來說還是相對方便的。">
-<meta name="twitter:image" content="https://i.imgur.com/gKEwrIM.png">
+<meta name="twitter:title" content="[Json.NET] DeserializeObject 檔案字串時遇到的錯誤 (Solved)">
+<meta name="twitter:description" content="今天在使用 Json.NET 處理讀取到的 Json 文字檔案，要反序列化為 Object 物件資料時遇到了一個錯誤： 1Unexpected character encountered while parsing value: e. Path &amp;apos;&amp;apos;, line 0, position 0. 後來找出了原因並解決了，是關於檔案在某些文字編輯器儲存時會留下的 BOM 字元，導致">
+<meta name="twitter:image" content="https://i.imgur.com/BVWzMGd.jpg">
 
 
 
 
 
 
-  <link rel="canonical" href="http://www.douduck08.com/zh-tw/2018/02/28/webgl-note-2/"/>
+  <link rel="canonical" href="http://www.douduck08.com/zh-tw/2018/04/11/unexpected-character-in-json-file/"/>
 
 
-  <title>[WebGL] three.js 學習筆記 #2 - 初見PBR | 鴨仔開發日記</title>
+  <title>[Json.NET] DeserializeObject 檔案字串時遇到的錯誤 (Solved) | 鴨仔開發日記</title>
   
 
 
@@ -274,7 +271,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/2018/02/28/webgl-note-2/">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/2018/04/11/unexpected-character-in-json-file/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="douduck08">
@@ -291,7 +288,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">[WebGL] three.js 學習筆記 #2 - 初見PBR</h1>
+          <h1 class="post-title" itemprop="name headline">[Json.NET] DeserializeObject 檔案字串時遇到的錯誤 (Solved)</h1>
         
 
         <div class="post-meta">
@@ -303,7 +300,7 @@
               
                 <span class="post-meta-item-text">發表於</span>
               
-              <time title="創建於" itemprop="dateCreated datePublished" datetime="2018-02-28T12:48:00+08:00">2018-02-28</time>
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2018-04-11T22:58:46+08:00">2018-04-11</time>
             
 
             
@@ -324,7 +321,7 @@
                 <span class="post-meta-item-text">分類於</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a></span>
 
                 
                 
@@ -339,9 +336,9 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/zh-tw/2018/02/28/webgl-note-2/#comments" itemprop="discussionUrl">
+                <a href="/zh-tw/2018/04/11/unexpected-character-in-json-file/#comments" itemprop="discussionUrl">
                   <span class="post-comments-count disqus-comment-count"
-                        data-disqus-identifier="zh-tw/2018/02/28/webgl-note-2/" itemprop="commentCount"></span>
+                        data-disqus-identifier="zh-tw/2018/04/11/unexpected-character-in-json-file/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -369,68 +366,34 @@
       
 
       
-        <p><img src="https://i.imgur.com/gKEwrIM.png" alt="red pbr"></p>
-<p>初淺地研究，嘗試自行撰寫 Physically Based Rendering shader。目前 javascript 用的還不是很習慣，非同步與事件順序常常會轉不過來，但 WebGL 作為一個練習寫 shader 的環境來說還是相對方便的。</p>
+        <p><img src="https://i.imgur.com/BVWzMGd.jpg" alt="ZERO WIDTH NO-BREAK SPACE"></p>
+<p>今天在使用 Json.NET 處理讀取到的 Json 文字檔案，要反序列化為 Object 物件資料時遇到了一個錯誤：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Unexpected character encountered while parsing value: e. Path &apos;&apos;, line 0, position 0.</span><br></pre></td></tr></table></figure>
+<p>後來找出了原因並解決了，是關於檔案在某些文字編輯器儲存時會留下的 BOM 字元，導致 Json 格式錯誤。</p>
 <a id="more"></a>
-<h3 id="主要資料"><a href="#主要資料" class="headerlink" title="主要資料"></a>主要資料</h3><p>PBR shadering 是近年來逐漸熱門的材質與光照處理技術，比起 Phong model 有了更多物理根據，也更加真實。</p>
-<p>這次練習的 PBR shadering 實作是根據 Epic 團隊在 UE4 上分享的技術講座：</p>
+<h3 id="錯誤的詳細過程"><a href="#錯誤的詳細過程" class="headerlink" title="錯誤的詳細過程"></a>錯誤的詳細過程</h3><p>Json.NET 我在使用上最常用到的兩個功能，分別是 <code>JsonConvert.SerializeObject</code> 與 <code>JsonConvert.DeserializeObject</code>，用於將物件資料序列化為 Json 字串，或者反過來用 Json 字串回復物件資料。</p>
+<p>這天在 Unity 是使用 <code>JsonConvert.DeserializeObject</code> 從外部讀入的 Json 文字檔案，要實作成可以外部更新的文字相關系統時，遭遇到了無法 Parsing 的例外錯誤。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Unexpected character encountered while parsing value: e. Path &apos;&apos;, line 0, position 0.</span><br></pre></td></tr></table></figure>
+<p>因為檔案是來自外部文字編輯器編輯而成，所以格式錯誤是很容易發生的，但是這次我將檔案字串放入其他 Json 專屬編輯器，卻都沒有出現錯誤警告，讓人困惑。</p>
+<h3 id="線上分析字串的工具"><a href="#線上分析字串的工具" class="headerlink" title="線上分析字串的工具"></a>線上分析字串的工具</h3><p>後來對於格式內容沒轍，改轉向研究字元編碼造成的問題。</p>
+<p>分享一個我覺得相當好用的線上工具，可以用來檢查字串的很多細節：</p>
 <blockquote>
-<p>Real Shading in Unreal Engine 4<br>by Brian Karis, Epic Games</p>
+<p>Unicode code converter</p>
 <ul>
-<li><a href="https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf" target="_blank" rel="noopener">https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf</a></li>
+<li><a href="https://r12a.github.io/app-conversion/" target="_blank" rel="noopener">https://r12a.github.io/app-conversion/</a></li>
 </ul>
 </blockquote>
-<p>而這篇文章又大量引用了另一篇迪士尼的技術文章，沿用了不少數學模型。</p>
-<blockquote>
-<p>Physically-Based Shading at Disney<br>by Brent Burley, Walt Disney Animation Studios</p>
-<ul>
-<li><a href="https://disney-animation.s3.amazonaws.com/library/s2012_pbs_disney_brdf_notes_v2.pdf" target="_blank" rel="noopener">https://disney-animation.s3.amazonaws.com/library/s2012_pbs_disney_brdf_notes_v2.pdf</a></li>
-</ul>
-</blockquote>
-<h3 id="基本的理解"><a href="#基本的理解" class="headerlink" title="基本的理解"></a>基本的理解</h3><p>PBR 將所有的光線反射分成 Diffuse 與 Specular，其中 Specular 更有著數種 BRDF 模型可以選擇，各有優缺點。</p>
-<p>依照來源，光線又分成有特定光源的直接光照，以及來自環境的間接光照，故綜合起來 PBR 的 light model 可以分成四個部分：</p>
-<ul>
-<li>Direct Diffuse</li>
-<li>Direct Specular</li>
-<li>Indirect Diffuse</li>
-<li>Indirect Specular</li>
-</ul>
-<p>而材質上，主要有 roughness 及 metallic，分別代表粗糙度以及金屬性質，皆會影響 Diffuse 與 Specular 的顏色及比例強度。</p>
-<h4 id="Direct-Diffuse"><a href="#Direct-Diffuse" class="headerlink" title="Direct Diffuse"></a>Direct Diffuse</h4><p>Direct Diffuse 是物體外型呈現的基本陰影，Epic 文章中採用了 Burley Diffuse 模型：</p>
-<blockquote>
-<p>Burley Diffuse 光照(日本語)</p>
-<ul>
-<li><a href="https://shikihuiku.wordpress.com/2014/05/01/burley-diffuseについて考えてみる/" target="_blank" rel="noopener">https://shikihuiku.wordpress.com/2014/05/01/burley-diffuseについて考えてみる/</a></li>
-</ul>
-</blockquote>
-<h4 id="Direct-Specular"><a href="#Direct-Specular" class="headerlink" title="Direct Specular"></a>Direct Specular</h4><p>Direct Specular 是來自特定光源的高光反射，一般來說會採用 BRDF 理論，但又會視情況在細部上選擇不同的模型。這裡我找到了一篇列出不少模型方程式的文章：</p>
-<blockquote>
-<p>Specular BRDF Reference</p>
-<ul>
-<li><a href="http://graphicrants.blogspot.tw/2013/08/specular-brdf-reference.html" target="_blank" rel="noopener">http://graphicrants.blogspot.tw/2013/08/specular-brdf-reference.html</a></li>
-</ul>
-</blockquote>
-<h4 id="Indirect-Diffuse-amp-Specular"><a href="#Indirect-Diffuse-amp-Specular" class="headerlink" title="Indirect Diffuse &amp; Specular"></a>Indirect Diffuse &amp; Specular</h4><p>Indirect lighting 是指環境上接收了主光源後，二次反射的結果。可以想像一下 “太陽-月亮-水面月影” 三者關係，其中水面月影便是 Indirect lighting 的結果。</p>
-<p>Indirect lighting 的兩個項目會影響材質呈現上的細節，雖然只是細節，卻是令 PBR 材質特別真實的靈魂所在。</p>
-<p>基本的原理，是將周圍環境預先處理成 CubeMap，而對於要物體上的一點，這張 CubeMap 上的每個像素都相當於一個微弱的小型光源，而將整個 CubeMap 的發光結果全部映照到物體上，就是 Indirect Lighting 演算法的目標。</p>
-<p>為了加速這演算過程，Epic 團隊用數張貼圖來代表 precompute 資料以及近似，來得到時間成本上合理的結果，Epic 原文不易理解的部分可以參考這篇文章輔助：</p>
-<blockquote>
-<p>Indirect Lighting for PBR</p>
-<ul>
-<li><a href="https://jmonkeyengine.github.io/wiki/jme3/advanced/pbr_part3.html" target="_blank" rel="noopener">https://jmonkeyengine.github.io/wiki/jme3/advanced/pbr_part3.html</a></li>
-</ul>
-</blockquote>
-<h3 id="PBR-中間步驟與結果"><a href="#PBR-中間步驟與結果" class="headerlink" title="PBR 中間步驟與結果"></a>PBR 中間步驟與結果</h3><h4 id="Diffuse"><a href="#Diffuse" class="headerlink" title="Diffuse"></a>Diffuse</h4><p><img src="https://i.imgur.com/eYUr74V.png" alt="Diffuse"></p>
-<h4 id="Specular"><a href="#Specular" class="headerlink" title="Specular"></a>Specular</h4><p><img src="https://i.imgur.com/LL9mTwA.png" alt="Specular"></p>
-<h4 id="Indirect-Diffuse"><a href="#Indirect-Diffuse" class="headerlink" title="Indirect Diffuse"></a>Indirect Diffuse</h4><p>還沒有找到相關貼圖，所以這邊目前被我跳過了。</p>
-<h4 id="Indirect-Specular"><a href="#Indirect-Specular" class="headerlink" title="Indirect Specular"></a>Indirect Specular</h4><p><img src="https://i.imgur.com/ctY8Bi1.png" alt="Indirect Specular"></p>
-<h4 id="加總後的結果"><a href="#加總後的結果" class="headerlink" title="加總後的結果"></a>加總後的結果</h4><p><img src="https://i.imgur.com/v0Pk4s5.png" alt="Combine"></p>
-<p>恩…覺得還有待加強…</p>
-<h3 id="其他參考連結"><a href="#其他參考連結" class="headerlink" title="其他參考連結"></a>其他參考連結</h3><ul>
-<li>Unreal 文件 Physically Based Materials -<br><a href="https://docs.unrealengine.com/latest/INT/Engine/Rendering/Materials/PhysicallyBased/" target="_blank" rel="noopener">https://docs.unrealengine.com/latest/INT/Engine/Rendering/Materials/PhysicallyBased/</a></li>
-<li>PBR Algorithms for Unity -<br><a href="http://www.jordanstevenstechart.com/physically-based-rendering" target="_blank" rel="noopener">http://www.jordanstevenstechart.com/physically-based-rendering</a></li>
-<li>DONTNOD Physically based rendering chart for Unreal Engine 4<br><a href="https://seblagarde.wordpress.com/2014/04/14/dontnod-physically-based-rendering-chart-for-unreal-engine-4/" target="_blank" rel="noopener">https://seblagarde.wordpress.com/2014/04/14/dontnod-physically-based-rendering-chart-for-unreal-engine-4/</a></li>
-<li>DONTNOD specular and glossiness chart<br><a href="https://seblagarde.wordpress.com/2012/04/30/dontnod-specular-and-glossiness-chart/" target="_blank" rel="noopener">https://seblagarde.wordpress.com/2012/04/30/dontnod-specular-and-glossiness-chart/</a></li>
+<p>不過編碼沒有發現問題，到是發現字元數量跟預期的不太相同。於利用上述轉換工具中的 <code>View in UniView</code> 功能，可以檢查所有字元的細節，這才發現了 <code>U+FEFF</code> 字元的存在。</p>
+<p><img src="https://i.imgur.com/BVWzMGd.jpg" alt="ZERO WIDTH NO-BREAK SPACE"></p>
+<p>解決方式在 C# 中相當容易，一段 <code>str = str.Replace (&quot;\uFEFF&quot;, &quot;&quot;);</code> 移除所有 <code>U+FEFF</code> 即可。</p>
+<p><code>JsonConvert.DeserializeObject</code> 總算是順利運作了!</p>
+<h3 id="一些背後的原理"><a href="#一些背後的原理" class="headerlink" title="一些背後的原理"></a>一些背後的原理</h3><p>在一些文字編輯器輸出的文字檔開頭，會置入一個稱作Byte order mark，簡稱 BOM 的字元作為文件開頭。目的是為了分辨與紀錄後續字元的編碼方式，同樣在一些 php 網頁中也可能存在。</p>
+<p>而在 C# 讀入檔案後，並不會忽略這些標記用的特殊字元，而是用一個 <code>zero width no-break space</code> 字元代替，即為 <code>U+FEFF</code> 字元。</p>
+<p>雖然有這個字元存在，但直接印出字串的時候，並不會留下空白或任何記號，而是完完全全的<strong>看不見</strong>，所以處理起來格外容易被忽略。過去在撰寫網路爬蟲時也被相似的字元狠狠的懲罰過，而這次又遇見了類似的問題。</p>
+<p>這可不只是魔鬼藏在細節裡，而是確確實實看不見的鬼魂，未來讀檔或下載文件檔來處理時也還會在相遇吧!</p>
+<h3 id="參考"><a href="#參考" class="headerlink" title="參考"></a>參考</h3><ul>
+<li>Non-breaking space - <a href="https://en.wikipedia.org/wiki/Non-breaking_space" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Non-breaking_space</a></li>
+<li>Byte order mark - <a href="https://en.wikipedia.org/wiki/Byte_order_mark" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Byte_order_mark</a></li>
 </ul>
 
       
@@ -452,7 +415,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>Post link：</strong>
-    <a href="http://www.douduck08.com/zh-tw/2018/02/28/webgl-note-2/" title="[WebGL] three.js 學習筆記 #2 - 初見PBR">http://www.douduck08.com/zh-tw/2018/02/28/webgl-note-2/</a>
+    <a href="http://www.douduck08.com/zh-tw/2018/04/11/unexpected-character-in-json-file/" title="[Json.NET] DeserializeObject 檔案字串時遇到的錯誤 (Solved)">http://www.douduck08.com/zh-tw/2018/04/11/unexpected-character-in-json-file/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice： </strong>
@@ -467,7 +430,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/webgl/" rel="tag"># webgl</a>
+            <a href="/tags/C/" rel="tag"># C#</a>
           
         </div>
       
@@ -480,8 +443,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/zh-tw/2018/02/24/webgl-note-1/" rel="next" title="[WebGL] three.js 學習筆記 #1">
-                <i class="fa fa-chevron-left"></i> [WebGL] three.js 學習筆記 #1
+              <a href="/zh-tw/2018/02/28/webgl-note-2/" rel="next" title="[WebGL] three.js 學習筆記 #2 - 初見PBR">
+                <i class="fa fa-chevron-left"></i> [WebGL] three.js 學習筆記 #2 - 初見PBR
               </a>
             
           </div>
@@ -490,8 +453,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/zh-tw/2018/04/11/unexpected-character-in-json-file/" rel="prev" title="[Json.NET] DeserializeObject 檔案字串時遇到的錯誤 (Solved)">
-                [Json.NET] DeserializeObject 檔案字串時遇到的錯誤 (Solved) <i class="fa fa-chevron-right"></i>
+              <a href="/zh-tw/2018/05/12/unity-learning-totally-review-5/" rel="prev" title="[Unity] 從零開始的學習心得 #5 – Mesh 與 Material">
+                [Unity] 從零開始的學習心得 #5 – Mesh 與 Material <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -634,7 +597,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#主要資料"><span class="nav-number">1.</span> <span class="nav-text">主要資料</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本的理解"><span class="nav-number">2.</span> <span class="nav-text">基本的理解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Direct-Diffuse"><span class="nav-number">2.1.</span> <span class="nav-text">Direct Diffuse</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Direct-Specular"><span class="nav-number">2.2.</span> <span class="nav-text">Direct Specular</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Indirect-Diffuse-amp-Specular"><span class="nav-number">2.3.</span> <span class="nav-text">Indirect Diffuse &amp; Specular</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PBR-中間步驟與結果"><span class="nav-number">3.</span> <span class="nav-text">PBR 中間步驟與結果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Diffuse"><span class="nav-number">3.1.</span> <span class="nav-text">Diffuse</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Specular"><span class="nav-number">3.2.</span> <span class="nav-text">Specular</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Indirect-Diffuse"><span class="nav-number">3.3.</span> <span class="nav-text">Indirect Diffuse</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Indirect-Specular"><span class="nav-number">3.4.</span> <span class="nav-text">Indirect Specular</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加總後的結果"><span class="nav-number">3.5.</span> <span class="nav-text">加總後的結果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他參考連結"><span class="nav-number">4.</span> <span class="nav-text">其他參考連結</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#錯誤的詳細過程"><span class="nav-number">1.</span> <span class="nav-text">錯誤的詳細過程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#線上分析字串的工具"><span class="nav-number">2.</span> <span class="nav-text">線上分析字串的工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#一些背後的原理"><span class="nav-number">3.</span> <span class="nav-text">一些背後的原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#參考"><span class="nav-number">4.</span> <span class="nav-text">參考</span></a></li></ol></div>
             
 
           </div>
@@ -779,9 +742,9 @@
   
     <script type="text/javascript">
       var disqus_config = function () {
-        this.page.url = 'http://www.douduck08.com/zh-tw/2018/02/28/webgl-note-2/';
-        this.page.identifier = 'zh-tw/2018/02/28/webgl-note-2/';
-        this.page.title = '[WebGL] three.js 學習筆記 #2 - 初見PBR';
+        this.page.url = 'http://www.douduck08.com/zh-tw/2018/04/11/unexpected-character-in-json-file/';
+        this.page.identifier = 'zh-tw/2018/04/11/unexpected-character-in-json-file/';
+        this.page.title = '[Json.NET] DeserializeObject 檔案字串時遇到的錯誤 (Solved)';
       };
       function loadComments () {
         var d = document, s = d.createElement('script');
