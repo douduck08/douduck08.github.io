@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.1" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avator.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avator32x32.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avator16x16.png?v=6.0.1">
+
+
+  <link rel="mask-icon" href="/images/avator32x32.png?v=6.0.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="unity,shader,">
+
+
+<meta name="description" content="《Unity shader 入門精要》的讀書筆記，九到十一章。 更深入的說明光照、貼圖，以及跟時間沾上邊的 shader  第九章：進階光照 渲染路徑 (Rendering Path) 只有設定了相對應的渲染路徑，shader才能取得對應的值。 可在 Player setting 或 Camera 中設定 https://docs.unity3d.com/Manual/RenderingPaths">
+<meta name="keywords" content="unity,shader">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[閱讀筆記] Unity shader 入門精要 #3">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part3/index.html">
+<meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="《Unity shader 入門精要》的讀書筆記，九到十一章。 更深入的說明光照、貼圖，以及跟時間沾上邊的 shader  第九章：進階光照 渲染路徑 (Rendering Path) 只有設定了相對應的渲染路徑，shader才能取得對應的值。 可在 Player setting 或 Camera 中設定 https://docs.unity3d.com/Manual/RenderingPaths">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:updated_time" content="2019-08-31T10:24:51.292Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[閱讀筆記] Unity shader 入門精要 #3">
+<meta name="twitter:description" content="《Unity shader 入門精要》的讀書筆記，九到十一章。 更深入的說明光照、貼圖，以及跟時間沾上邊的 shader  第九章：進階光照 渲染路徑 (Rendering Path) 只有設定了相對應的渲染路徑，shader才能取得對應的值。 可在 Player setting 或 Camera 中設定 https://docs.unity3d.com/Manual/RenderingPaths">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part3/">
+
+
+  <title>[閱讀筆記] Unity shader 入門精要 #3 | 鴨仔開發日記</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-73254781-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">鴨仔開發日記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一個開發者的點點滴滴 – ABOUT A GAME DEVELOPER</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首頁</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>彙整</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-series-of-articles">
+          <a href="/series-of-articles/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>系列文章</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book-review">
+          <a href="/book-review/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>閱讀筆記</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>關於</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[閱讀筆記] Unity shader 入門精要 #3</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-06-01T03:05:17+08:00">2017-06-01</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/review-unity-shader-for-beginner-part3/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/review-unity-shader-for-beginner-part3/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>《Unity shader 入門精要》的讀書筆記，九到十一章。 更深入的說明光照、貼圖，以及跟時間沾上邊的 shader </p>
+<h3 id="第九章：進階光照"><a href="#第九章：進階光照" class="headerlink" title="第九章：進階光照"></a>第九章：進階光照</h3><ul>
+<li>渲染路徑 (Rendering Path)<ul>
+<li>只有設定了相對應的渲染路徑，shader才能取得對應的值。</li>
+<li>可在 Player setting 或 Camera 中設定</li>
+<li><a href="https://docs.unity3d.com/Manual/RenderingPaths.html" target="_blank" rel="noopener">https://docs.unity3d.com/Manual/RenderingPaths.html</a></li>
+</ul>
+</li>
+<li>Forward Rendering Path<ul>
+<li>對所有光照與 fregmant 進行深度測試，通過則計算光照，寫入 Frame Buffer</li>
+<li>對硬體需求較低，但不適合處理大量光照</li>
+<li>LightMode Tags 分成 ForwardBase 跟 ForwardAdd 兩種</li>
+<li>Base Pass 會進行環境光跟自發光計算，並處理一個逐像素平行光照，預設有陰影，需要使用編譯命令 <code>#pragma multi_compile_fwdbase</code></li>
+<li>Addition Pass 逐像素處理剩餘光照，預設無陰影，需要設定 Blend，並使用編譯命令 <code>#pragma multi_compile_fwdadd</code></li>
+<li>如果需要陰影資料的 Addition Pass，則改用 <code>#pragma multi_compile_fwdadd_fullshadows</code></li>
+</ul>
+</li>
+<li>Deferred Rendering Path<ul>
+<li>對所有光照與 fregmant 進行深度測試，通過則將資料寫入 G Buffer，再用第二個 Pass 計算，寫入 Frame Buffer</li>
+<li>硬體需求較高，但是可以應對較多的光照</li>
+<li>不支持完整的抗鋸齒 (AA，anti-aliasing)、不能處理半透明</li>
+</ul>
+</li>
+<li>Vertex Lit Rendering Path：Unity 5.0 後已淘汰，屬於 Forward Rendering Path 的特例</li>
+<li>四種光源：平行光、點光源、聚光燈、面光源<ul>
+<li>在 shader 中判斷光源類型：<code>#ifdef USING_DIRECTIONAL_LIGHT</code></li>
+</ul>
+</li>
+<li>光源屬性：位置、方向、顏色、強度、衰減<ul>
+<li>取得光源的相對位置 ：mul<code>(_LightMatrix0, float4(worldPosition, 1)).xyz;</code></li>
+<li>取得顏色與強度的綜合值：_LightColor0</li>
+<li>對衰減值進行查表：<code>tex2D(_LightTexture0, dot(lightCoord, lightCoord).rr).UNITY_ATTEN_CHANNEL;</code></li>
+</ul>
+</li>
+<li>陰影渲染：<ul>
+<li>Unity 會取得物件底下 LightMode Tags 為 ShadowCaster 的 Pass，將攝影機置於光源位置，取得一系列的場景深度 (Shadow Map)，用於判斷其他物件是否位於陰影中，透過設置適當的 Fallback 即可讓物件有此功能。</li>
+<li>陰影生成分為 <strong>產生陰影地圖</strong>、<strong>在物體上透過採樣陰影地圖渲染陰影</strong> 兩步驟，Unity 的 Mesh Render 可以設定是否產生或接受陰影。</li>
+</ul>
+</li>
+<li>AutoLight.cginc 提供了可以用於計算陰影的內建方法，使物體可以接受陰影：<ul>
+<li>SHADOW_COORDS (int) - 呼叫於 vertex shader 的輸入結構定義，用於儲存陰影採樣的座標結構宣告，需要一個傳入值，為一個尚未使用的 <strong>texcoord 編號</strong>。</li>
+<li>TRANSFER_SHADOW (struct) - 呼叫於 vertex shader 中計算座標，需要將<strong>輸出結構</strong>作為傳入值。</li>
+<li>SHADOW_ATTENUATION (struct) - 呼叫於 fragment shader，需要<strong>輸入結構</strong>作為傳入值，會回傳一個 fixed 變數，代表光線比例，跟漫反射及高光數值相乘即可。</li>
+<li>上面三個方法是使用 #define 進行定義，所以有一些額外的命名規則要遵守。</li>
+<li>UNITY_LIGHT_ATTENUATION - 綜合了光照衰減採樣及陰影地圖採樣的方法。</li>
+</ul>
+</li>
+</ul>
+<p>第十章：進階紋理貼圖 (More Texture)</p>
+<ul>
+<li>Cubemap<ul>
+<li>SkyBox 是將六張貼圖 (或者一張展開圖) 合併為一個立方體進行採樣的效果，為 Cubemap 的一種。</li>
+<li>動態生成的 Cubemap 可以用 Camera.RenderToCubemap 方法完成。</li>
+</ul>
+</li>
+<li>Cubemap 應用<ul>
+<li>反射紋理：利用入射方向 (攝影機方向)、法線方向取得反射方向後進行採樣。</li>
+<li>折射紋理方法類似反射，但計算原理公式不同。</li>
+<li>因為反射折射與漫反射屬於類似的物理效應，所以會用 <strong>一個可設定的比例 </strong>混和兩者的顏色，替代原本漫反射的位置。</li>
+<li>另有 Schlick Fresnel 等式用於決定折射比例，可以渲染物體邊緣透光的效果：<a href="http://www.jordanstevenstechart.com/physically-based-rendering" target="_blank" rel="noopener">http://www.jordanstevenstechart.com/physically-based-rendering</a></li>
+</ul>
+</li>
+<li>Render Texture<ul>
+<li>在專案中建立 Render Texture：可以調整解析度</li>
+<li>GrabPass、OnRenderImage：解析度與螢幕大小相同，GrabPass 不適合在移動設備上使用</li>
+</ul>
+</li>
+<li>使用 GrabPass 需要對應兩個變數：<ul>
+<li>GrabPass { “NAME” }</li>
+<li>sampler2D NAME;</li>
+<li>float4 NAME_TexelSize;</li>
+</ul>
+</li>
+<li>Procedural Texture<ul>
+<li>使用腳本生成的 Texture 賦予 Material</li>
+<li>Unity 另外支援透過 Substance Designer 所繪製的 Procedural Material</li>
+</ul>
+</li>
+<li>本章提到的一些內建方法<ul>
+<li>reflect (入射方向, 法線方向) 可以計算反射方向</li>
+<li>refract (單位入射方向, 單位法線方向, 折射係數) 可以計算折射方向</li>
+<li>texCUBE (cubemap, direction) 對 cubemap 進行採樣</li>
+<li>lerp (a, b, amount)</li>
+<li>ComputeGrabScreenPos (頂點座標) 取得螢幕上的座標</li>
+</ul>
+</li>
+</ul>
+<p>第十一章：動畫</p>
+<ul>
+<li>Unity shader 內建的時間變數：<ul>
+<li><code>_Time = (t/20, t, 2t, 3t)</code>，t 為自場景加載後的時間</li>
+<li><code>_SinTime =  (t/8, t/4, t/2, t)</code>，t 為經過 sin 運算的時間</li>
+<li><code>_CosTime</code> 類上</li>
+<li><code>unity_DeltaTime = (dt, 1/dt, smoothDt, 1/smoothDt)</code></li>
+</ul>
+</li>
+<li>相關應用：<ul>
+<li>逐格動畫</li>
+<li>無限滾動特效</li>
+<li>頂點動畫：水波動、Billboarding (讓平面永遠面向攝影機)</li>
+</ul>
+</li>
+<li>頂點動畫注意事項<ul>
+<li>需要避開 WorldSpace 的運算，否則必須 DisableBatching</li>
+<li>需要另外撰寫 ShadowCaster shader 來做陰影的動畫</li>
+</ul>
+</li>
+<li>本章提到的一些內建方法<ul>
+<li>floor (float) 取高斯值</li>
+<li>V2F_SHADOW_CASTER 內建方法計算所需的 v2f 定義</li>
+<li>TRANSFER_SHADOW_CASTER_NORMALOFFSET (struct) 於 vertex shader 中計算陰影，傳入值為一個 v2f 結構</li>
+<li>SHADOW_CASTER_FRAGMENT (struct) 於 fragmant shader 中輸出結果到 shadow map</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author：</strong>
+    douduck08
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link：</strong>
+    <a href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part3/" title="[閱讀筆記] Unity shader 入門精要 #3">http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice： </strong>
+    All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> unless stating additionally.
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/unity/" rel="tag"># unity</a>
+          
+            <a href="/tags/shader/" rel="tag"># shader</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/zh-tw/review-unity-shader-for-beginner-part2/" rel="next" title="[閱讀筆記] Unity shader 入門精要 #2">
+                <i class="fa fa-chevron-left"></i> [閱讀筆記] Unity shader 入門精要 #2
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/zh-tw/review-unity-shader-for-beginner-part4/" rel="prev" title="[閱讀筆記] Unity shader 入門精要 #4">
+                [閱讀筆記] Unity shader 入門精要 #4 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">douduck08</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">文章</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">分類</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">標籤</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/douduck08" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.facebook.com/douduck08develop/" target="_blank" title="FB Page">
+                      
+                        <i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#第九章：進階光照"><span class="nav-number">1.</span> <span class="nav-text">第九章：進階光照</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.1"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://douduck-hexo-blog.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part3/';
+        this.page.identifier = 'zh-tw/review-unity-shader-for-beginner-part3/';
+        this.page.title = '[閱讀筆記] Unity shader 入門精要 #3';
+      };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://douduck-hexo-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

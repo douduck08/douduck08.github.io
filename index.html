@@ -2415,14 +2415,7 @@
                 <span class="post-meta-item-text">分類於</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/note/" itemprop="url" rel="index"><span itemprop="name">note</span></a></span>
 
                 
                 
@@ -3370,9 +3363,567 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/zh-tw/review-unity-shader-for-beginner-part5/" itemprop="url">[閱讀筆記] Unity shader 入門精要 #5</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-06-04T22:14:42+08:00">2017-06-04</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/review-unity-shader-for-beginner-part5/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/review-unity-shader-for-beginner-part5/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>《Unity shader 入門精要》的讀書筆記，十六章到十九章。 十六章說明渲染上的優化方向；十七章簡單說明了 surface shader；十八章簡單說明了 PBS 技術。 十九、二十章說明一些 Unity  的更新，以及精進渲染技術知識的方向。 </p>
+<h3 id="第十六章：Unity-的渲染優化"><a href="#第十六章：Unity-的渲染優化" class="headerlink" title="第十六章：Unity 的渲染優化"></a>第十六章：Unity 的渲染優化</h3><ul>
+<li><strong>一開始就把優化當作設計的一部份</strong></li>
+<li>造成遊戲瓶頸的可能原因：<ul>
+<li>CPU - 過多的腳本運算或物理模擬</li>
+<li>CPU - 過多的 draw call</li>
+<li>GPU - 過多的頂點、逐頂點運算</li>
+<li>GPU - 過多的 fragment、overdraw</li>
+<li>解析度過高的貼圖、frame buffer</li>
+</ul>
+</li>
+<li>優化方向：<ul>
+<li>減少 draw call</li>
+<li>優化模型、使用 LOD、<a href="https://docs.unity3d.com/Manual/OcclusionCulling.html" target="_blank" rel="noopener">Occlusion Culling</a></li>
+<li>控制繪圖順序</li>
+<li>注意透明物體的使用</li>
+<li>減少即時光照</li>
+<li>減少 overdraw</li>
+<li>壓縮貼圖大小</li>
+</ul>
+</li>
+<li>使用<strong>動態 batching</strong> 減少 draw call：<ul>
+<li>使用同一個材質，Unity 會自動實現動態 batching</li>
+<li>一次動態 batching 所能接受的頂點數上限為 900</li>
+<li>多 Pass 的 shader 無法動態 batching</li>
+</ul>
+</li>
+<li>使用<strong>靜態 batching</strong> 減少 draw call：<ul>
+<li>將物體設定的 static 打勾</li>
+<li>在程式運作一開始，將數個模型合併</li>
+<li>會占用更多記憶體</li>
+<li>物體不可被移動</li>
+</ul>
+</li>
+<li>共用材質的技巧<ul>
+<li>合併貼圖</li>
+<li>將相異的 shader 參數儲存於頂點顏色 (或其他頂點數據)</li>
+<li>使用 Render.sharedMaterial</li>
+</ul>
+</li>
+<li>減少 overdraw 技巧：<ul>
+<li>對於確定會在最前方的物體，調整其渲染順序往前</li>
+<li>減少透明的使用</li>
+<li>在移動裝置上，因為 GPU 架構的差異，透明度混和可能會優於透明度測試</li>
+<li>使用 lightmap 代替即時光照，移動設備上甚至要避免使用逐像素光照</li>
+</ul>
+</li>
+<li>shader 程式碼優化<ul>
+<li>用 float 儲存頂點座標，用 half 儲存 uv 座標，用 fixed 儲存單位向量</li>
+<li>避免變數精度轉換</li>
+<li>盡量合併差值計算</li>
+<li>盡量避免 if、loop 語法</li>
+<li>盡量避免三角函數跟指數運算</li>
+<li>盡量避免 discard，這跟一些 GPU 的優化架構有關</li>
+<li>一些細節會因平台而異</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十七章：-surface-shader"><a href="#第十七章：-surface-shader" class="headerlink" title="第十七章： surface shader"></a>第十七章： surface shader</h3><ul>
+<li>surface shader 是 unity 對於 shader 的進一步抽象封裝<ul>
+<li><a href="https://docs.unity3d.com/Manual/SL-SurfaceShaders.html" target="_blank" rel="noopener">https://docs.unity3d.com/Manual/SL-SurfaceShaders.html</a></li>
+<li>在 SubShader 中編寫而非 Pass</li>
+<li>方便撰寫但能夠實現的自定義渲染較有限</li>
+<li>性能較差，但如果需要處理許多光照，是個好的選擇</li>
+<li>如果光照單純，使用 vertex/fragment shader 效能會好很多</li>
+</ul>
+</li>
+<li>編譯指令 <code>#pragma surface</code> 用於定義<strong>使用的函數</strong>及光<strong>照模型</strong></li>
+<li>函數格式：<ul>
+<li>void surf (Input IN, inout SurfaceOutput o)</li>
+<li>void surf (Input IN, inout SurfaceOutputStanderd o)</li>
+<li>void surf (Input IN, inout SurfaceOutputStanderdSpecular o)</li>
+<li>Input 結構有一些內建的變數、也可自訂增加變數</li>
+</ul>
+</li>
+<li>光照模型：<ul>
+<li>Standard 標準物理光照</li>
+<li>StanderdSpecular 物理金屬光照</li>
+<li>Lambert</li>
+<li>BlinnPhong</li>
+<li>或者自行定義：<a href="https://docs.unity3d.com/Manual/SL-SurfaceShaderLighting.html" target="_blank" rel="noopener">https://docs.unity3d.com/Manual/SL-SurfaceShaderLighting.html</a></li>
+</ul>
+</li>
+<li>其他參數：<ul>
+<li>vertex 修改頂點的函數</li>
+<li>finalcolor 在顏色存入 frame buffer 前進行修改的函數</li>
+<li>adddhadow、fullforwardshadows、noshadow</li>
+<li>alpha、alphatest</li>
+<li>exclude_path 可以在移除對特定的渲染路徑的支援</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十八章：Physically-Based-Shading，PBS"><a href="#第十八章：Physically-Based-Shading，PBS" class="headerlink" title="第十八章：Physically Based Shading，PBS"></a>第十八章：Physically Based Shading，PBS</h3><ul>
+<li>基於物理的渲染 Physically Based Shading<ul>
+<li>比起 Lambert，使用了考慮細微漫射及次表面散射的 BRDF 等式</li>
+<li>Standard 跟 Standard Specular 使用相同的 BRDF 等式，只是對外調整的參數項目及意義不同，依然可以做出相同的表現</li>
+<li>使用 HDR 的 skybox 可以表現出更真實的光照，擁有更高的亮度精度，但是運算需求也較高</li>
+</ul>
+</li>
+<li>Unity 5 的 Global Illumination (GI) 可以提供間接光照，增加光照的真實感，可由光源的 Bounce Intensity 調整間接光照的強度</li>
+<li>平行光的 Baked 模式會將場景光照儲存到一張 lightmap，Mix 模式則只儲存 static 物件的光罩，剩餘物件採用即時渲染</li>
+<li>反射探針 (Reflection Probes) 的設置，可以提供反射所需的 cubemap</li>
+<li>Gamma space 與 Linear space 的顏色差別：<ul>
+<li>Linear space 較接近真實的顏色</li>
+<li>一般紋理貼圖是以 Gamma space 儲存，如果硬體支援，Unity 會自動進行顏色空間的轉換</li>
+<li>如果硬體不支援，可以在 shader 中以效能為代價進行手動轉換</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/zh-tw/review-unity-shader-for-beginner-part4/" itemprop="url">[閱讀筆記] Unity shader 入門精要 #4</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-06-03T02:21:32+08:00">2017-06-03</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/review-unity-shader-for-beginner-part4/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/review-unity-shader-for-beginner-part4/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>《Unity shader 入門精要》的讀書筆記，十二章到十五章。 十二章說明在 OnRenderImage 組合多個 RenderTexture  與 Shader 完成後製特效。 十三章說明深度紋理 (Depth Texture) 及 法線紋理 (Normal Texture) 及其應用。 十四章說明卡通、素描兩個風格渲染；第十五章說明噪聲的應用。</p>
+<h3 id="第十二章：後處理特效-post-processing-effect"><a href="#第十二章：後處理特效-post-processing-effect" class="headerlink" title="第十二章：後處理特效 (post-processing effect)"></a>第十二章：後處理特效 (post-processing effect)</h3><ul>
+<li>OnRenderImage<ul>
+<li><a href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderImage.html" target="_blank" rel="noopener">https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderImage.html</a></li>
+<li>須掛載於 Camera 之下。</li>
+<li>會搭配 <a href="https://docs.unity3d.com/ScriptReference/Graphics.Blit.html" target="_blank" rel="noopener">Graphics.Blit</a> 來完成渲染，當前螢幕 src 可以渲染至一張 RenderTeture，或者顯示在螢幕上；如果設定了 Material，會<strong>將 src 以 _MainTex 為名傳遞給 Pass</strong>。</li>
+<li>預設會在透明 Pass 之後執行，可以加上 ImageEffectOpaque Attribute 改成在 透明 Pass 之前執行。</li>
+<li>如果開啟了 AA，處理多張貼圖會有在不同平台是否翻轉的問題，書中 5.6.1 有解釋。</li>
+</ul>
+</li>
+<li>用於 OnRenderImage 的 shader 常見設定<ul>
+<li>ZTest Always</li>
+<li>Cull Off</li>
+<li>ZWrite Off</li>
+</ul>
+</li>
+<li>亮度值 luminance：<ul>
+<li>luminance = 0.2125 <em> r + 0.7154 </em> g + 0.0721 * b</li>
+<li>(r, g, b) = (luminance , luminance , luminance ) 相當是一個的等亮度的灰階色，作為 <strong>色彩飽和度 (彩度)</strong> 為零的代表</li>
+</ul>
+</li>
+<li>摺積 Convolution：<ul>
+<li>利用一個 n 階方陣 (kernel) 對覆蓋的像素值求積的和</li>
+<li><a href="https://en.wikipedia.org/wiki/Kernel_(image_processing" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Kernel_(image_processing) </a>)</li>
+<li><a href="http://www.aishack.in/tutorials/image-convolution-examples/" target="_blank" rel="noopener">http://www.aishack.in/tutorials/image-convolution-examples/</a></li>
+<li>應用：邊緣檢測、高斯模糊等</li>
+<li>邊緣檢測的不同 kernel：Roberts、Prewitt、Sobel、Laplacian</li>
+</ul>
+</li>
+<li>Bloom 特效：<ul>
+<li>先利用一個值決定亮度較高的像素，儲存為一張 RenderTexture</li>
+<li>對這張儲存的 RenderTexture 進行高斯模糊</li>
+<li>混和原圖與處理後的 renderTexture</li>
+</ul>
+</li>
+<li>運動模糊特效：<ul>
+<li>利用一張 RenderTexture 累積疊加畫面</li>
+<li>疊加時以一定比例混和 RGB 通道</li>
+</ul>
+</li>
+<li>本章提到的 Unity API<ul>
+<li>SystemInfo.supportImageEffects</li>
+<li>SystemInfo.supportRenderTetures</li>
+<li>shader.isSupport</li>
+<li>RenderTexture.GetTemporary () 建立暫時的 RenderTexture</li>
+<li>RenderTexture.ReleaseTemporary () 釋放暫時 RenderTexture 占用的資源</li>
+<li>RenderTexture.MarkRestoreExpected () 避免沒有清空 RenderTexture 時 Unity 跳出警告。</li>
+</ul>
+</li>
+<li>本章提到的 unity shader 內建功能<ul>
+<li>appdata_img 內建的 vertex shader 輸入結構，定義於 UnityCG.cginc 中</li>
+<li>CGINCLUDE … ENDCG 用來在 SubShader 層級定義結構跟方法</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十三章：深度紋理-Depth-Texture-及-法線紋理-Normal-Texture"><a href="#第十三章：深度紋理-Depth-Texture-及-法線紋理-Normal-Texture" class="headerlink" title="第十三章：深度紋理 (Depth Texture) 及 法線紋理 (Normal Texture)"></a>第十三章：深度紋理 (Depth Texture) 及 法線紋理 (Normal Texture)</h3><ul>
+<li>深度紋理：<ul>
+<li><a href="https://docs.unity3d.com/Manual/SL-CameraDepthTexture.html" target="_blank" rel="noopener">https://docs.unity3d.com/Manual/SL-CameraDepthTexture.html</a></li>
+<li>指攝影機在 NDC 空間中所取得的一張深度資訊。</li>
+<li>在 Deferred Rendering  中，會與法線紋理儲存在 G-buffer 中。</li>
+<li>在 Forward Rendering 可以利用 camera.deepTextureMode 設定，再由特定名稱的 shader 參數取得。</li>
+</ul>
+</li>
+<li>深度紋理的採樣：<ul>
+<li>SAMPLE_DEPTH_TEXTURE (_CameraDepthTexture, i.uv) 進行採樣，i.uv 是目前像素的 uv 座標。</li>
+<li>SAMPLE_DEPTH_TEXTURE_PROJ (_CameraDepthTexture, UNITY_PROJ_COORD (i.scrPos)) 進行採樣，i.scrPos 是來自 ComputeScreenPos() 計算並插值後得到的螢幕座標。</li>
+<li>採樣結果經過 LinearEyeDepth 或 Linear01Depth 取得視角空間下的線性深度。</li>
+</ul>
+</li>
+<li>法線紋理：<ul>
+<li>存取情況與深度紋理基本類似，如果取得一張 <strong>深度法線紋理</strong>，則深度存於 R、G 通道，法線存於 B、A 通道。</li>
+<li>適當調整攝影機位置，可以提高兩項紋理的精密度。</li>
+</ul>
+</li>
+<li>深度法線紋理的採樣：<ul>
+<li>tex2D (_CameraDepthNormalsTexture, i.uv) 直接採樣。</li>
+<li>DecodeDepthNormal (float4 data, out float depth, out float3, normal) 內建方法可以解析採樣內容。</li>
+</ul>
+</li>
+<li>運動模糊特效 (方法二)：<ul>
+<li>利用深度紋理計算像素的移動速度。</li>
+<li>為了從 view space 回推 world space 座標，需要在腳本中先計算 <strong>視角*投影</strong> 的 <strong>矩陣及反矩陣</strong>，Camera.woldToCameraMatrix、Camera.projectionMatrix 是可以利用的 Unity API。</li>
+<li>利用腳本傳遞過來的矩陣，以 <code>currebtPos = (uv.xy * 2 - 1, depth * 2 - 1, 1)</code> 來計算 <strong>當前禎 </strong>與<strong>上一禎 </strong>的 NDC 座標，進而取得像素的移動速度，進行對應的模糊處理。</li>
+<li>此方法是適用於靜止物體，只考慮攝影機的效果。</li>
+</ul>
+</li>
+<li>Fog 特效<ul>
+<li>介紹了另一個重建世界座標的方法：攝影機座標 + 線性深度 * 攝影機對進剪裁平面的射線</li>
+<li><code>float4 worldPos = _WorldSpaceCameraPos + linearDepth * interpolatedRay</code></li>
+<li>依照世界座標的高 (worldPos.y) 決定物的繪製。</li>
+</ul>
+</li>
+<li>邊緣檢測<ul>
+<li>使用 Roberts kernel 對 深度紋理 及 法線紋理 進行處理，只要有一者達到閥值便繪製邊線。</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十四章：特殊風格渲染"><a href="#第十四章：特殊風格渲染" class="headerlink" title="第十四章：特殊風格渲染"></a>第十四章：特殊風格渲染</h3><ul>
+<li>卡通風格渲染：區塊化的漸變貼圖 + 邊緣描繪 + 特殊的高光區塊處理</li>
+<li>素描風格渲染：<ul>
+<li>需要多張 Tonal art map</li>
+<li>將漫反射的數值分區規劃成數個整數，分別代表要留白或使用的貼圖編號</li>
+</ul>
+</li>
+<li>本章提到的 shader 方法<ul>
+<li>step (threshhold, value) 當 threshhold &lt; value 時回傳 1，否則回傳 0</li>
+<li>smoothstep (-w, w, value - threshhold)，當地三個參數位於 (-w, w) 區間時，回傳 (0, 1) 之間的一個小數，否則跟 step 運作相同</li>
+<li>fwidth (x)</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十五章：噪聲"><a href="#第十五章：噪聲" class="headerlink" title="第十五章：噪聲"></a>第十五章：噪聲</h3><ul>
+<li>噪聲紋理 (noise map)：一張有著隨機明暗分布的灰階貼圖</li>
+<li>噪聲紋理生成演算法：<ul>
+<li>Perlin：<a href="https://en.wikipedia.org/wiki/Perlin_noise" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Perlin_noise</a></li>
+<li>Worley：<a href="https://en.wikipedia.org/wiki/Worley_noise" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Worley_noise</a></li>
+</ul>
+</li>
+<li>消融特效：<ul>
+<li>噪聲紋理 + 透明測試</li>
+<li>當噪聲紋理採樣結果大於一個閥值，則剔除像素</li>
+<li>要特別處理 shadow caster</li>
+</ul>
+</li>
+<li>水波特效：<ul>
+<li>透過噪聲紋理來生成法線貼圖，需啟用 create from grayscale</li>
+<li>利用 _Time 變數與設定的 float2 speed 變數進行 uv 平移的動畫</li>
+<li>同樣透過 cubemap 實現反射與折射所需的採樣</li>
+</ul>
+</li>
+<li>Fog 特效：<ul>
+<li>利用噪聲紋理與 FogDensity 做相乘，來製造雲霧的隨機分佈</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -3413,7 +3964,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-count">23</span>
                     <span class="site-state-item-name">文章</span>
                   </a>
                 </div>

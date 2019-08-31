@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.1" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avator.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avator32x32.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avator16x16.png?v=6.0.1">
+
+
+  <link rel="mask-icon" href="/images/avator32x32.png?v=6.0.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="unity,shader,">
+
+
+<meta name="description" content="《Unity shader 入門精要》的讀書筆記，十六章到十九章。 十六章說明渲染上的優化方向；十七章簡單說明了 surface shader；十八章簡單說明了 PBS 技術。 十九、二十章說明一些 Unity  的更新，以及精進渲染技術知識的方向。  第十六章：Unity 的渲染優化 一開始就把優化當作設計的一部份 造成遊戲瓶頸的可能原因： CPU - 過多的腳本運算或物理模擬 CPU - 過多">
+<meta name="keywords" content="unity,shader">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[閱讀筆記] Unity shader 入門精要 #5">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part5/index.html">
+<meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="《Unity shader 入門精要》的讀書筆記，十六章到十九章。 十六章說明渲染上的優化方向；十七章簡單說明了 surface shader；十八章簡單說明了 PBS 技術。 十九、二十章說明一些 Unity  的更新，以及精進渲染技術知識的方向。  第十六章：Unity 的渲染優化 一開始就把優化當作設計的一部份 造成遊戲瓶頸的可能原因： CPU - 過多的腳本運算或物理模擬 CPU - 過多">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:updated_time" content="2019-08-31T10:24:51.292Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[閱讀筆記] Unity shader 入門精要 #5">
+<meta name="twitter:description" content="《Unity shader 入門精要》的讀書筆記，十六章到十九章。 十六章說明渲染上的優化方向；十七章簡單說明了 surface shader；十八章簡單說明了 PBS 技術。 十九、二十章說明一些 Unity  的更新，以及精進渲染技術知識的方向。  第十六章：Unity 的渲染優化 一開始就把優化當作設計的一部份 造成遊戲瓶頸的可能原因： CPU - 過多的腳本運算或物理模擬 CPU - 過多">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part5/">
+
+
+  <title>[閱讀筆記] Unity shader 入門精要 #5 | 鴨仔開發日記</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-73254781-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">鴨仔開發日記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一個開發者的點點滴滴 – ABOUT A GAME DEVELOPER</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首頁</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>彙整</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-series-of-articles">
+          <a href="/series-of-articles/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>系列文章</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book-review">
+          <a href="/book-review/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>閱讀筆記</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>關於</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[閱讀筆記] Unity shader 入門精要 #5</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-06-04T22:14:42+08:00">2017-06-04</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/review-unity-shader-for-beginner-part5/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/review-unity-shader-for-beginner-part5/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>《Unity shader 入門精要》的讀書筆記，十六章到十九章。 十六章說明渲染上的優化方向；十七章簡單說明了 surface shader；十八章簡單說明了 PBS 技術。 十九、二十章說明一些 Unity  的更新，以及精進渲染技術知識的方向。 </p>
+<h3 id="第十六章：Unity-的渲染優化"><a href="#第十六章：Unity-的渲染優化" class="headerlink" title="第十六章：Unity 的渲染優化"></a>第十六章：Unity 的渲染優化</h3><ul>
+<li><strong>一開始就把優化當作設計的一部份</strong></li>
+<li>造成遊戲瓶頸的可能原因：<ul>
+<li>CPU - 過多的腳本運算或物理模擬</li>
+<li>CPU - 過多的 draw call</li>
+<li>GPU - 過多的頂點、逐頂點運算</li>
+<li>GPU - 過多的 fragment、overdraw</li>
+<li>解析度過高的貼圖、frame buffer</li>
+</ul>
+</li>
+<li>優化方向：<ul>
+<li>減少 draw call</li>
+<li>優化模型、使用 LOD、<a href="https://docs.unity3d.com/Manual/OcclusionCulling.html" target="_blank" rel="noopener">Occlusion Culling</a></li>
+<li>控制繪圖順序</li>
+<li>注意透明物體的使用</li>
+<li>減少即時光照</li>
+<li>減少 overdraw</li>
+<li>壓縮貼圖大小</li>
+</ul>
+</li>
+<li>使用<strong>動態 batching</strong> 減少 draw call：<ul>
+<li>使用同一個材質，Unity 會自動實現動態 batching</li>
+<li>一次動態 batching 所能接受的頂點數上限為 900</li>
+<li>多 Pass 的 shader 無法動態 batching</li>
+</ul>
+</li>
+<li>使用<strong>靜態 batching</strong> 減少 draw call：<ul>
+<li>將物體設定的 static 打勾</li>
+<li>在程式運作一開始，將數個模型合併</li>
+<li>會占用更多記憶體</li>
+<li>物體不可被移動</li>
+</ul>
+</li>
+<li>共用材質的技巧<ul>
+<li>合併貼圖</li>
+<li>將相異的 shader 參數儲存於頂點顏色 (或其他頂點數據)</li>
+<li>使用 Render.sharedMaterial</li>
+</ul>
+</li>
+<li>減少 overdraw 技巧：<ul>
+<li>對於確定會在最前方的物體，調整其渲染順序往前</li>
+<li>減少透明的使用</li>
+<li>在移動裝置上，因為 GPU 架構的差異，透明度混和可能會優於透明度測試</li>
+<li>使用 lightmap 代替即時光照，移動設備上甚至要避免使用逐像素光照</li>
+</ul>
+</li>
+<li>shader 程式碼優化<ul>
+<li>用 float 儲存頂點座標，用 half 儲存 uv 座標，用 fixed 儲存單位向量</li>
+<li>避免變數精度轉換</li>
+<li>盡量合併差值計算</li>
+<li>盡量避免 if、loop 語法</li>
+<li>盡量避免三角函數跟指數運算</li>
+<li>盡量避免 discard，這跟一些 GPU 的優化架構有關</li>
+<li>一些細節會因平台而異</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十七章：-surface-shader"><a href="#第十七章：-surface-shader" class="headerlink" title="第十七章： surface shader"></a>第十七章： surface shader</h3><ul>
+<li>surface shader 是 unity 對於 shader 的進一步抽象封裝<ul>
+<li><a href="https://docs.unity3d.com/Manual/SL-SurfaceShaders.html" target="_blank" rel="noopener">https://docs.unity3d.com/Manual/SL-SurfaceShaders.html</a></li>
+<li>在 SubShader 中編寫而非 Pass</li>
+<li>方便撰寫但能夠實現的自定義渲染較有限</li>
+<li>性能較差，但如果需要處理許多光照，是個好的選擇</li>
+<li>如果光照單純，使用 vertex/fragment shader 效能會好很多</li>
+</ul>
+</li>
+<li>編譯指令 <code>#pragma surface</code> 用於定義<strong>使用的函數</strong>及光<strong>照模型</strong></li>
+<li>函數格式：<ul>
+<li>void surf (Input IN, inout SurfaceOutput o)</li>
+<li>void surf (Input IN, inout SurfaceOutputStanderd o)</li>
+<li>void surf (Input IN, inout SurfaceOutputStanderdSpecular o)</li>
+<li>Input 結構有一些內建的變數、也可自訂增加變數</li>
+</ul>
+</li>
+<li>光照模型：<ul>
+<li>Standard 標準物理光照</li>
+<li>StanderdSpecular 物理金屬光照</li>
+<li>Lambert</li>
+<li>BlinnPhong</li>
+<li>或者自行定義：<a href="https://docs.unity3d.com/Manual/SL-SurfaceShaderLighting.html" target="_blank" rel="noopener">https://docs.unity3d.com/Manual/SL-SurfaceShaderLighting.html</a></li>
+</ul>
+</li>
+<li>其他參數：<ul>
+<li>vertex 修改頂點的函數</li>
+<li>finalcolor 在顏色存入 frame buffer 前進行修改的函數</li>
+<li>adddhadow、fullforwardshadows、noshadow</li>
+<li>alpha、alphatest</li>
+<li>exclude_path 可以在移除對特定的渲染路徑的支援</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十八章：Physically-Based-Shading，PBS"><a href="#第十八章：Physically-Based-Shading，PBS" class="headerlink" title="第十八章：Physically Based Shading，PBS"></a>第十八章：Physically Based Shading，PBS</h3><ul>
+<li>基於物理的渲染 Physically Based Shading<ul>
+<li>比起 Lambert，使用了考慮細微漫射及次表面散射的 BRDF 等式</li>
+<li>Standard 跟 Standard Specular 使用相同的 BRDF 等式，只是對外調整的參數項目及意義不同，依然可以做出相同的表現</li>
+<li>使用 HDR 的 skybox 可以表現出更真實的光照，擁有更高的亮度精度，但是運算需求也較高</li>
+</ul>
+</li>
+<li>Unity 5 的 Global Illumination (GI) 可以提供間接光照，增加光照的真實感，可由光源的 Bounce Intensity 調整間接光照的強度</li>
+<li>平行光的 Baked 模式會將場景光照儲存到一張 lightmap，Mix 模式則只儲存 static 物件的光罩，剩餘物件採用即時渲染</li>
+<li>反射探針 (Reflection Probes) 的設置，可以提供反射所需的 cubemap</li>
+<li>Gamma space 與 Linear space 的顏色差別：<ul>
+<li>Linear space 較接近真實的顏色</li>
+<li>一般紋理貼圖是以 Gamma space 儲存，如果硬體支援，Unity 會自動進行顏色空間的轉換</li>
+<li>如果硬體不支援，可以在 shader 中以效能為代價進行手動轉換</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author：</strong>
+    douduck08
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link：</strong>
+    <a href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part5/" title="[閱讀筆記] Unity shader 入門精要 #5">http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part5/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice： </strong>
+    All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> unless stating additionally.
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/unity/" rel="tag"># unity</a>
+          
+            <a href="/tags/shader/" rel="tag"># shader</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/zh-tw/review-unity-shader-for-beginner-part4/" rel="next" title="[閱讀筆記] Unity shader 入門精要 #4">
+                <i class="fa fa-chevron-left"></i> [閱讀筆記] Unity shader 入門精要 #4
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/zh-tw/review-extantion-of-unity-editor-part1/" rel="prev" title="[閱讀筆記] Unity のエディター拡張 #1">
+                [閱讀筆記] Unity のエディター拡張 #1 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">douduck08</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-name">文章</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">分類</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">標籤</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/douduck08" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.facebook.com/douduck08develop/" target="_blank" title="FB Page">
+                      
+                        <i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#第十六章：Unity-的渲染優化"><span class="nav-number">1.</span> <span class="nav-text">第十六章：Unity 的渲染優化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第十七章：-surface-shader"><span class="nav-number">2.</span> <span class="nav-text">第十七章： surface shader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#第十八章：Physically-Based-Shading，PBS"><span class="nav-number">3.</span> <span class="nav-text">第十八章：Physically Based Shading，PBS</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.1"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://douduck-hexo-blog.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part5/';
+        this.page.identifier = 'zh-tw/review-unity-shader-for-beginner-part5/';
+        this.page.title = '[閱讀筆記] Unity shader 入門精要 #5';
+      };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://douduck-hexo-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
