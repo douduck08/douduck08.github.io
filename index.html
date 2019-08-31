@@ -822,6 +822,13 @@
 
                 
                 
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/webGL/" itemprop="url" rel="index"><span itemprop="name">webGL</span></a></span>
+
+                
+                
               
             </span>
           
@@ -973,6 +980,13 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/webGL/" itemprop="url" rel="index"><span itemprop="name">webGL</span></a></span>
 
                 
                 
@@ -2677,6 +2691,183 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-opengl-online-course/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/zh-tw/review-opengl-online-course/" itemprop="url">[學習心得] OpenGL 線上課程 - Review OpenGL Online Course</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-09-22T00:20:11+08:00">2017-09-22</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/openGL/" itemprop="url" rel="index"><span itemprop="name">openGL</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/review-opengl-online-course/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/review-opengl-online-course/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>將 《<a href="https://www.udemy.com/opengl-tutorials/learn/v4/content" target="_blank" rel="noopener">Modern OpenGL C++ 3D Game Tutorial Series</a>》這個 OpenGL 的線上課程完結了，比起預計所花的時間短了不少。 OpenGL 是個發展已久的 Graphics API，當遊戲光靠 CPU 已經無法負擔，需要透過 GPU 來 “硬體加速” 畫面處理的工作時，相對的溝通工作便可以用這類 API 來完成。 雖然還有其他 Graphics API，但我選擇了 OpenGL 作為入門，並碰巧遇上了這門線上課程的優惠。完成了課程後，在這邊記下一些心得，讓其他想接觸 OpenGL 或這門線上課程的人作為參考。</p>
+<h3 id="課程內容"><a href="#課程內容" class="headerlink" title="課程內容"></a>課程內容</h3><p>一路下來這個課程可以學到：</p>
+<ul>
+<li>Windows 與 Mac OSX 上 OpenGL 的開發環境架設</li>
+<li>建立 shader program 到 GPU 上</li>
+<li>傳遞 mesh 資料至 GPU 並透過 shader 繪製到畫面上</li>
+<li>將圖片、貼圖載入到 GPU 的 TEXTURE Unit 中使用</li>
+<li>位移、旋轉相關變形的實作</li>
+<li>虛擬攝影機、動態取景的實作</li>
+<li>傳遞相關資料並使用 shader 渲染光照效果</li>
+<li>利用第三方 library 讀取 model 檔案至程式中繪製</li>
+<li>Skybox 簡單實作</li>
+</ul>
+<p>不過這個課程並不會詳細解說每個項目背後的原理，包括每個使用到的 OpenGL API 的細節功能也不會清楚的解釋，基本上就是把課程內容分別舉例子實作一次，並提供給大家原始碼做為參考。 上述的每個項目都是在 3D 繪圖、遊戲製作的一些基本需求，透過這個課程可以理解如何用 OpenGL 達成這些需求。 但是因為沒有描述原理，所以沒有 3D 繪圖的一些觀念時，會在講者編輯程式碼與解說時產生疑惑，變成知其然而不知其所以然的窘境，甚至鴨子聽雷的情況。</p>
+<h3 id="個人建議的先備知識"><a href="#個人建議的先備知識" class="headerlink" title="個人建議的先備知識"></a>個人建議的先備知識</h3><p>事前如果有 3D 繪圖的一些觀念，或者有細究過遊戲繪圖，上起這門課程會容易些：</p>
+<ul>
+<li>3D Model 資料的組成：mesh、vertex、triangle、normal、uv 貼圖等關鍵字的意義</li>
+<li>Render pipeline：應用階段、幾何階段等繪圖步驟之間會傳遞甚麼資料</li>
+<li>vertex shader 與 fragment shader 的功用與基本認識</li>
+</ul>
+<p>這門課是用 C++ 為使用語言，所以當然對 C++ 要有一定程度的了解，包括類別 (class)、指標 (pointer)、標頭檔 (header file) 如何在 C++ 中使用，而不是只有條件是跟迴圈的程度。 另外如果先擁有撰寫 shader 的基礎 (Unity shaderLab 等任何 shader 實作手段都行)，那基本上就沒問題了，否則最低限度至少要先知道 vertex shader 與 fragment shader 的意義。</p>
+<h3 id="其他感想"><a href="#其他感想" class="headerlink" title="其他感想"></a>其他感想</h3><p>就個人感覺來說，如果是要做為初學者的教學，這段線上課程所包含的內容有點貧乏。許多的原理跟 API 細節沒有解說，會在課程剛開始時感到疑惑，必須另外去找資料或文件確認 API 的功能。 但是因為網路上自學 OpenGL 的影片相當少見，就這點來說還是相當值得的。比起慢慢地閱讀文件或文章，自行做實驗來學習，實際操作的影片可以更好的引導進入狀況，配合自己在每個小節後查資料解惑，很快就能對 OpenGL 掌握到一定程度。 利用這門課當作敲門磚，我自覺算是很順利地進入 OpenGL 的世界，未來只要再補上更多原理細節即可。 可以來想想要做些甚麼作品來當作練習，檢查自己的理解了。</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-extantion-of-unity-editor-part3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -3627,296 +3818,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="douduck08">
-      <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="鴨仔開發日記">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/zh-tw/review-unity-shader-for-beginner-part4/" itemprop="url">[閱讀筆記] Unity shader 入門精要 #4</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">發表於</span>
-              
-              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-06-03T02:21:32+08:00">2017-06-03</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分類於</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/zh-tw/review-unity-shader-for-beginner-part4/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/review-unity-shader-for-beginner-part4/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>《Unity shader 入門精要》的讀書筆記，十二章到十五章。 十二章說明在 OnRenderImage 組合多個 RenderTexture  與 Shader 完成後製特效。 十三章說明深度紋理 (Depth Texture) 及 法線紋理 (Normal Texture) 及其應用。 十四章說明卡通、素描兩個風格渲染；第十五章說明噪聲的應用。</p>
-<h3 id="第十二章：後處理特效-post-processing-effect"><a href="#第十二章：後處理特效-post-processing-effect" class="headerlink" title="第十二章：後處理特效 (post-processing effect)"></a>第十二章：後處理特效 (post-processing effect)</h3><ul>
-<li>OnRenderImage<ul>
-<li><a href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderImage.html" target="_blank" rel="noopener">https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderImage.html</a></li>
-<li>須掛載於 Camera 之下。</li>
-<li>會搭配 <a href="https://docs.unity3d.com/ScriptReference/Graphics.Blit.html" target="_blank" rel="noopener">Graphics.Blit</a> 來完成渲染，當前螢幕 src 可以渲染至一張 RenderTeture，或者顯示在螢幕上；如果設定了 Material，會<strong>將 src 以 _MainTex 為名傳遞給 Pass</strong>。</li>
-<li>預設會在透明 Pass 之後執行，可以加上 ImageEffectOpaque Attribute 改成在 透明 Pass 之前執行。</li>
-<li>如果開啟了 AA，處理多張貼圖會有在不同平台是否翻轉的問題，書中 5.6.1 有解釋。</li>
-</ul>
-</li>
-<li>用於 OnRenderImage 的 shader 常見設定<ul>
-<li>ZTest Always</li>
-<li>Cull Off</li>
-<li>ZWrite Off</li>
-</ul>
-</li>
-<li>亮度值 luminance：<ul>
-<li>luminance = 0.2125 <em> r + 0.7154 </em> g + 0.0721 * b</li>
-<li>(r, g, b) = (luminance , luminance , luminance ) 相當是一個的等亮度的灰階色，作為 <strong>色彩飽和度 (彩度)</strong> 為零的代表</li>
-</ul>
-</li>
-<li>摺積 Convolution：<ul>
-<li>利用一個 n 階方陣 (kernel) 對覆蓋的像素值求積的和</li>
-<li><a href="https://en.wikipedia.org/wiki/Kernel_(image_processing" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Kernel_(image_processing) </a>)</li>
-<li><a href="http://www.aishack.in/tutorials/image-convolution-examples/" target="_blank" rel="noopener">http://www.aishack.in/tutorials/image-convolution-examples/</a></li>
-<li>應用：邊緣檢測、高斯模糊等</li>
-<li>邊緣檢測的不同 kernel：Roberts、Prewitt、Sobel、Laplacian</li>
-</ul>
-</li>
-<li>Bloom 特效：<ul>
-<li>先利用一個值決定亮度較高的像素，儲存為一張 RenderTexture</li>
-<li>對這張儲存的 RenderTexture 進行高斯模糊</li>
-<li>混和原圖與處理後的 renderTexture</li>
-</ul>
-</li>
-<li>運動模糊特效：<ul>
-<li>利用一張 RenderTexture 累積疊加畫面</li>
-<li>疊加時以一定比例混和 RGB 通道</li>
-</ul>
-</li>
-<li>本章提到的 Unity API<ul>
-<li>SystemInfo.supportImageEffects</li>
-<li>SystemInfo.supportRenderTetures</li>
-<li>shader.isSupport</li>
-<li>RenderTexture.GetTemporary () 建立暫時的 RenderTexture</li>
-<li>RenderTexture.ReleaseTemporary () 釋放暫時 RenderTexture 占用的資源</li>
-<li>RenderTexture.MarkRestoreExpected () 避免沒有清空 RenderTexture 時 Unity 跳出警告。</li>
-</ul>
-</li>
-<li>本章提到的 unity shader 內建功能<ul>
-<li>appdata_img 內建的 vertex shader 輸入結構，定義於 UnityCG.cginc 中</li>
-<li>CGINCLUDE … ENDCG 用來在 SubShader 層級定義結構跟方法</li>
-</ul>
-</li>
-</ul>
-<h3 id="第十三章：深度紋理-Depth-Texture-及-法線紋理-Normal-Texture"><a href="#第十三章：深度紋理-Depth-Texture-及-法線紋理-Normal-Texture" class="headerlink" title="第十三章：深度紋理 (Depth Texture) 及 法線紋理 (Normal Texture)"></a>第十三章：深度紋理 (Depth Texture) 及 法線紋理 (Normal Texture)</h3><ul>
-<li>深度紋理：<ul>
-<li><a href="https://docs.unity3d.com/Manual/SL-CameraDepthTexture.html" target="_blank" rel="noopener">https://docs.unity3d.com/Manual/SL-CameraDepthTexture.html</a></li>
-<li>指攝影機在 NDC 空間中所取得的一張深度資訊。</li>
-<li>在 Deferred Rendering  中，會與法線紋理儲存在 G-buffer 中。</li>
-<li>在 Forward Rendering 可以利用 camera.deepTextureMode 設定，再由特定名稱的 shader 參數取得。</li>
-</ul>
-</li>
-<li>深度紋理的採樣：<ul>
-<li>SAMPLE_DEPTH_TEXTURE (_CameraDepthTexture, i.uv) 進行採樣，i.uv 是目前像素的 uv 座標。</li>
-<li>SAMPLE_DEPTH_TEXTURE_PROJ (_CameraDepthTexture, UNITY_PROJ_COORD (i.scrPos)) 進行採樣，i.scrPos 是來自 ComputeScreenPos() 計算並插值後得到的螢幕座標。</li>
-<li>採樣結果經過 LinearEyeDepth 或 Linear01Depth 取得視角空間下的線性深度。</li>
-</ul>
-</li>
-<li>法線紋理：<ul>
-<li>存取情況與深度紋理基本類似，如果取得一張 <strong>深度法線紋理</strong>，則深度存於 R、G 通道，法線存於 B、A 通道。</li>
-<li>適當調整攝影機位置，可以提高兩項紋理的精密度。</li>
-</ul>
-</li>
-<li>深度法線紋理的採樣：<ul>
-<li>tex2D (_CameraDepthNormalsTexture, i.uv) 直接採樣。</li>
-<li>DecodeDepthNormal (float4 data, out float depth, out float3, normal) 內建方法可以解析採樣內容。</li>
-</ul>
-</li>
-<li>運動模糊特效 (方法二)：<ul>
-<li>利用深度紋理計算像素的移動速度。</li>
-<li>為了從 view space 回推 world space 座標，需要在腳本中先計算 <strong>視角*投影</strong> 的 <strong>矩陣及反矩陣</strong>，Camera.woldToCameraMatrix、Camera.projectionMatrix 是可以利用的 Unity API。</li>
-<li>利用腳本傳遞過來的矩陣，以 <code>currebtPos = (uv.xy * 2 - 1, depth * 2 - 1, 1)</code> 來計算 <strong>當前禎 </strong>與<strong>上一禎 </strong>的 NDC 座標，進而取得像素的移動速度，進行對應的模糊處理。</li>
-<li>此方法是適用於靜止物體，只考慮攝影機的效果。</li>
-</ul>
-</li>
-<li>Fog 特效<ul>
-<li>介紹了另一個重建世界座標的方法：攝影機座標 + 線性深度 * 攝影機對進剪裁平面的射線</li>
-<li><code>float4 worldPos = _WorldSpaceCameraPos + linearDepth * interpolatedRay</code></li>
-<li>依照世界座標的高 (worldPos.y) 決定物的繪製。</li>
-</ul>
-</li>
-<li>邊緣檢測<ul>
-<li>使用 Roberts kernel 對 深度紋理 及 法線紋理 進行處理，只要有一者達到閥值便繪製邊線。</li>
-</ul>
-</li>
-</ul>
-<h3 id="第十四章：特殊風格渲染"><a href="#第十四章：特殊風格渲染" class="headerlink" title="第十四章：特殊風格渲染"></a>第十四章：特殊風格渲染</h3><ul>
-<li>卡通風格渲染：區塊化的漸變貼圖 + 邊緣描繪 + 特殊的高光區塊處理</li>
-<li>素描風格渲染：<ul>
-<li>需要多張 Tonal art map</li>
-<li>將漫反射的數值分區規劃成數個整數，分別代表要留白或使用的貼圖編號</li>
-</ul>
-</li>
-<li>本章提到的 shader 方法<ul>
-<li>step (threshhold, value) 當 threshhold &lt; value 時回傳 1，否則回傳 0</li>
-<li>smoothstep (-w, w, value - threshhold)，當地三個參數位於 (-w, w) 區間時，回傳 (0, 1) 之間的一個小數，否則跟 step 運作相同</li>
-<li>fwidth (x)</li>
-</ul>
-</li>
-</ul>
-<h3 id="第十五章：噪聲"><a href="#第十五章：噪聲" class="headerlink" title="第十五章：噪聲"></a>第十五章：噪聲</h3><ul>
-<li>噪聲紋理 (noise map)：一張有著隨機明暗分布的灰階貼圖</li>
-<li>噪聲紋理生成演算法：<ul>
-<li>Perlin：<a href="https://en.wikipedia.org/wiki/Perlin_noise" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Perlin_noise</a></li>
-<li>Worley：<a href="https://en.wikipedia.org/wiki/Worley_noise" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Worley_noise</a></li>
-</ul>
-</li>
-<li>消融特效：<ul>
-<li>噪聲紋理 + 透明測試</li>
-<li>當噪聲紋理採樣結果大於一個閥值，則剔除像素</li>
-<li>要特別處理 shadow caster</li>
-</ul>
-</li>
-<li>水波特效：<ul>
-<li>透過噪聲紋理來生成法線貼圖，需啟用 create from grayscale</li>
-<li>利用 _Time 變數與設定的 float2 speed 變數進行 uv 平移的動畫</li>
-<li>同樣透過 cubemap 實現反射與折射所需的採樣</li>
-</ul>
-</li>
-<li>Fog 特效：<ul>
-<li>利用噪聲紋理與 FogDensity 做相乘，來製造雲霧的隨機分佈</li>
-</ul>
-</li>
-</ul>
-
-          
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -3964,7 +3865,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-count">27</span>
                     <span class="site-state-item-name">文章</span>
                   </a>
                 </div>
@@ -3975,7 +3876,7 @@
                 
                 <div class="site-state-item site-state-categories">
                   <a href="/categories/index.html">
-                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">分類</span>
                   </a>
                 </div>

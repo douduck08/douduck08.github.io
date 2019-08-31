@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.1" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avator.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avator32x32.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avator16x16.png?v=6.0.1">
+
+
+  <link rel="mask-icon" href="/images/avator32x32.png?v=6.0.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="design-pattern,object-oriented-design,">
+
+
+<meta name="description" content="隨著參與大型專案的開發次數越來越多，對維護與穩定的要求越來越高，我不斷地感受到，改變一下程式的設計方式或許不影響程式功能，但是在未來修改或擴增功能時卻會變得更加容易。甚至好的設計之下，可以將部分的程式碼作點修改，就能適用於不同的專案，大大地節約開發所需要耗費的時間跟心力。 針對於好的設計，最近藉由一本書在學習設計模式，書中有一小節簡短帶過了一些關於進行物件導向開發時，可以讓開發或者維護更容易的一些">
+<meta name="keywords" content="design-pattern,object-oriented-design">
+<meta property="og:type" content="article">
+<meta property="og:title" content="物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/some-principle-of-object-oriented-design/index.html">
+<meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="隨著參與大型專案的開發次數越來越多，對維護與穩定的要求越來越高，我不斷地感受到，改變一下程式的設計方式或許不影響程式功能，但是在未來修改或擴增功能時卻會變得更加容易。甚至好的設計之下，可以將部分的程式碼作點修改，就能適用於不同的專案，大大地節約開發所需要耗費的時間跟心力。 針對於好的設計，最近藉由一本書在學習設計模式，書中有一小節簡短帶過了一些關於進行物件導向開發時，可以讓開發或者維護更容易的一些">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:updated_time" content="2019-08-31T16:08:04.142Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design">
+<meta name="twitter:description" content="隨著參與大型專案的開發次數越來越多，對維護與穩定的要求越來越高，我不斷地感受到，改變一下程式的設計方式或許不影響程式功能，但是在未來修改或擴增功能時卻會變得更加容易。甚至好的設計之下，可以將部分的程式碼作點修改，就能適用於不同的專案，大大地節約開發所需要耗費的時間跟心力。 針對於好的設計，最近藉由一本書在學習設計模式，書中有一小節簡短帶過了一些關於進行物件導向開發時，可以讓開發或者維護更容易的一些">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.douduck08.com/zh-tw/some-principle-of-object-oriented-design/">
+
+
+  <title>物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design | 鴨仔開發日記</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-73254781-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">鴨仔開發日記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一個開發者的點點滴滴 – ABOUT A GAME DEVELOPER</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首頁</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>彙整</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-series-of-articles">
+          <a href="/series-of-articles/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>系列文章</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book-review">
+          <a href="/book-review/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>閱讀筆記</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>關於</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/some-principle-of-object-oriented-design/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2016-04-23T22:52:41+08:00">2016-04-23</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/some-principle-of-object-oriented-design/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/some-principle-of-object-oriented-design/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>隨著參與大型專案的開發次數越來越多，對維護與穩定的要求越來越高，我不斷地感受到，改變一下程式的設計方式或許不影響程式功能，但是在未來修改或擴增功能時卻會變得更加容易。甚至好的設計之下，可以將部分的程式碼作點修改，就能適用於不同的專案，大大地節約開發所需要耗費的時間跟心力。</p>
+<p>針對於好的設計，最近藉由一本書在學習設計模式，書中有一小節簡短帶過了一些關於進行物件導向開發時，可以讓開發或者維護更容易的一些設計原則。</p>
+<p>雖然只是短短一小節，但是就讓我體會到站在巨人肩膀上的感覺。過去為了讓自己的程式有著上述容易維護與可重複使用的優點，往往會花上許多時間去反覆思考，但原來早就有前人歸納出幾個原則可以作為設計的大方向了，我只是再次考慮了相同的問題而已。</p>
+<p>這些原則不能說是絕對的，但是如果在這些原則所指名的方向上思考，可以確實的讓人少走上許多冤枉路。上網特別研究了在書中提到的幾項設計原則之後，留下了此篇紀錄。(六項原則：SRP、OCP、LSP、ISP、DIP、LKP)  </p>
+<h3 id="SOLID-SRP-OCP-LSP-ISP-DIP"><a href="#SOLID-SRP-OCP-LSP-ISP-DIP" class="headerlink" title="SOLID (SRP, OCP, LSP, ISP, DIP)"></a>SOLID (SRP, OCP, LSP, ISP, DIP)</h3><p>首先是由 Robert Cecil Martin 在 Agile software development (2002) 一書中提到的 SOLID 五個設計原則：</p>
+<ul>
+<li>Single responsibility principle (SRP)</li>
+<li>Open/closed principle (OCP)</li>
+<li>Liskov substitution principle (LSP)</li>
+<li>Interface segregation principle (ISP)</li>
+<li>Dependency inversion principle (DIP)</li>
+</ul>
+<h4 id="單一責任原則-SRP"><a href="#單一責任原則-SRP" class="headerlink" title="單一責任原則 SRP"></a>單一責任原則 SRP</h4><p>一個類別 (class) 只負責一項事物，不在一個類別之中實作過多的功能。</p>
+<h4 id="開放封閉原則-OCP"><a href="#開放封閉原則-OCP" class="headerlink" title="開放封閉原則 OCP"></a>開放封閉原則 OCP</h4><p>一個類別應該兼具開放性與封閉性，開放性指一個類別應該可以因應需求而被擴展，封閉性則指一個完成的類別不應該為了需求而被修飾。</p>
+<p>看起相互矛盾的兩個要求，如何被同時實現呢？透過將類別拆分成抽象類別及實作類別，而實作類別會繼承於抽象類別，便可以達成要求。</p>
+<p>當類別的功能被使用時，皆透過抽象類別來呼叫，抽象類別可以被固定下來達成封閉性；當需求改變時，只要重新實作一個作為子類別的實作類別，便可以在保留介面(抽象類別的函式不變)的情況下修改功能，擁有開放性。</p>
+<h4 id="里氏替代原則-LSP"><a href="#里氏替代原則-LSP" class="headerlink" title="里氏替代原則 LSP"></a>里氏替代原則 LSP</h4><p>由 Barbara Liskov 在 1988 年提出的：”Subtypes must be substitutable for their base types.”</p>
+<p>翻譯之後的意思是指，子類別必須能夠替代父類別。詳細一點來說，便是指一個子類別的實作，應該包括父類別的所有介面(函式)，使子類別被使用時，可以完全取代父類別的定位，不會有短少功能的情況。用C#的角度來解釋，就是父類別的所有 public function  應該都要是 virtual 或是 abstract 的。</p>
+<h4 id="介面分離原則-ISP"><a href="#介面分離原則-ISP" class="headerlink" title="介面分離原則 ISP"></a>介面分離原則 ISP</h4><p>與其設計一個結合所有功能的介面。不如設計好幾個因應需求的介面，讓使用者可以在擁有最少介面的情況下操作功能。簡化介面與切分功能便是這個原則的表現。</p>
+<h4 id="依賴性反轉原則-DIP"><a href="#依賴性反轉原則-DIP" class="headerlink" title="依賴性反轉原則 DIP"></a>依賴性反轉原則 DIP</h4><p>這個原則包含兩點：</p>
+<ol>
+<li>高階模組不應該依賴低階模組，兩者應依賴於抽象類別。</li>
+<li>抽象類別不應該依賴實作類別，而實作類別則應該依賴抽象類別。</li>
+</ol>
+<p>所謂的不依賴，簡單來說就是，低階模組被替換或修改後，高階模組不應該被迫修改；反過來說，如果抽象類別被修改了，則實作類別被迫修改則是合理的。而如何區分高階跟低階？通常低階模組會是高階模組的一部份。</p>
+<h3 id="最少知識原則-Least-knowledge-principle-LKP"><a href="#最少知識原則-Least-knowledge-principle-LKP" class="headerlink" title="最少知識原則 Least knowledge principle (LKP)"></a>最少知識原則 Least knowledge principle (LKP)</h3><p>在1987年被提出，可用三點來概括：</p>
+<ol>
+<li>每個單位與對其他單位有最低限度的了解，關於跟自己有關的那部分。</li>
+<li>每個單位只能跟朋友溝通，而非陌生人。</li>
+<li>上述的朋友，只包括直接的朋友。</li>
+</ol>
+<p>這三句話講得文謅謅的，相當哲學。這個原則書上的解釋也不多，我的理解是：在實現類別的功能時，盡可能不要去依賴其他類別的成員變數，需要甚麼資訊都盡量自行取得，降低每個類別之間的耦合度，免得維護時牽一髮則動全身。  </p>
+<h3 id="Inheritance-IS-A-vs-Composition-HAS-A"><a href="#Inheritance-IS-A-vs-Composition-HAS-A" class="headerlink" title="Inheritance (IS-A) vs. Composition (HAS-A)"></a>Inheritance (IS-A) vs. Composition (HAS-A)</h3><p><strong>多用組合少用繼承。</strong>這點被沒稱之為原則，但是許多關於物件導向程式設計的討論都會提到這點，可以說是大部分的人都認同的經驗談。 物件導向的繼承很方便，但是良好的設計不應該過度依賴繼承，繼承的層數應該不要超過三層，除了效能考量，也能避免在追蹤 bug 時，需要大量的時間來抽絲剝繭。甚至其實有些語言根本不支援多重繼承。透過用組合代替繼承，可以把一些沒必要沿用的功能保留下來，減少新類別所擁有的溝通接口，維護上也不會被迫整頓一些用不到的函式。   相關參考</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/SOLID_(object-oriented_design" target="_blank" rel="noopener">SOLID</a>) <a href="https://en.wikipedia.org/wiki/SOLID_(object-oriented_design" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/SOLID_(object-oriented_design</a>)</li>
+<li><a href="https://en.wikipedia.org/wiki/Law_of_Demeter" target="_blank" rel="noopener">最少知識原則</a> <a href="https://en.wikipedia.org/wiki/Law_of_Demeter" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Law_of_Demeter</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author：</strong>
+    douduck08
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link：</strong>
+    <a href="http://www.douduck08.com/zh-tw/some-principle-of-object-oriented-design/" title="物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design">http://www.douduck08.com/zh-tw/some-principle-of-object-oriented-design/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice： </strong>
+    All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> unless stating additionally.
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/design-pattern/" rel="tag"># design-pattern</a>
+          
+            <a href="/tags/object-oriented-design/" rel="tag"># object-oriented-design</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/zh-tw/what-benefits-i-get-after-studying-design-pattern/" rel="prev" title="學習設計模式的感想 – what benefits I get after studying design pattern">
+                學習設計模式的感想 – what benefits I get after studying design pattern <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">douduck08</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">文章</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">分類</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">標籤</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/douduck08" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.facebook.com/douduck08develop/" target="_blank" title="FB Page">
+                      
+                        <i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#SOLID-SRP-OCP-LSP-ISP-DIP"><span class="nav-number">1.</span> <span class="nav-text">SOLID (SRP, OCP, LSP, ISP, DIP)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#單一責任原則-SRP"><span class="nav-number">1.1.</span> <span class="nav-text">單一責任原則 SRP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#開放封閉原則-OCP"><span class="nav-number">1.2.</span> <span class="nav-text">開放封閉原則 OCP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#里氏替代原則-LSP"><span class="nav-number">1.3.</span> <span class="nav-text">里氏替代原則 LSP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#介面分離原則-ISP"><span class="nav-number">1.4.</span> <span class="nav-text">介面分離原則 ISP</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#依賴性反轉原則-DIP"><span class="nav-number">1.5.</span> <span class="nav-text">依賴性反轉原則 DIP</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#最少知識原則-Least-knowledge-principle-LKP"><span class="nav-number">2.</span> <span class="nav-text">最少知識原則 Least knowledge principle (LKP)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Inheritance-IS-A-vs-Composition-HAS-A"><span class="nav-number">3.</span> <span class="nav-text">Inheritance (IS-A) vs. Composition (HAS-A)</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.1"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://douduck-hexo-blog.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'http://www.douduck08.com/zh-tw/some-principle-of-object-oriented-design/';
+        this.page.identifier = 'zh-tw/some-principle-of-object-oriented-design/';
+        this.page.title = '物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design';
+      };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://douduck-hexo-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

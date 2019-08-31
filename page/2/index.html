@@ -282,6 +282,296 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/zh-tw/review-unity-shader-for-beginner-part4/" itemprop="url">[閱讀筆記] Unity shader 入門精要 #4</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-06-03T02:21:32+08:00">2017-06-03</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/review-unity-shader-for-beginner-part4/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/review-unity-shader-for-beginner-part4/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>《Unity shader 入門精要》的讀書筆記，十二章到十五章。 十二章說明在 OnRenderImage 組合多個 RenderTexture  與 Shader 完成後製特效。 十三章說明深度紋理 (Depth Texture) 及 法線紋理 (Normal Texture) 及其應用。 十四章說明卡通、素描兩個風格渲染；第十五章說明噪聲的應用。</p>
+<h3 id="第十二章：後處理特效-post-processing-effect"><a href="#第十二章：後處理特效-post-processing-effect" class="headerlink" title="第十二章：後處理特效 (post-processing effect)"></a>第十二章：後處理特效 (post-processing effect)</h3><ul>
+<li>OnRenderImage<ul>
+<li><a href="https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderImage.html" target="_blank" rel="noopener">https://docs.unity3d.com/ScriptReference/MonoBehaviour.OnRenderImage.html</a></li>
+<li>須掛載於 Camera 之下。</li>
+<li>會搭配 <a href="https://docs.unity3d.com/ScriptReference/Graphics.Blit.html" target="_blank" rel="noopener">Graphics.Blit</a> 來完成渲染，當前螢幕 src 可以渲染至一張 RenderTeture，或者顯示在螢幕上；如果設定了 Material，會<strong>將 src 以 _MainTex 為名傳遞給 Pass</strong>。</li>
+<li>預設會在透明 Pass 之後執行，可以加上 ImageEffectOpaque Attribute 改成在 透明 Pass 之前執行。</li>
+<li>如果開啟了 AA，處理多張貼圖會有在不同平台是否翻轉的問題，書中 5.6.1 有解釋。</li>
+</ul>
+</li>
+<li>用於 OnRenderImage 的 shader 常見設定<ul>
+<li>ZTest Always</li>
+<li>Cull Off</li>
+<li>ZWrite Off</li>
+</ul>
+</li>
+<li>亮度值 luminance：<ul>
+<li>luminance = 0.2125 <em> r + 0.7154 </em> g + 0.0721 * b</li>
+<li>(r, g, b) = (luminance , luminance , luminance ) 相當是一個的等亮度的灰階色，作為 <strong>色彩飽和度 (彩度)</strong> 為零的代表</li>
+</ul>
+</li>
+<li>摺積 Convolution：<ul>
+<li>利用一個 n 階方陣 (kernel) 對覆蓋的像素值求積的和</li>
+<li><a href="https://en.wikipedia.org/wiki/Kernel_(image_processing" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Kernel_(image_processing) </a>)</li>
+<li><a href="http://www.aishack.in/tutorials/image-convolution-examples/" target="_blank" rel="noopener">http://www.aishack.in/tutorials/image-convolution-examples/</a></li>
+<li>應用：邊緣檢測、高斯模糊等</li>
+<li>邊緣檢測的不同 kernel：Roberts、Prewitt、Sobel、Laplacian</li>
+</ul>
+</li>
+<li>Bloom 特效：<ul>
+<li>先利用一個值決定亮度較高的像素，儲存為一張 RenderTexture</li>
+<li>對這張儲存的 RenderTexture 進行高斯模糊</li>
+<li>混和原圖與處理後的 renderTexture</li>
+</ul>
+</li>
+<li>運動模糊特效：<ul>
+<li>利用一張 RenderTexture 累積疊加畫面</li>
+<li>疊加時以一定比例混和 RGB 通道</li>
+</ul>
+</li>
+<li>本章提到的 Unity API<ul>
+<li>SystemInfo.supportImageEffects</li>
+<li>SystemInfo.supportRenderTetures</li>
+<li>shader.isSupport</li>
+<li>RenderTexture.GetTemporary () 建立暫時的 RenderTexture</li>
+<li>RenderTexture.ReleaseTemporary () 釋放暫時 RenderTexture 占用的資源</li>
+<li>RenderTexture.MarkRestoreExpected () 避免沒有清空 RenderTexture 時 Unity 跳出警告。</li>
+</ul>
+</li>
+<li>本章提到的 unity shader 內建功能<ul>
+<li>appdata_img 內建的 vertex shader 輸入結構，定義於 UnityCG.cginc 中</li>
+<li>CGINCLUDE … ENDCG 用來在 SubShader 層級定義結構跟方法</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十三章：深度紋理-Depth-Texture-及-法線紋理-Normal-Texture"><a href="#第十三章：深度紋理-Depth-Texture-及-法線紋理-Normal-Texture" class="headerlink" title="第十三章：深度紋理 (Depth Texture) 及 法線紋理 (Normal Texture)"></a>第十三章：深度紋理 (Depth Texture) 及 法線紋理 (Normal Texture)</h3><ul>
+<li>深度紋理：<ul>
+<li><a href="https://docs.unity3d.com/Manual/SL-CameraDepthTexture.html" target="_blank" rel="noopener">https://docs.unity3d.com/Manual/SL-CameraDepthTexture.html</a></li>
+<li>指攝影機在 NDC 空間中所取得的一張深度資訊。</li>
+<li>在 Deferred Rendering  中，會與法線紋理儲存在 G-buffer 中。</li>
+<li>在 Forward Rendering 可以利用 camera.deepTextureMode 設定，再由特定名稱的 shader 參數取得。</li>
+</ul>
+</li>
+<li>深度紋理的採樣：<ul>
+<li>SAMPLE_DEPTH_TEXTURE (_CameraDepthTexture, i.uv) 進行採樣，i.uv 是目前像素的 uv 座標。</li>
+<li>SAMPLE_DEPTH_TEXTURE_PROJ (_CameraDepthTexture, UNITY_PROJ_COORD (i.scrPos)) 進行採樣，i.scrPos 是來自 ComputeScreenPos() 計算並插值後得到的螢幕座標。</li>
+<li>採樣結果經過 LinearEyeDepth 或 Linear01Depth 取得視角空間下的線性深度。</li>
+</ul>
+</li>
+<li>法線紋理：<ul>
+<li>存取情況與深度紋理基本類似，如果取得一張 <strong>深度法線紋理</strong>，則深度存於 R、G 通道，法線存於 B、A 通道。</li>
+<li>適當調整攝影機位置，可以提高兩項紋理的精密度。</li>
+</ul>
+</li>
+<li>深度法線紋理的採樣：<ul>
+<li>tex2D (_CameraDepthNormalsTexture, i.uv) 直接採樣。</li>
+<li>DecodeDepthNormal (float4 data, out float depth, out float3, normal) 內建方法可以解析採樣內容。</li>
+</ul>
+</li>
+<li>運動模糊特效 (方法二)：<ul>
+<li>利用深度紋理計算像素的移動速度。</li>
+<li>為了從 view space 回推 world space 座標，需要在腳本中先計算 <strong>視角*投影</strong> 的 <strong>矩陣及反矩陣</strong>，Camera.woldToCameraMatrix、Camera.projectionMatrix 是可以利用的 Unity API。</li>
+<li>利用腳本傳遞過來的矩陣，以 <code>currebtPos = (uv.xy * 2 - 1, depth * 2 - 1, 1)</code> 來計算 <strong>當前禎 </strong>與<strong>上一禎 </strong>的 NDC 座標，進而取得像素的移動速度，進行對應的模糊處理。</li>
+<li>此方法是適用於靜止物體，只考慮攝影機的效果。</li>
+</ul>
+</li>
+<li>Fog 特效<ul>
+<li>介紹了另一個重建世界座標的方法：攝影機座標 + 線性深度 * 攝影機對進剪裁平面的射線</li>
+<li><code>float4 worldPos = _WorldSpaceCameraPos + linearDepth * interpolatedRay</code></li>
+<li>依照世界座標的高 (worldPos.y) 決定物的繪製。</li>
+</ul>
+</li>
+<li>邊緣檢測<ul>
+<li>使用 Roberts kernel 對 深度紋理 及 法線紋理 進行處理，只要有一者達到閥值便繪製邊線。</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十四章：特殊風格渲染"><a href="#第十四章：特殊風格渲染" class="headerlink" title="第十四章：特殊風格渲染"></a>第十四章：特殊風格渲染</h3><ul>
+<li>卡通風格渲染：區塊化的漸變貼圖 + 邊緣描繪 + 特殊的高光區塊處理</li>
+<li>素描風格渲染：<ul>
+<li>需要多張 Tonal art map</li>
+<li>將漫反射的數值分區規劃成數個整數，分別代表要留白或使用的貼圖編號</li>
+</ul>
+</li>
+<li>本章提到的 shader 方法<ul>
+<li>step (threshhold, value) 當 threshhold &lt; value 時回傳 1，否則回傳 0</li>
+<li>smoothstep (-w, w, value - threshhold)，當地三個參數位於 (-w, w) 區間時，回傳 (0, 1) 之間的一個小數，否則跟 step 運作相同</li>
+<li>fwidth (x)</li>
+</ul>
+</li>
+</ul>
+<h3 id="第十五章：噪聲"><a href="#第十五章：噪聲" class="headerlink" title="第十五章：噪聲"></a>第十五章：噪聲</h3><ul>
+<li>噪聲紋理 (noise map)：一張有著隨機明暗分布的灰階貼圖</li>
+<li>噪聲紋理生成演算法：<ul>
+<li>Perlin：<a href="https://en.wikipedia.org/wiki/Perlin_noise" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Perlin_noise</a></li>
+<li>Worley：<a href="https://en.wikipedia.org/wiki/Worley_noise" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Worley_noise</a></li>
+</ul>
+</li>
+<li>消融特效：<ul>
+<li>噪聲紋理 + 透明測試</li>
+<li>當噪聲紋理採樣結果大於一個閥值，則剔除像素</li>
+<li>要特別處理 shadow caster</li>
+</ul>
+</li>
+<li>水波特效：<ul>
+<li>透過噪聲紋理來生成法線貼圖，需啟用 create from grayscale</li>
+<li>利用 _Time 變數與設定的 float2 speed 變數進行 uv 平移的動畫</li>
+<li>同樣透過 cubemap 實現反射與折射所需的採樣</li>
+</ul>
+</li>
+<li>Fog 特效：<ul>
+<li>利用噪聲紋理與 FogDensity 做相乘，來製造雲霧的隨機分佈</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1029,6 +1319,571 @@
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/some-probable-methods-to-prevent-unity-lagging/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/zh-tw/some-probable-methods-to-prevent-unity-lagging/" itemprop="url">解決 Unity 的遊戲停頓或 lag 的可能方案</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-04-10T01:04:04+08:00">2017-04-10</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/some-probable-methods-to-prevent-unity-lagging/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/some-probable-methods-to-prevent-unity-lagging/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>Unity 在手機或掌機等效能有限的平台上，如果沒有進行優化，當遊戲複雜到一定的程度就無法保證幀數可以穩定，開始出現各種卡頓，影響玩家體驗。 一般出現卡頓，都可以依照原因對症下藥、進行優化，盡量增加玩家的優良體驗，以及減少對設備的負擔。因為在社群上參與了些討論，就想將 Coroutine 跟非同步這兩個在 Unity 中常用的運算優化手段做個紀錄。 **這篇文章是單純的想法心得與資料閱讀筆記，沒有舉出實作的驗證。</p>
+<h3 id="遊戲可能的卡頓原因"><a href="#遊戲可能的卡頓原因" class="headerlink" title="遊戲可能的卡頓原因"></a>遊戲可能的卡頓原因</h3><p>遊戲會卡頓的原因百百種，基本上開啟 profiler 分析原因之後再進行優化才能精準的解決問題。不過在卡頓出現之前、尚在開發階段時，便就預期可能造成效能問題的部分，提早進行處理則再好不過了。 其中一種造成卡頓的原因，是 MonoBehaviour 無法在一幀的時間之內完成運算工作，導致幀與幀之間的時間拉長、FPS 下降，其中常見的細部原因又可以分成：</p>
+<ul>
+<li>過多的邏輯運算在 Update() 之中，導致 CPU 花了太多時間，才將流程交棒給畫面更新。</li>
+<li>從儲存設備取用資料花上過多時間，導致邏輯運算浪費許多時間在等待資源。如場景切換、Prefab 讀取。</li>
+<li>某個邏輯運算的步驟需要其他流程先完成，所以花了許多時間在等待。如等待網路回應、接收伺服器資料。</li>
+<li>CPU 跟記憶體 IO 被大量其他運算占用，導致 MonoBehaviour 暫時停擺。如同時大量的 GC 產生。</li>
+<li>其他。</li>
+</ul>
+<p>上面提到的前三個原因，在開發階段較容易察覺，提早進行卡頓的預防；第四個或者其他未知的原因，則可能到了開發後期才會逐漸凸顯。</p>
+<h3 id="針對過多邏輯運算或等待的可能解決方法"><a href="#針對過多邏輯運算或等待的可能解決方法" class="headerlink" title="針對過多邏輯運算或等待的可能解決方法"></a>針對過多邏輯運算或等待的可能解決方法</h3><p>有一定的 Unity 開發經驗後，會發現某些特定的動作特別容易造成卡頓。則可以使用各種方法，預防與降低卡頓出現的可能，其中常常使用的便是 <strong>協程(Coroutine)</strong> 以及 <strong>非同步設計(Asynchronous Programming)</strong>。</p>
+<h3 id="協程-Coroutine"><a href="#協程-Coroutine" class="headerlink" title="協程 (Coroutine)"></a>協程 (Coroutine)</h3><p>首先，Coroutine 不是多執行緒的一種，所有的運算都還是在主執行緒 (main thread) 中進行，所以並不會降低主執行緒的負擔。Coroutine 的效果是將本來在一幀 (frame，一個 Update) 之間的工作，分散到數個 Update 之中去執行，避開畫面因為等待而卡頓的情形。 在 Unity 之中的 Coroutine 是依附在 MonoBehaviour  之下的，Unity 會在每一次的 Update 流程中去執行 Coroutine 的工作，這點可以在 Unity Script Lifecycle Flowchart 中看到：</p>
+<ul>
+<li>Execution Order of Event Functions - <a href="https://docs.unity3d.com/Manual/ExecutionOrder.html" target="_blank" rel="noopener">https://docs.unity3d.com/Manual/ExecutionOrder.html</a></li>
+</ul>
+<p>不過正因為 Coroutine 依賴著啟用它的 MonoBehaviour，所以當所掛載的物件因為特定原因消失，或者 Component 被關閉或銷毀，都會使 Coroutine 的工作終止甚至遺失。 必要的時候，可以建立一個 DontDestroy GameObject 專門執行 Coroutine，或者使用套件來進行 Coroutine 的派遣：</p>
+<ul>
+<li>More Effective Coroutines - <a href="https://www.assetstore.unity3d.com/en/#!/content/54975" target="_blank" rel="noopener">https://www.assetstore.unity3d.com/en/#!/content/54975</a></li>
+</ul>
+<h3 id="Coroutine-的各種-yield"><a href="#Coroutine-的各種-yield" class="headerlink" title="Coroutine 的各種 yield"></a>Coroutine 的各種 yield</h3><p>Coroutine 的設計中會使用到各種 yield，其中功能也不盡相同：</p>
+<ul>
+<li><code>yield return null</code> 下一幀再繼續後續工作。</li>
+<li><code>yield return 0</code> 也是下一幀再繼續，不過有額外的 boxing，所以 <strong>不要用</strong>。</li>
+<li><code>yield return new WaitForSeconds(float seconds)</code> 從下一幀開始，當經過時間 <strong>大於等於</strong> 呼叫的秒數後再繼續工作，由於是依賴於 Update 的時間，所以時間的精確度無法信賴。</li>
+<li><code>yield return new WaitForEndOfFrame()</code> 可以在 Script Lifecycle Flowchart 看到，其他 yield 都是在 Update() 及 LateUpdate() 之間執行，只有這個是在畫面更新後執行。</li>
+</ul>
+<h3 id="非同步設計-Asynchronous-Programming"><a href="#非同步設計-Asynchronous-Programming" class="headerlink" title="非同步設計 (Asynchronous Programming)"></a>非同步設計 (Asynchronous Programming)</h3><p>非同步設計是真正的 <strong>多執行緒的一種</strong>。不同於一般多執行續要手動管理執行續的開始與結束，非同步設計是反覆利用 .NET 底層準備好的 Thread Pool 進行工作，因此不需要手動管理執行緒資源的釋放，使用上更為方便彈性。 不過 Unity 對於非同步有限制存在，<strong>有些 API 的動作必須在 主執行緒 (main thread) 才能使用</strong>，否則會出現 “xxx can only be called from the Main Thread” 的錯誤，在這其中有一些 Thread-safe 的議題存在。例如你無法在非同步的結果回傳中執行 <code>GameObject.Find()</code>。 Unity 提供了許多內建的非同步方法可以直接使用：</p>
+<ul>
+<li>SceneManager.LoadSceneAsync</li>
+<li>Resources.LoadAsync</li>
+<li>AssetBundle.LoadFromFileAsync</li>
+<li>其他更多，請自行挖掘官方文件</li>
+</ul>
+<p>會有這些內建的非同步方法存在，無非就是這些動作很容易造成遊戲的卡頓甚至停頓，其中大部分是與儲存設備中的資源讀取有關。 而 .NET 中所提供的非同步方法，我只有使用過 TCPClient/Socket 相關的 BeginConnect、BeginReceive、BeginSend 等網路連線相關的方法。 如果加上自行設計非同步方法來使用，更可以將一些需要大量的遊戲邏輯從主執行緒中抽離，對於遊戲的效能優化是另一種選擇。 ** 非同步方法中 Async 與 Begin 關鍵字不只是名稱上不同，更是因為採用了不同的非同步設計模型，這部分我也尚未完全理解透徹，待來日再跟大家分享。</p>
+<h3 id="兩個方法的一些小總結"><a href="#兩個方法的一些小總結" class="headerlink" title="兩個方法的一些小總結"></a>兩個方法的一些小總結</h3><p>Coroutine 是相當簡單易用的手段，用於分散每個 Update 的負擔，但畢竟負擔還是在主執行續之上，因此不是大量使用就會使效能變好。不過也因為依舊在主執行續上執行工作，所以使用 Unity API 上沒有太大的限制。 Coroutine 有時也可以利用於遊戲邏輯上，讓一些橫跨於數個 Update() 的邏輯 (如計時) 更容易被設計出來。 非同步設計是將工作移出主執行緒來運作，對於遊戲的流暢有相當大的幫助，不過使用上的複雜度較高，也無法使用全部的 Unity API，因此不是任何時候皆適用。</p>
+<h3 id="最後"><a href="#最後" class="headerlink" title="最後"></a>最後</h3><p>並不是所有的卡頓都可以透過這兩個方法解決，甚至不適當的使用這些方法也會製造卡頓的出現。很多時候遊戲卡頓的原因都是因應每個專案的不同而有不一樣的對應手段，這兩個方法只是在開發初期可以簡單避開許多明顯的效能問題。 通過分析與解明遊戲運作的各個階段與機制，找出最適當的實作方式，才能榨乾硬體設備的效能，做出華麗且體驗流暢的遊戲設計！(雖然手機會因此很燙) 遊戲優化是個深入且有趣的議題，還望這篇文章能帶給大家幫助。 (其實也是擔心查了一堆資料，未來的自己會遺忘細節而做的筆記)</p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/what-benefits-i-get-after-studying-design-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/zh-tw/what-benefits-i-get-after-studying-design-pattern/" itemprop="url">學習設計模式的感想 – what benefits I get after studying design pattern</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2016-11-14T01:41:10+08:00">2016-11-14</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/what-benefits-i-get-after-studying-design-pattern/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/what-benefits-i-get-after-studying-design-pattern/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>接觸設計模式的時間說長不長說短不短，但自從接觸了之後，才發現不管網路或者開發者社群，時不時都會有人提出<strong>如何學習設計模式</strong>的疑問。對於只是聽聞<strong>設計模式</strong>這個名稱，並被灌輸這個很重要，必須去學的想法的人，設計模式可能就像神祕學一般難易入門。 其實設計模式沒有這麼神奇與強大，只要累積一定的程式開發經驗之後，設計模式的想法基礎自然會逐漸被你聽聞或者吸收 (頓悟)。所謂的學習設計模式，只不過是強行頓悟的一個過程，像是打坐或冥想一般。 這篇文章是我接觸設計模式後的想法彙整，且提到了些關於學習過程的想法，希望可以幫到想接觸的人。  </p>
+<h3 id="何謂設計模式"><a href="#何謂設計模式" class="headerlink" title="何謂設計模式"></a>何謂設計模式</h3><p>設計模式，一開始是為了彌補物件導向程式設計的一些缺點所被提出的，關注在如何規劃整套程式系統的架構。在我的想法中，它奠基於<strong>物件導向程式設計</strong>以及針對物件導向被提出來的許多<strong>設計原則</strong>，由眾人的經驗歸納出來的一套方案，用來處理一個或數個常見的需求。 直接用名稱來說文解字：</p>
+<ul>
+<li>設計 - 形容一個具有良好特性的解決方案，使得開發出來的程式碼容易被沿用與維護等。如何形成一個良好的程式設計架構，可以參考許多被提出來的設計原則，如<code>SOILD</code>。</li>
+<li>模式 - 被歸納出來的方案，可以被重複應用在許多場合，解決相似的需求。</li>
+</ul>
+<p>曾經被提出來的設計模式可說是過去開發者的經驗，但是每個開發者都可以歸納整理出自己的設計模式，作為提升自己長期程式開發的一大利器。 </p>
+<blockquote>
+<blockquote>
+<a href="/zh-tw/some-principle-of-object-oriented-design/" title="物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design">物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design</a> 
+</blockquote>
+</blockquote>
+<h3 id="為何要學設計模式"><a href="#為何要學設計模式" class="headerlink" title="為何要學設計模式"></a>為何要學設計模式</h3><p>一般提到<strong>學習設計模式</strong>，不外乎是指一開始由 “Gang of Four” 四人幫所提出來的 23 種設計模式，或者以這為基礎所衍伸出來的不同書籍。 學習設計模式有幾個優勢：</p>
+<ul>
+<li>物件導向程式設計有著物件化、讓物件之間的獨立的特色，因此透過良好的設計，被設計出來的物件可以被重複使用在數個專案之中，大幅提升開發效率。</li>
+<li>對開發者個人而言，良好的設計代表<strong>容易增減功能</strong>、<strong>容易維護</strong>、<strong>容易重複使用</strong>程式碼。</li>
+<li>對團隊合作而言，良好的設計可以明確切割開發工作，更容易溝通與分工。物件的專一性，也間接降低開發者互相干擾的可能性。</li>
+</ul>
+<p>但是學習設計模式的初期，或者過度崇拜已知的設計模式，可能會出現幾個不良情況：</p>
+<ul>
+<li>過度依賴設計模式，可能造成<strong>過度設計</strong>，準備了過於龐大但不被充分使用的系統設計。</li>
+<li>選擇了不適合的設計模式，卻因為相信設計模式的好處而硬是吃下相關的設計開發成本。</li>
+</ul>
+<p>學習設計模式，最原始的目的應該是吸收前人的經驗，認識更多使用與設計物件的方法，以及如何更好的依循設計原則來思考，提升自己開發成品的可維護性、可複用性。 設計模式不是規範，可以被捨棄也可以被創新，依照使用的程式語言與引擎環境不同，能夠具有良好特性且符合需求的設計都可被沿用與推廣。  </p>
+<h3 id="如何學習設計模式"><a href="#如何學習設計模式" class="headerlink" title="如何學習設計模式"></a>如何學習設計模式</h3><p>雖然接觸設計模式的時間不長，但我覺得學習設計模式比起熟捻各種模式，更重要的應該是它背後的想法與各個設計原則的來由。 如果要學習設計模式，我認為有幾個環節：</p>
+<ul>
+<li>接觸設計模式的管道主要應該就看書、閱讀資料，但不需要自我要求去閱讀 Gang of Four 的原著或者厚厚的外文書。</li>
+<li><strong>自行實作專案的經驗很重要</strong>。如果接觸過設計模式之前有試著開發出成品，學習設計模式時便可以檢視過去自己使用物件導向的想法有何不妥；接觸過設計模式後更要繼續嘗試開發，不只可以增加理解，或許也有機會體驗過度設計，在未來避免重搗覆轍。</li>
+<li>再看幾本書，或多多與人討論，抑或上網尋找他人經驗，反覆體會同一個模式在不同人手中出現的變化。</li>
+<li>定期檢視自己的專案，不斷更新想法。</li>
+</ul>
+<h4 id="先學物件導向-vs-先學設計模式"><a href="#先學物件導向-vs-先學設計模式" class="headerlink" title="先學物件導向 vs 先學設計模式"></a>先學物件導向 vs 先學設計模式</h4><ul>
+<li><strong>物件導向</strong>與<strong>設計模式</strong>有上下、依附的關係，但沒有先學後學的差別，兩者是需要反覆理解和相互進步的題組。你可以先學習物件導向，嘗試物件導向開發後，再接觸設計模式來理解自己的做法之優劣；也可以從設計模式開始，理解物件導向的優勢以及各種設計方案，再一一理解每個模式中物件導向的原理。</li>
+<li>在我的想法中，頂多是在學習設計模式前，對幾個物件導向的名詞與關鍵字有所理解，會更加容易去閱讀。</li>
+</ul>
+<h4 id="學習物件可能需要的基礎-關於物件導向"><a href="#學習物件可能需要的基礎-關於物件導向" class="headerlink" title="學習物件可能需要的基礎 (關於物件導向)"></a>學習物件可能需要的基礎 (關於物件導向)</h4><ul>
+<li>物件的概念</li>
+<li>繼承關係，private、protected、public 的差別</li>
+<li>定義與實現的差別，關於 abstract、sealed、virtual、override 這幾個關鍵字</li>
+<li>成員變數與方法，static 與 non-static 的差別</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/some-principle-of-object-oriented-design/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/zh-tw/some-principle-of-object-oriented-design/" itemprop="url">物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2016-04-23T22:52:41+08:00">2016-04-23</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/some-principle-of-object-oriented-design/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/some-principle-of-object-oriented-design/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>隨著參與大型專案的開發次數越來越多，對維護與穩定的要求越來越高，我不斷地感受到，改變一下程式的設計方式或許不影響程式功能，但是在未來修改或擴增功能時卻會變得更加容易。甚至好的設計之下，可以將部分的程式碼作點修改，就能適用於不同的專案，大大地節約開發所需要耗費的時間跟心力。</p>
+<p>針對於好的設計，最近藉由一本書在學習設計模式，書中有一小節簡短帶過了一些關於進行物件導向開發時，可以讓開發或者維護更容易的一些設計原則。</p>
+<p>雖然只是短短一小節，但是就讓我體會到站在巨人肩膀上的感覺。過去為了讓自己的程式有著上述容易維護與可重複使用的優點，往往會花上許多時間去反覆思考，但原來早就有前人歸納出幾個原則可以作為設計的大方向了，我只是再次考慮了相同的問題而已。</p>
+<p>這些原則不能說是絕對的，但是如果在這些原則所指名的方向上思考，可以確實的讓人少走上許多冤枉路。上網特別研究了在書中提到的幾項設計原則之後，留下了此篇紀錄。(六項原則：SRP、OCP、LSP、ISP、DIP、LKP)  </p>
+<h3 id="SOLID-SRP-OCP-LSP-ISP-DIP"><a href="#SOLID-SRP-OCP-LSP-ISP-DIP" class="headerlink" title="SOLID (SRP, OCP, LSP, ISP, DIP)"></a>SOLID (SRP, OCP, LSP, ISP, DIP)</h3><p>首先是由 Robert Cecil Martin 在 Agile software development (2002) 一書中提到的 SOLID 五個設計原則：</p>
+<ul>
+<li>Single responsibility principle (SRP)</li>
+<li>Open/closed principle (OCP)</li>
+<li>Liskov substitution principle (LSP)</li>
+<li>Interface segregation principle (ISP)</li>
+<li>Dependency inversion principle (DIP)</li>
+</ul>
+<h4 id="單一責任原則-SRP"><a href="#單一責任原則-SRP" class="headerlink" title="單一責任原則 SRP"></a>單一責任原則 SRP</h4><p>一個類別 (class) 只負責一項事物，不在一個類別之中實作過多的功能。</p>
+<h4 id="開放封閉原則-OCP"><a href="#開放封閉原則-OCP" class="headerlink" title="開放封閉原則 OCP"></a>開放封閉原則 OCP</h4><p>一個類別應該兼具開放性與封閉性，開放性指一個類別應該可以因應需求而被擴展，封閉性則指一個完成的類別不應該為了需求而被修飾。</p>
+<p>看起相互矛盾的兩個要求，如何被同時實現呢？透過將類別拆分成抽象類別及實作類別，而實作類別會繼承於抽象類別，便可以達成要求。</p>
+<p>當類別的功能被使用時，皆透過抽象類別來呼叫，抽象類別可以被固定下來達成封閉性；當需求改變時，只要重新實作一個作為子類別的實作類別，便可以在保留介面(抽象類別的函式不變)的情況下修改功能，擁有開放性。</p>
+<h4 id="里氏替代原則-LSP"><a href="#里氏替代原則-LSP" class="headerlink" title="里氏替代原則 LSP"></a>里氏替代原則 LSP</h4><p>由 Barbara Liskov 在 1988 年提出的：”Subtypes must be substitutable for their base types.”</p>
+<p>翻譯之後的意思是指，子類別必須能夠替代父類別。詳細一點來說，便是指一個子類別的實作，應該包括父類別的所有介面(函式)，使子類別被使用時，可以完全取代父類別的定位，不會有短少功能的情況。用C#的角度來解釋，就是父類別的所有 public function  應該都要是 virtual 或是 abstract 的。</p>
+<h4 id="介面分離原則-ISP"><a href="#介面分離原則-ISP" class="headerlink" title="介面分離原則 ISP"></a>介面分離原則 ISP</h4><p>與其設計一個結合所有功能的介面。不如設計好幾個因應需求的介面，讓使用者可以在擁有最少介面的情況下操作功能。簡化介面與切分功能便是這個原則的表現。</p>
+<h4 id="依賴性反轉原則-DIP"><a href="#依賴性反轉原則-DIP" class="headerlink" title="依賴性反轉原則 DIP"></a>依賴性反轉原則 DIP</h4><p>這個原則包含兩點：</p>
+<ol>
+<li>高階模組不應該依賴低階模組，兩者應依賴於抽象類別。</li>
+<li>抽象類別不應該依賴實作類別，而實作類別則應該依賴抽象類別。</li>
+</ol>
+<p>所謂的不依賴，簡單來說就是，低階模組被替換或修改後，高階模組不應該被迫修改；反過來說，如果抽象類別被修改了，則實作類別被迫修改則是合理的。而如何區分高階跟低階？通常低階模組會是高階模組的一部份。</p>
+<h3 id="最少知識原則-Least-knowledge-principle-LKP"><a href="#最少知識原則-Least-knowledge-principle-LKP" class="headerlink" title="最少知識原則 Least knowledge principle (LKP)"></a>最少知識原則 Least knowledge principle (LKP)</h3><p>在1987年被提出，可用三點來概括：</p>
+<ol>
+<li>每個單位與對其他單位有最低限度的了解，關於跟自己有關的那部分。</li>
+<li>每個單位只能跟朋友溝通，而非陌生人。</li>
+<li>上述的朋友，只包括直接的朋友。</li>
+</ol>
+<p>這三句話講得文謅謅的，相當哲學。這個原則書上的解釋也不多，我的理解是：在實現類別的功能時，盡可能不要去依賴其他類別的成員變數，需要甚麼資訊都盡量自行取得，降低每個類別之間的耦合度，免得維護時牽一髮則動全身。  </p>
+<h3 id="Inheritance-IS-A-vs-Composition-HAS-A"><a href="#Inheritance-IS-A-vs-Composition-HAS-A" class="headerlink" title="Inheritance (IS-A) vs. Composition (HAS-A)"></a>Inheritance (IS-A) vs. Composition (HAS-A)</h3><p><strong>多用組合少用繼承。</strong>這點被沒稱之為原則，但是許多關於物件導向程式設計的討論都會提到這點，可以說是大部分的人都認同的經驗談。 物件導向的繼承很方便，但是良好的設計不應該過度依賴繼承，繼承的層數應該不要超過三層，除了效能考量，也能避免在追蹤 bug 時，需要大量的時間來抽絲剝繭。甚至其實有些語言根本不支援多重繼承。透過用組合代替繼承，可以把一些沒必要沿用的功能保留下來，減少新類別所擁有的溝通接口，維護上也不會被迫整頓一些用不到的函式。   相關參考</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/SOLID_(object-oriented_design" target="_blank" rel="noopener">SOLID</a>) <a href="https://en.wikipedia.org/wiki/SOLID_(object-oriented_design" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/SOLID_(object-oriented_design</a>)</li>
+<li><a href="https://en.wikipedia.org/wiki/Law_of_Demeter" target="_blank" rel="noopener">最少知識原則</a> <a href="https://en.wikipedia.org/wiki/Law_of_Demeter" target="_blank" rel="noopener">https://en.wikipedia.org/wiki/Law_of_Demeter</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
   </section>
 
   
@@ -1076,7 +1931,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">23</span>
+                    <span class="site-state-item-count">27</span>
                     <span class="site-state-item-name">文章</span>
                   </a>
                 </div>
@@ -1087,7 +1942,7 @@
                 
                 <div class="site-state-item site-state-categories">
                   <a href="/categories/index.html">
-                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-count">10</span>
                     <span class="site-state-item-name">分類</span>
                   </a>
                 </div>

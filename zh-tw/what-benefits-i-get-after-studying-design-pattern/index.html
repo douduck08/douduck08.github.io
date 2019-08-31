@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.1" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avator.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avator32x32.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avator16x16.png?v=6.0.1">
+
+
+  <link rel="mask-icon" href="/images/avator32x32.png?v=6.0.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="design-pattern,">
+
+
+<meta name="description" content="接觸設計模式的時間說長不長說短不短，但自從接觸了之後，才發現不管網路或者開發者社群，時不時都會有人提出如何學習設計模式的疑問。對於只是聽聞設計模式這個名稱，並被灌輸這個很重要，必須去學的想法的人，設計模式可能就像神祕學一般難易入門。 其實設計模式沒有這麼神奇與強大，只要累積一定的程式開發經驗之後，設計模式的想法基礎自然會逐漸被你聽聞或者吸收 (頓悟)。所謂的學習設計模式，只不過是強行頓悟的一個過程">
+<meta name="keywords" content="design-pattern">
+<meta property="og:type" content="article">
+<meta property="og:title" content="學習設計模式的感想 – what benefits I get after studying design pattern">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/what-benefits-i-get-after-studying-design-pattern/index.html">
+<meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="接觸設計模式的時間說長不長說短不短，但自從接觸了之後，才發現不管網路或者開發者社群，時不時都會有人提出如何學習設計模式的疑問。對於只是聽聞設計模式這個名稱，並被灌輸這個很重要，必須去學的想法的人，設計模式可能就像神祕學一般難易入門。 其實設計模式沒有這麼神奇與強大，只要累積一定的程式開發經驗之後，設計模式的想法基礎自然會逐漸被你聽聞或者吸收 (頓悟)。所謂的學習設計模式，只不過是強行頓悟的一個過程">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:updated_time" content="2019-08-31T16:06:13.044Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="學習設計模式的感想 – what benefits I get after studying design pattern">
+<meta name="twitter:description" content="接觸設計模式的時間說長不長說短不短，但自從接觸了之後，才發現不管網路或者開發者社群，時不時都會有人提出如何學習設計模式的疑問。對於只是聽聞設計模式這個名稱，並被灌輸這個很重要，必須去學的想法的人，設計模式可能就像神祕學一般難易入門。 其實設計模式沒有這麼神奇與強大，只要累積一定的程式開發經驗之後，設計模式的想法基礎自然會逐漸被你聽聞或者吸收 (頓悟)。所謂的學習設計模式，只不過是強行頓悟的一個過程">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.douduck08.com/zh-tw/what-benefits-i-get-after-studying-design-pattern/">
+
+
+  <title>學習設計模式的感想 – what benefits I get after studying design pattern | 鴨仔開發日記</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-73254781-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">鴨仔開發日記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一個開發者的點點滴滴 – ABOUT A GAME DEVELOPER</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首頁</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>彙整</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-series-of-articles">
+          <a href="/series-of-articles/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>系列文章</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book-review">
+          <a href="/book-review/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>閱讀筆記</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>關於</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/what-benefits-i-get-after-studying-design-pattern/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">學習設計模式的感想 – what benefits I get after studying design pattern</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2016-11-14T01:41:10+08:00">2016-11-14</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/what-benefits-i-get-after-studying-design-pattern/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/what-benefits-i-get-after-studying-design-pattern/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>接觸設計模式的時間說長不長說短不短，但自從接觸了之後，才發現不管網路或者開發者社群，時不時都會有人提出<strong>如何學習設計模式</strong>的疑問。對於只是聽聞<strong>設計模式</strong>這個名稱，並被灌輸這個很重要，必須去學的想法的人，設計模式可能就像神祕學一般難易入門。 其實設計模式沒有這麼神奇與強大，只要累積一定的程式開發經驗之後，設計模式的想法基礎自然會逐漸被你聽聞或者吸收 (頓悟)。所謂的學習設計模式，只不過是強行頓悟的一個過程，像是打坐或冥想一般。 這篇文章是我接觸設計模式後的想法彙整，且提到了些關於學習過程的想法，希望可以幫到想接觸的人。  </p>
+<h3 id="何謂設計模式"><a href="#何謂設計模式" class="headerlink" title="何謂設計模式"></a>何謂設計模式</h3><p>設計模式，一開始是為了彌補物件導向程式設計的一些缺點所被提出的，關注在如何規劃整套程式系統的架構。在我的想法中，它奠基於<strong>物件導向程式設計</strong>以及針對物件導向被提出來的許多<strong>設計原則</strong>，由眾人的經驗歸納出來的一套方案，用來處理一個或數個常見的需求。 直接用名稱來說文解字：</p>
+<ul>
+<li>設計 - 形容一個具有良好特性的解決方案，使得開發出來的程式碼容易被沿用與維護等。如何形成一個良好的程式設計架構，可以參考許多被提出來的設計原則，如<code>SOILD</code>。</li>
+<li>模式 - 被歸納出來的方案，可以被重複應用在許多場合，解決相似的需求。</li>
+</ul>
+<p>曾經被提出來的設計模式可說是過去開發者的經驗，但是每個開發者都可以歸納整理出自己的設計模式，作為提升自己長期程式開發的一大利器。 </p>
+<blockquote>
+<blockquote>
+<a href="/zh-tw/some-principle-of-object-oriented-design/" title="物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design">物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design</a> 
+</blockquote>
+</blockquote>
+<h3 id="為何要學設計模式"><a href="#為何要學設計模式" class="headerlink" title="為何要學設計模式"></a>為何要學設計模式</h3><p>一般提到<strong>學習設計模式</strong>，不外乎是指一開始由 “Gang of Four” 四人幫所提出來的 23 種設計模式，或者以這為基礎所衍伸出來的不同書籍。 學習設計模式有幾個優勢：</p>
+<ul>
+<li>物件導向程式設計有著物件化、讓物件之間的獨立的特色，因此透過良好的設計，被設計出來的物件可以被重複使用在數個專案之中，大幅提升開發效率。</li>
+<li>對開發者個人而言，良好的設計代表<strong>容易增減功能</strong>、<strong>容易維護</strong>、<strong>容易重複使用</strong>程式碼。</li>
+<li>對團隊合作而言，良好的設計可以明確切割開發工作，更容易溝通與分工。物件的專一性，也間接降低開發者互相干擾的可能性。</li>
+</ul>
+<p>但是學習設計模式的初期，或者過度崇拜已知的設計模式，可能會出現幾個不良情況：</p>
+<ul>
+<li>過度依賴設計模式，可能造成<strong>過度設計</strong>，準備了過於龐大但不被充分使用的系統設計。</li>
+<li>選擇了不適合的設計模式，卻因為相信設計模式的好處而硬是吃下相關的設計開發成本。</li>
+</ul>
+<p>學習設計模式，最原始的目的應該是吸收前人的經驗，認識更多使用與設計物件的方法，以及如何更好的依循設計原則來思考，提升自己開發成品的可維護性、可複用性。 設計模式不是規範，可以被捨棄也可以被創新，依照使用的程式語言與引擎環境不同，能夠具有良好特性且符合需求的設計都可被沿用與推廣。  </p>
+<h3 id="如何學習設計模式"><a href="#如何學習設計模式" class="headerlink" title="如何學習設計模式"></a>如何學習設計模式</h3><p>雖然接觸設計模式的時間不長，但我覺得學習設計模式比起熟捻各種模式，更重要的應該是它背後的想法與各個設計原則的來由。 如果要學習設計模式，我認為有幾個環節：</p>
+<ul>
+<li>接觸設計模式的管道主要應該就看書、閱讀資料，但不需要自我要求去閱讀 Gang of Four 的原著或者厚厚的外文書。</li>
+<li><strong>自行實作專案的經驗很重要</strong>。如果接觸過設計模式之前有試著開發出成品，學習設計模式時便可以檢視過去自己使用物件導向的想法有何不妥；接觸過設計模式後更要繼續嘗試開發，不只可以增加理解，或許也有機會體驗過度設計，在未來避免重搗覆轍。</li>
+<li>再看幾本書，或多多與人討論，抑或上網尋找他人經驗，反覆體會同一個模式在不同人手中出現的變化。</li>
+<li>定期檢視自己的專案，不斷更新想法。</li>
+</ul>
+<h4 id="先學物件導向-vs-先學設計模式"><a href="#先學物件導向-vs-先學設計模式" class="headerlink" title="先學物件導向 vs 先學設計模式"></a>先學物件導向 vs 先學設計模式</h4><ul>
+<li><strong>物件導向</strong>與<strong>設計模式</strong>有上下、依附的關係，但沒有先學後學的差別，兩者是需要反覆理解和相互進步的題組。你可以先學習物件導向，嘗試物件導向開發後，再接觸設計模式來理解自己的做法之優劣；也可以從設計模式開始，理解物件導向的優勢以及各種設計方案，再一一理解每個模式中物件導向的原理。</li>
+<li>在我的想法中，頂多是在學習設計模式前，對幾個物件導向的名詞與關鍵字有所理解，會更加容易去閱讀。</li>
+</ul>
+<h4 id="學習物件可能需要的基礎-關於物件導向"><a href="#學習物件可能需要的基礎-關於物件導向" class="headerlink" title="學習物件可能需要的基礎 (關於物件導向)"></a>學習物件可能需要的基礎 (關於物件導向)</h4><ul>
+<li>物件的概念</li>
+<li>繼承關係，private、protected、public 的差別</li>
+<li>定義與實現的差別，關於 abstract、sealed、virtual、override 這幾個關鍵字</li>
+<li>成員變數與方法，static 與 non-static 的差別</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author：</strong>
+    douduck08
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link：</strong>
+    <a href="http://www.douduck08.com/zh-tw/what-benefits-i-get-after-studying-design-pattern/" title="學習設計模式的感想 – what benefits I get after studying design pattern">http://www.douduck08.com/zh-tw/what-benefits-i-get-after-studying-design-pattern/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice： </strong>
+    All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> unless stating additionally.
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/design-pattern/" rel="tag"># design-pattern</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/zh-tw/some-principle-of-object-oriented-design/" rel="next" title="物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design">
+                <i class="fa fa-chevron-left"></i> 物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/zh-tw/some-probable-methods-to-prevent-unity-lagging/" rel="prev" title="解決 Unity 的遊戲停頓或 lag 的可能方案">
+                解決 Unity 的遊戲停頓或 lag 的可能方案 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">douduck08</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">文章</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">分類</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">標籤</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/douduck08" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.facebook.com/douduck08develop/" target="_blank" title="FB Page">
+                      
+                        <i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#何謂設計模式"><span class="nav-number">1.</span> <span class="nav-text">何謂設計模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#為何要學設計模式"><span class="nav-number">2.</span> <span class="nav-text">為何要學設計模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何學習設計模式"><span class="nav-number">3.</span> <span class="nav-text">如何學習設計模式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#先學物件導向-vs-先學設計模式"><span class="nav-number">3.1.</span> <span class="nav-text">先學物件導向 vs 先學設計模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#學習物件可能需要的基礎-關於物件導向"><span class="nav-number">3.2.</span> <span class="nav-text">學習物件可能需要的基礎 (關於物件導向)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.1"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://douduck-hexo-blog.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'http://www.douduck08.com/zh-tw/what-benefits-i-get-after-studying-design-pattern/';
+        this.page.identifier = 'zh-tw/what-benefits-i-get-after-studying-design-pattern/';
+        this.page.title = '學習設計模式的感想 – what benefits I get after studying design pattern';
+      };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://douduck-hexo-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

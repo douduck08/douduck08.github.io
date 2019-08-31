@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.1" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avator.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avator32x32.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avator16x16.png?v=6.0.1">
+
+
+  <link rel="mask-icon" href="/images/avator32x32.png?v=6.0.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="openGL,">
+
+
+<meta name="description" content="將 《Modern OpenGL C++ 3D Game Tutorial Series》這個 OpenGL 的線上課程完結了，比起預計所花的時間短了不少。 OpenGL 是個發展已久的 Graphics API，當遊戲光靠 CPU 已經無法負擔，需要透過 GPU 來 “硬體加速” 畫面處理的工作時，相對的溝通工作便可以用這類 API 來完成。 雖然還有其他 Graphics API，但我選擇了">
+<meta name="keywords" content="openGL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[學習心得] OpenGL 線上課程 - Review OpenGL Online Course">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/review-opengl-online-course/index.html">
+<meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="將 《Modern OpenGL C++ 3D Game Tutorial Series》這個 OpenGL 的線上課程完結了，比起預計所花的時間短了不少。 OpenGL 是個發展已久的 Graphics API，當遊戲光靠 CPU 已經無法負擔，需要透過 GPU 來 “硬體加速” 畫面處理的工作時，相對的溝通工作便可以用這類 API 來完成。 雖然還有其他 Graphics API，但我選擇了">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:updated_time" content="2019-08-31T15:58:19.872Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[學習心得] OpenGL 線上課程 - Review OpenGL Online Course">
+<meta name="twitter:description" content="將 《Modern OpenGL C++ 3D Game Tutorial Series》這個 OpenGL 的線上課程完結了，比起預計所花的時間短了不少。 OpenGL 是個發展已久的 Graphics API，當遊戲光靠 CPU 已經無法負擔，需要透過 GPU 來 “硬體加速” 畫面處理的工作時，相對的溝通工作便可以用這類 API 來完成。 雖然還有其他 Graphics API，但我選擇了">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.douduck08.com/zh-tw/review-opengl-online-course/">
+
+
+  <title>[學習心得] OpenGL 線上課程 - Review OpenGL Online Course | 鴨仔開發日記</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-73254781-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">鴨仔開發日記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一個開發者的點點滴滴 – ABOUT A GAME DEVELOPER</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首頁</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>彙整</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-series-of-articles">
+          <a href="/series-of-articles/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>系列文章</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book-review">
+          <a href="/book-review/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>閱讀筆記</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>關於</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-opengl-online-course/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[學習心得] OpenGL 線上課程 - Review OpenGL Online Course</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2017-09-22T00:20:11+08:00">2017-09-22</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/openGL/" itemprop="url" rel="index"><span itemprop="name">openGL</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/review-opengl-online-course/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/review-opengl-online-course/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>將 《<a href="https://www.udemy.com/opengl-tutorials/learn/v4/content" target="_blank" rel="noopener">Modern OpenGL C++ 3D Game Tutorial Series</a>》這個 OpenGL 的線上課程完結了，比起預計所花的時間短了不少。 OpenGL 是個發展已久的 Graphics API，當遊戲光靠 CPU 已經無法負擔，需要透過 GPU 來 “硬體加速” 畫面處理的工作時，相對的溝通工作便可以用這類 API 來完成。 雖然還有其他 Graphics API，但我選擇了 OpenGL 作為入門，並碰巧遇上了這門線上課程的優惠。完成了課程後，在這邊記下一些心得，讓其他想接觸 OpenGL 或這門線上課程的人作為參考。</p>
+<h3 id="課程內容"><a href="#課程內容" class="headerlink" title="課程內容"></a>課程內容</h3><p>一路下來這個課程可以學到：</p>
+<ul>
+<li>Windows 與 Mac OSX 上 OpenGL 的開發環境架設</li>
+<li>建立 shader program 到 GPU 上</li>
+<li>傳遞 mesh 資料至 GPU 並透過 shader 繪製到畫面上</li>
+<li>將圖片、貼圖載入到 GPU 的 TEXTURE Unit 中使用</li>
+<li>位移、旋轉相關變形的實作</li>
+<li>虛擬攝影機、動態取景的實作</li>
+<li>傳遞相關資料並使用 shader 渲染光照效果</li>
+<li>利用第三方 library 讀取 model 檔案至程式中繪製</li>
+<li>Skybox 簡單實作</li>
+</ul>
+<p>不過這個課程並不會詳細解說每個項目背後的原理，包括每個使用到的 OpenGL API 的細節功能也不會清楚的解釋，基本上就是把課程內容分別舉例子實作一次，並提供給大家原始碼做為參考。 上述的每個項目都是在 3D 繪圖、遊戲製作的一些基本需求，透過這個課程可以理解如何用 OpenGL 達成這些需求。 但是因為沒有描述原理，所以沒有 3D 繪圖的一些觀念時，會在講者編輯程式碼與解說時產生疑惑，變成知其然而不知其所以然的窘境，甚至鴨子聽雷的情況。</p>
+<h3 id="個人建議的先備知識"><a href="#個人建議的先備知識" class="headerlink" title="個人建議的先備知識"></a>個人建議的先備知識</h3><p>事前如果有 3D 繪圖的一些觀念，或者有細究過遊戲繪圖，上起這門課程會容易些：</p>
+<ul>
+<li>3D Model 資料的組成：mesh、vertex、triangle、normal、uv 貼圖等關鍵字的意義</li>
+<li>Render pipeline：應用階段、幾何階段等繪圖步驟之間會傳遞甚麼資料</li>
+<li>vertex shader 與 fragment shader 的功用與基本認識</li>
+</ul>
+<p>這門課是用 C++ 為使用語言，所以當然對 C++ 要有一定程度的了解，包括類別 (class)、指標 (pointer)、標頭檔 (header file) 如何在 C++ 中使用，而不是只有條件是跟迴圈的程度。 另外如果先擁有撰寫 shader 的基礎 (Unity shaderLab 等任何 shader 實作手段都行)，那基本上就沒問題了，否則最低限度至少要先知道 vertex shader 與 fragment shader 的意義。</p>
+<h3 id="其他感想"><a href="#其他感想" class="headerlink" title="其他感想"></a>其他感想</h3><p>就個人感覺來說，如果是要做為初學者的教學，這段線上課程所包含的內容有點貧乏。許多的原理跟 API 細節沒有解說，會在課程剛開始時感到疑惑，必須另外去找資料或文件確認 API 的功能。 但是因為網路上自學 OpenGL 的影片相當少見，就這點來說還是相當值得的。比起慢慢地閱讀文件或文章，自行做實驗來學習，實際操作的影片可以更好的引導進入狀況，配合自己在每個小節後查資料解惑，很快就能對 OpenGL 掌握到一定程度。 利用這門課當作敲門磚，我自覺算是很順利地進入 OpenGL 的世界，未來只要再補上更多原理細節即可。 可以來想想要做些甚麼作品來當作練習，檢查自己的理解了。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author：</strong>
+    douduck08
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link：</strong>
+    <a href="http://www.douduck08.com/zh-tw/review-opengl-online-course/" title="[學習心得] OpenGL 線上課程 - Review OpenGL Online Course">http://www.douduck08.com/zh-tw/review-opengl-online-course/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice： </strong>
+    All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> unless stating additionally.
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/openGL/" rel="tag"># openGL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/zh-tw/review-extantion-of-unity-editor-part3/" rel="next" title="[閱讀筆記] Unity のエディター拡張 #3">
+                <i class="fa fa-chevron-left"></i> [閱讀筆記] Unity のエディター拡張 #3
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/zh-tw/after-watching-geed/" rel="prev" title="[雜談] 聊聊奧特曼，再扯一點數位市場的變化">
+                [雜談] 聊聊奧特曼，再扯一點數位市場的變化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">douduck08</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">27</span>
+                    <span class="site-state-item-name">文章</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">分類</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">標籤</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/douduck08" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.facebook.com/douduck08develop/" target="_blank" title="FB Page">
+                      
+                        <i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#課程內容"><span class="nav-number">1.</span> <span class="nav-text">課程內容</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#個人建議的先備知識"><span class="nav-number">2.</span> <span class="nav-text">個人建議的先備知識</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他感想"><span class="nav-number">3.</span> <span class="nav-text">其他感想</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.1"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://douduck-hexo-blog.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'http://www.douduck08.com/zh-tw/review-opengl-online-course/';
+        this.page.identifier = 'zh-tw/review-opengl-online-course/';
+        this.page.title = '[學習心得] OpenGL 線上課程 - Review OpenGL Online Course';
+      };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://douduck-hexo-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
