@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw,en,default">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=6.0.1" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avator.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avator32x32.png?v=6.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avator16x16.png?v=6.0.1">
+
+
+  <link rel="mask-icon" href="/images/avator32x32.png?v=6.0.1" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.0.1',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="webgl,">
+
+
+<meta name="description" content="初淺地研究，嘗試自行撰寫 Physically Based Rendering shader。目前 javascript 用的還不是很習慣，非同步與事件順序常常會轉不過來，但 WebGL 作為一個練習寫 shader 的環境來說還是相對方便的。">
+<meta name="keywords" content="webgl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[WebGL] three.js 學習筆記 #2 - 初見PBR">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/webgl-note-2/index.html">
+<meta property="og:site_name" content="鴨仔開發日記">
+<meta property="og:description" content="初淺地研究，嘗試自行撰寫 Physically Based Rendering shader。目前 javascript 用的還不是很習慣，非同步與事件順序常常會轉不過來，但 WebGL 作為一個練習寫 shader 的環境來說還是相對方便的。">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:image" content="https://i.imgur.com/gKEwrIM.png">
+<meta property="og:image" content="https://i.imgur.com/eYUr74V.png">
+<meta property="og:image" content="https://i.imgur.com/LL9mTwA.png">
+<meta property="og:image" content="https://i.imgur.com/ctY8Bi1.png">
+<meta property="og:image" content="https://i.imgur.com/v0Pk4s5.png">
+<meta property="og:updated_time" content="2019-08-31T08:28:19.435Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[WebGL] three.js 學習筆記 #2 - 初見PBR">
+<meta name="twitter:description" content="初淺地研究，嘗試自行撰寫 Physically Based Rendering shader。目前 javascript 用的還不是很習慣，非同步與事件順序常常會轉不過來，但 WebGL 作為一個練習寫 shader 的環境來說還是相對方便的。">
+<meta name="twitter:image" content="https://i.imgur.com/gKEwrIM.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://www.douduck08.com/zh-tw/webgl-note-2/">
+
+
+  <title>[WebGL] three.js 學習筆記 #2 - 初見PBR | 鴨仔開發日記</title>
+  
+
+
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-73254781-1');
+</script>
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">鴨仔開發日記</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一個開發者的點點滴滴 – ABOUT A GAME DEVELOPER</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br>首頁</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>彙整</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-series-of-articles">
+          <a href="/series-of-articles/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>系列文章</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-book-review">
+          <a href="/book-review/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br>閱讀筆記</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br>關於</a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/webgl-note-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨仔開發日記">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[WebGL] three.js 學習筆記 #2 - 初見PBR</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2018-02-28T12:48:00+08:00">2018-02-28</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分類於</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/zh-tw/webgl-note-2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/webgl-note-2/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://i.imgur.com/gKEwrIM.png" alt="red pbr"></p>
+<p>初淺地研究，嘗試自行撰寫 Physically Based Rendering shader。目前 javascript 用的還不是很習慣，非同步與事件順序常常會轉不過來，但 WebGL 作為一個練習寫 shader 的環境來說還是相對方便的。</p>
+<a id="more"></a>
+<h3 id="主要資料"><a href="#主要資料" class="headerlink" title="主要資料"></a>主要資料</h3><p>PBR shadering 是近年來逐漸熱門的材質與光照處理技術，比起 Phong model 有了更多物理根據，也更加真實。</p>
+<p>這次練習的 PBR shadering 實作是根據 Epic 團隊在 UE4 上分享的技術講座：</p>
+<blockquote>
+<p>Real Shading in Unreal Engine 4<br>by Brian Karis, Epic Games</p>
+<ul>
+<li><a href="https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf" target="_blank" rel="noopener">https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf</a></li>
+</ul>
+</blockquote>
+<p>而這篇文章又大量引用了另一篇迪士尼的技術文章，沿用了不少數學模型。</p>
+<blockquote>
+<p>Physically-Based Shading at Disney<br>by Brent Burley, Walt Disney Animation Studios</p>
+<ul>
+<li><a href="https://disney-animation.s3.amazonaws.com/library/s2012_pbs_disney_brdf_notes_v2.pdf" target="_blank" rel="noopener">https://disney-animation.s3.amazonaws.com/library/s2012_pbs_disney_brdf_notes_v2.pdf</a></li>
+</ul>
+</blockquote>
+<h3 id="基本的理解"><a href="#基本的理解" class="headerlink" title="基本的理解"></a>基本的理解</h3><p>PBR 將所有的光線反射分成 Diffuse 與 Specular，其中 Specular 更有著數種 BRDF 模型可以選擇，各有優缺點。</p>
+<p>依照來源，光線又分成有特定光源的直接光照，以及來自環境的間接光照，故綜合起來 PBR 的 light model 可以分成四個部分：</p>
+<ul>
+<li>Direct Diffuse</li>
+<li>Direct Specular</li>
+<li>Indirect Diffuse</li>
+<li>Indirect Specular</li>
+</ul>
+<p>而材質上，主要有 roughness 及 metallic，分別代表粗糙度以及金屬性質，皆會影響 Diffuse 與 Specular 的顏色及比例強度。</p>
+<h4 id="Direct-Diffuse"><a href="#Direct-Diffuse" class="headerlink" title="Direct Diffuse"></a>Direct Diffuse</h4><p>Direct Diffuse 是物體外型呈現的基本陰影，Epic 文章中採用了 Burley Diffuse 模型：</p>
+<blockquote>
+<p>Burley Diffuse 光照(日本語)</p>
+<ul>
+<li><a href="https://shikihuiku.wordpress.com/2014/05/01/burley-diffuseについて考えてみる/" target="_blank" rel="noopener">https://shikihuiku.wordpress.com/2014/05/01/burley-diffuseについて考えてみる/</a></li>
+</ul>
+</blockquote>
+<h4 id="Direct-Specular"><a href="#Direct-Specular" class="headerlink" title="Direct Specular"></a>Direct Specular</h4><p>Direct Specular 是來自特定光源的高光反射，一般來說會採用 BRDF 理論，但又會視情況在細部上選擇不同的模型。這裡我找到了一篇列出不少模型方程式的文章：</p>
+<blockquote>
+<p>Specular BRDF Reference</p>
+<ul>
+<li><a href="http://graphicrants.blogspot.tw/2013/08/specular-brdf-reference.html" target="_blank" rel="noopener">http://graphicrants.blogspot.tw/2013/08/specular-brdf-reference.html</a></li>
+</ul>
+</blockquote>
+<h4 id="Indirect-Diffuse-amp-Specular"><a href="#Indirect-Diffuse-amp-Specular" class="headerlink" title="Indirect Diffuse &amp; Specular"></a>Indirect Diffuse &amp; Specular</h4><p>Indirect lighting 是指環境上接收了主光源後，二次反射的結果。可以想像一下 “太陽-月亮-水面月影” 三者關係，其中水面月影便是 Indirect lighting 的結果。</p>
+<p>Indirect lighting 的兩個項目會影響材質呈現上的細節，雖然只是細節，卻是令 PBR 材質特別真實的靈魂所在。</p>
+<p>基本的原理，是將周圍環境預先處理成 CubeMap，而對於要物體上的一點，這張 CubeMap 上的每個像素都相當於一個微弱的小型光源，而將整個 CubeMap 的發光結果全部映照到物體上，就是 Indirect Lighting 演算法的目標。</p>
+<p>為了加速這演算過程，Epic 團隊用數張貼圖來代表 precompute 資料以及近似，來得到時間成本上合理的結果，Epic 原文不易理解的部分可以參考這篇文章輔助：</p>
+<blockquote>
+<p>Indirect Lighting for PBR</p>
+<ul>
+<li><a href="https://jmonkeyengine.github.io/wiki/jme3/advanced/pbr_part3.html" target="_blank" rel="noopener">https://jmonkeyengine.github.io/wiki/jme3/advanced/pbr_part3.html</a></li>
+</ul>
+</blockquote>
+<h3 id="PBR-中間步驟與結果"><a href="#PBR-中間步驟與結果" class="headerlink" title="PBR 中間步驟與結果"></a>PBR 中間步驟與結果</h3><h4 id="Diffuse"><a href="#Diffuse" class="headerlink" title="Diffuse"></a>Diffuse</h4><p><img src="https://i.imgur.com/eYUr74V.png" alt="Diffuse"></p>
+<h4 id="Specular"><a href="#Specular" class="headerlink" title="Specular"></a>Specular</h4><p><img src="https://i.imgur.com/LL9mTwA.png" alt="Specular"></p>
+<h4 id="Indirect-Diffuse"><a href="#Indirect-Diffuse" class="headerlink" title="Indirect Diffuse"></a>Indirect Diffuse</h4><p>還沒有找到相關貼圖，所以這邊目前被我跳過了。</p>
+<h4 id="Indirect-Specular"><a href="#Indirect-Specular" class="headerlink" title="Indirect Specular"></a>Indirect Specular</h4><p><img src="https://i.imgur.com/ctY8Bi1.png" alt="Indirect Specular"></p>
+<h4 id="加總後的結果"><a href="#加總後的結果" class="headerlink" title="加總後的結果"></a>加總後的結果</h4><p><img src="https://i.imgur.com/v0Pk4s5.png" alt="Combine"></p>
+<p>恩…覺得還有待加強…</p>
+<h3 id="其他參考連結"><a href="#其他參考連結" class="headerlink" title="其他參考連結"></a>其他參考連結</h3><ul>
+<li>Unreal 文件 Physically Based Materials -<br><a href="https://docs.unrealengine.com/latest/INT/Engine/Rendering/Materials/PhysicallyBased/" target="_blank" rel="noopener">https://docs.unrealengine.com/latest/INT/Engine/Rendering/Materials/PhysicallyBased/</a></li>
+<li>PBR Algorithms for Unity -<br><a href="http://www.jordanstevenstechart.com/physically-based-rendering" target="_blank" rel="noopener">http://www.jordanstevenstechart.com/physically-based-rendering</a></li>
+<li>DONTNOD Physically based rendering chart for Unreal Engine 4<br><a href="https://seblagarde.wordpress.com/2014/04/14/dontnod-physically-based-rendering-chart-for-unreal-engine-4/" target="_blank" rel="noopener">https://seblagarde.wordpress.com/2014/04/14/dontnod-physically-based-rendering-chart-for-unreal-engine-4/</a></li>
+<li>DONTNOD specular and glossiness chart<br><a href="https://seblagarde.wordpress.com/2012/04/30/dontnod-specular-and-glossiness-chart/" target="_blank" rel="noopener">https://seblagarde.wordpress.com/2012/04/30/dontnod-specular-and-glossiness-chart/</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author：</strong>
+    douduck08
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link：</strong>
+    <a href="http://www.douduck08.com/zh-tw/webgl-note-2/" title="[WebGL] three.js 學習筆記 #2 - 初見PBR">http://www.douduck08.com/zh-tw/webgl-note-2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice： </strong>
+    All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/3.0/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> unless stating additionally.
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/webgl/" rel="tag"># webgl</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/zh-tw/webgl-note-1/" rel="next" title="[WebGL] three.js 學習筆記 #1">
+                <i class="fa fa-chevron-left"></i> [WebGL] three.js 學習筆記 #1
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/zh-tw/unexpected-character-in-json-file/" rel="prev" title="[Json.NET] DeserializeObject 檔案字串時遇到的錯誤 (Solved)">
+                [Json.NET] DeserializeObject 檔案字串時遇到的錯誤 (Solved) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">douduck08</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">18</span>
+                    <span class="site-state-item-name">文章</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">分類</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    <span class="site-state-item-count">24</span>
+                    <span class="site-state-item-name">標籤</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/douduck08" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.facebook.com/douduck08develop/" target="_blank" title="FB Page">
+                      
+                        <i class="fa fa-fw fa-facebook"></i>FB Page</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#主要資料"><span class="nav-number">1.</span> <span class="nav-text">主要資料</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本的理解"><span class="nav-number">2.</span> <span class="nav-text">基本的理解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Direct-Diffuse"><span class="nav-number">2.1.</span> <span class="nav-text">Direct Diffuse</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Direct-Specular"><span class="nav-number">2.2.</span> <span class="nav-text">Direct Specular</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Indirect-Diffuse-amp-Specular"><span class="nav-number">2.3.</span> <span class="nav-text">Indirect Diffuse &amp; Specular</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PBR-中間步驟與結果"><span class="nav-number">3.</span> <span class="nav-text">PBR 中間步驟與結果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Diffuse"><span class="nav-number">3.1.</span> <span class="nav-text">Diffuse</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Specular"><span class="nav-number">3.2.</span> <span class="nav-text">Specular</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Indirect-Diffuse"><span class="nav-number">3.3.</span> <span class="nav-text">Indirect Diffuse</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Indirect-Specular"><span class="nav-number">3.4.</span> <span class="nav-text">Indirect Specular</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#加總後的結果"><span class="nav-number">3.5.</span> <span class="nav-text">加總後的結果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他參考連結"><span class="nav-number">4.</span> <span class="nav-text">其他參考連結</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.1"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.1"></script>
+
+
+
+  
+
+  
+    <script id="dsq-count-scr" src="https://douduck-hexo-blog.disqus.com/count.js" async></script>
+  
+
+  
+    <script type="text/javascript">
+      var disqus_config = function () {
+        this.page.url = 'http://www.douduck08.com/zh-tw/webgl-note-2/';
+        this.page.identifier = 'zh-tw/webgl-note-2/';
+        this.page.title = '[WebGL] three.js 學習筆記 #2 - 初見PBR';
+      };
+      function loadComments () {
+        var d = document, s = d.createElement('script');
+        s.src = 'https://douduck-hexo-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      }
+      
+        loadComments();
+      
+    </script>
+  
+
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
