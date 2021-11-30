@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="物件池 (Object Pool)，是一個普遍用於遊戲的一個設計模式 (pattern)，目的是為了重複使用一些頻繁被取用的資源，減少建立、銷毀的運算消耗，在特定情況下是非常重要的優化手段。 我這邊會試著從硬體原理開始，說明物件池的使用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Unity] 物件池的實現 - Practicing of Object Pool">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/practicing-of-object-pool/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="物件池 (Object Pool)，是一個普遍用於遊戲的一個設計模式 (pattern)，目的是為了重複使用一些頻繁被取用的資源，減少建立、銷毀的運算消耗，在特定情況下是非常重要的優化手段。 我這邊會試著從硬體原理開始，說明物件池的使用。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2017-08-01T13:44:25.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.453Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="unity">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/practicing-of-object-pool/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/practicing-of-object-pool/","path":"zh-tw/practicing-of-object-pool/","title":"[Unity] 物件池的實現 - Practicing of Object Pool"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Unity] 物件池的實現 - Practicing of Object Pool | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E8%AA%AA%E8%AA%AA%E7%A1%AC%E9%AB%94"><span class="nav-number">1.</span> <span class="nav-text">先說說硬體</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%80%E4%BB%A5%E8%AA%AA%E7%82%BA%E4%BD%95%E9%9C%80%E8%A6%81%E7%89%A9%E4%BB%B6%E6%B1%A0%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">所以說為何需要物件池？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E4%BB%B6%E6%B1%A0%E5%AF%A6%E4%BD%9C"><span class="nav-number">3.</span> <span class="nav-text">物件池實作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%B0%E7%AF%80%E8%A3%9C%E5%85%85"><span class="nav-number">4.</span> <span class="nav-text">細節補充</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%83%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">參考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/practicing-of-object-pool/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Unity] 物件池的實現 - Practicing of Object Pool
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-08-01 21:44:25" itemprop="dateCreated datePublished" datetime="2017-08-01T21:44:25+08:00">2017-08-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/practicing-of-object-pool/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/practicing-of-object-pool/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>物件池 (Object Pool)</strong>，是一個普遍用於遊戲的一個設計模式 (pattern)，目的是為了重複使用一些頻繁被取用的資源，減少<strong>建立、銷毀</strong>的運算消耗，在特定情況下是非常重要的優化手段。</p>
+<p>我這邊會試著從硬體原理開始，說明物件池的使用。</p>
+<span id="more"></span>
+<h3 id="先說說硬體">先說說硬體</h3>
+<p>所謂的遊戲程式，就是一個將許多圖片、模型、邏輯依照事先的設計展現於螢幕中，一個由 0 與 1 組成的世界。(我就是想講這句話)</p>
+<p>許多的程式碼、遊戲資源在構築成螢幕表現前，要先從儲存設備中出發，經過一連串硬體路徑才能抵達螢幕，這邊我們簡化成三個階段：</p>
+<ul>
+<li>長期儲存設備：電腦的硬碟、手機的儲存硬體等。</li>
+<li>短期儲存設備：一般來說就是記憶體。</li>
+<li>實際運算與表現：CPU、GPU等，細節不在本次討論範圍內。</li>
+</ul>
+<p>其中，<strong>長期儲存設備</strong>的反應很慢，一般來說會盡量減少相關的存取次數。如果跟 Unity 做個對應，Resources.Load 相關的 API 便是為了存取位於此處的資源而進行的動作，所以一般會建議盡量減少使用次數，或者不要在重要的時間點執行 (如戰鬥畫面)，而是事先做好存取動作 (如讀取畫面)。</p>
+<p>而<strong>短期儲存設備</strong>基本上算是運作相當快速了，不過像是<strong>記憶體</strong>這類的硬體，是硬體中所有的設備共享的一個區塊，所以會有一套管理機制來分配每個軟體或硬體的使用範圍。即使是在單一軟體中，也會有負責記憶體分配與回收的機制，來保障程式的運作，這一部份 Unity 都已經幫我們完成了管理，只要我們<strong>不濫用的話</strong>。</p>
+<h3 id="所以說為何需要物件池？">所以說為何需要物件池？</h3>
+<p>剛剛也說了，記憶體的實際管理 Unity 跟 .NET 都幫我們完成了，只要不濫用則遊戲通常都可以順順的運作下去。</p>
+<p>因為很難定義濫用記憶體是怎麼一回事，所以我們直接來說濫用的結果好了，最常見的就是 GC.Collect 會瘋狂被觸發啦！只要有閱讀過 Unity 優化相關資料的人，就會知道這是件可怕的事。</p>
+<p><strong>GC.Collect</strong>是一個回收記憶體的系統機制，一般來說是累積一定量的<strong>待銷毀物件</strong>後會自動執行，在執行的瞬間會造成一定的效能開銷，所以頻繁出現的 GC.Collect 會直接造成遊戲的卡頓與劣化。</p>
+<p>回到<strong>物件池(Object Pool)<strong>的目的：減少建立、銷毀動作的次數，因此常作為</strong>頻繁被取用</strong> 的資源的管理手段，減少建立與銷毀的開銷，減少 GC.Collect 被觸動的頻率。</p>
+<p>最常被舉例的情況，大概就是<strong>子彈</strong>了，不斷重複被發射與擊毀的子彈，而且短時間之內會大量產生，與大量消逝的物件，正是物件池的應用對象。用物件池的<strong>取出、收回</strong>兩個動作來代替一般物件的<strong>建立、消毀</strong>，減少記憶體重新分配與回收的頻率。</p>
+<h3 id="物件池實作">物件池實作</h3>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">GameObjectPool</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="keyword">private</span> GameObject m_prefab;</span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="keyword">private</span> <span class="built_in">int</span> m_initailSize = <span class="number">5</span>;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">List</span>&lt;<span class="title">GameObject</span>&gt; m_availableObjects</span> = <span class="keyword">new</span> List&lt;GameObject&gt; ();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Awake</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; m_initailSize; i++) &#123;</span><br><span class="line">            GameObject go = Instantiate&lt;GameObject&gt; (m_prefab, <span class="keyword">this</span>.transform);</span><br><span class="line">            m_availableObjects.Add (go); go.SetActive (<span class="literal">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> GameObject <span class="title">GetPooledInstance</span> (<span class="params">Transform parent</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">lock</span> (m_availableObjects) &#123;</span><br><span class="line">            <span class="built_in">int</span> lastIndex = m_availableObjects.Count - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> (lastIndex &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                GameObject go = m_availableObjects[lastIndex];</span><br><span class="line">                m_availableObjects.RemoveAt (lastIndex);</span><br><span class="line">                go.SetActive (<span class="literal">true</span>);</span><br><span class="line">                <span class="keyword">if</span> (go.transform.parent != parent) &#123;</span><br><span class="line">                    go.transform.SetParent (parent);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> go;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                GameObject go = Instantiate&lt;GameObject&gt; (m_prefab, parent);</span><br><span class="line">                <span class="keyword">return</span> go;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">BackToPool</span> (<span class="params">GameObject go</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">lock</span> (m_availableObjects) &#123;</span><br><span class="line">            m_availableObjects.Add (go);</span><br><span class="line">            go.SetActive (<span class="literal">false</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>這是一段簡易的物件池實現，需要一個物件作為掛載體，並在 Inspector 拉進要做為初始物件的 prefab。</p>
+<ul>
+<li>GetPooledInstance () 會檢查物件池中是否有物件可以取用，有則取出進行回傳，否則會從 prefab 再次實體化一個新物件並回傳。</li>
+<li>GetPooledInstance () 有個 transform 作為傳入值，根據 Unity 5.3 之後的更新，可以在實體化 Instantiate<GameObject> () 傳入要做為 parent 的 transform，比起後來才 SetParent() 會友更好的效能。</li>
+<li>BackToPool () 會將物件回收，放回 List 中，並 SetActive (false) 進入待命狀態。</li>
+</ul>
+<p>一般來說除了這裡實現的兩個方法，還會實現一個銷毀整個物件池的方法，用來結束物件池的使用。</p>
+<p>另外如果接受物件池管理的物件也掛載著 PooledObject 之類的腳本，可以讓整套管理機制更加完整便利，不過這部分我還還在思考構思中，尚未實作。</p>
+<p>** 參考連結的 《Object Pools, a Unity C# Tutorial 》一文中，便是有 ObjectPool、PooledObject 兩個腳本合作的物件池版本。</p>
+<h3 id="細節補充">細節補充</h3>
+<p>這邊說明前文沒提到，關聯性較低，但我想可以藉機說明的事情。</p>
+<p>這邊我用硬碟代稱長期儲存設備、記憶體代稱短期儲存設備，由於不同平台間有硬體差異，可能用詞上較不精確，但我想閱讀起來會較容易。</p>
+<p>一般來說，除了一開始會自動載入的程式碼、第一個場景，Unity 其他資源 (場景、Resources 資料夾中的檔案) 都要經過存取的動作，將資料<strong>從硬碟讀取到記憶體</strong>才能使用，這邊舉兩個  API 為例子：</p>
+<ul>
+<li>SceneManager.LoadScene ()</li>
+<li>Resources.Load ()</li>
+</ul>
+<p>因為這兩個動作執行上很慢，所以當檔案較大、數量較多的時候，會<strong>事先</strong>進行存取的動作，所以才會有讀取畫面、非同步執行等設計。另外如果知道資源會在後續很快會再用上，不要急於 Resources.UnloadAsset ()，而是另行設計暫存手段，減少讀取次數才好。</p>
+<p>本文中說到的 GameObject 物件，在硬碟中的身分是 Prefab，也是要經過 Resources.Load () 來取得。而一開始就被 Reference 在場景的 Componenet 上的 Prefab，之所以不需要 Resources.Load ()，是因為它們一開始就<strong>視為場景的一部份</strong>被讀取進來了。</p>
+<p>所以，作為第一個場景時因為無法使用讀取畫面等手段讓玩家理解，如果做得太大或者有太多 Componenet、Prefab Reference 在場景中，就會讓遊戲開啟時有段畫面卡住的時間，是要盡量避免的。</p>
+<p>而 GameObject.Instantiate () 一般做為將 Prefab 實體化到場景中的動作，實際上是複製一份 Prefab 資料，是一個<strong>從記憶體到記憶體</strong>的動作，雖然分配上不需多少時間，但是建構物件在場景中，需要 CPU 進行另外的運算來初始化，所以如果 Prefab 太大，有過多的子物件或 Component 需要初始化，依舊是會造成卡頓的，這邊無法透過非同步來優化，只能分隔成較小的 Prefab 來分散負擔。</p>
+<p>而銷毀物件 GameObject.Destory() 直接影響的是後來的 GC，便是本文主要內容提及的，也是物件池主要發揮功效的部份了。</p>
+<p>雖然這幾點跟物件池沒有直接關係，但是跟物件池背後的目的，以及相關的硬體、Unity 機制有關，便一並簡單地進行了說明。</p>
+<h3 id="參考">參考</h3>
+<ul>
+<li>Object pool pattern - Wikipedia - <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Object_pool_pattern">https://en.wikipedia.org/wiki/Object_pool_pattern</a></li>
+<li>物件池 – 阿祥的開發日常 - <a target="_blank" rel="noopener" href="https://tedsieblog.wordpress.com/2016/07/10/object-pool/">https://tedsieblog.wordpress.com/2016/07/10/object-pool/</a></li>
+<li>Object Pools, a Unity C# Tutorial - <a target="_blank" rel="noopener" href="http://catlikecoding.com/unity/tutorials/object-pools/">http://catlikecoding.com/unity/tutorials/object-pools/</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/practicing-of-object-pool/" title="[Unity] 物件池的實現 - Practicing of Object Pool">http://www.douduck08.com/zh-tw/practicing-of-object-pool/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/review-extantion-of-unity-editor-part3/" rel="prev" title="[閱讀筆記] Unity のエディター拡張 #3">
+                  <i class="fa fa-chevron-left"></i> [閱讀筆記] Unity のエディター拡張 #3
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/another-practicing-of-object-pool/" rel="next" title="[Unity] 另一個物件池的實現 – Another Practicing of Object Pool">
+                  [Unity] 另一個物件池的實現 – Another Practicing of Object Pool <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

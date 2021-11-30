@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="前幾天用 Unity 的 uGUI 元件組合出了雷達圖效果，同時也能夠及時的修改數值，表現在圖表上，是個蠻有趣的嘗試。 如果要完整表達內容，可能要搭配大量的圖片，所以這次嘗試使用影片的方式來分享實作。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Unity] 利用 UI 元件製作雷達圖">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/make-radar-chart-with-ugui/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="前幾天用 Unity 的 uGUI 元件組合出了雷達圖效果，同時也能夠及時的修改數值，表現在圖表上，是個蠻有趣的嘗試。 如果要完整表達內容，可能要搭配大量的圖片，所以這次嘗試使用影片的方式來分享實作。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2017-12-01T16:19:11.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.452Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="video">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/make-radar-chart-with-ugui/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/make-radar-chart-with-ugui/","path":"zh-tw/make-radar-chart-with-ugui/","title":"[Unity] 利用 UI 元件製作雷達圖"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Unity] 利用 UI 元件製作雷達圖 | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%80%E7%9C%8B%E9%87%8D%E9%BB%9E"><span class="nav-number">1.</span> <span class="nav-text">觀看重點</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%8C%E8%A9%B1"><span class="nav-number">2.</span> <span class="nav-text">後話</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/make-radar-chart-with-ugui/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Unity] 利用 UI 元件製作雷達圖
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-12-02 00:19:11" itemprop="dateCreated datePublished" datetime="2017-12-02T00:19:11+08:00">2017-12-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/make-radar-chart-with-ugui/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/make-radar-chart-with-ugui/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>前幾天用 Unity 的 uGUI 元件組合出了雷達圖效果，同時也能夠及時的修改數值，表現在圖表上，是個蠻有趣的嘗試。</p>
+<p>如果要完整表達內容，可能要搭配大量的圖片，所以這次嘗試使用影片的方式來分享實作。</p>
+<div class="video-container"><iframe src="https://www.youtube.com/embed/tLTUqNIw9SM" frameborder="0" loading="lazy" allowfullscreen></iframe></div>
+<span id="more"></span>
+<h3 id="觀看重點">觀看重點</h3>
+<ul>
+<li>利用 uGUI 元件製作的雷達圖，可以跟其他 UI 配合得很好。</li>
+<li>使用父子物件的結構來擴充縮放的軸向。</li>
+<li>利用修改 Pivot 來方便元件的排列與使用。</li>
+<li>使用腳本來同步修改多個 Image 的長寬，表現出雷達圖的數值變化。</li>
+<li>加上其他圖片來強化表現。</li>
+</ul>
+<blockquote>
+<p>專案 Github：<a target="_blank" rel="noopener" href="https://github.com/douduck08/UnityDemo-UIRadarChart">https://github.com/douduck08/UnityDemo-UIRadarChart</a></p>
+</blockquote>
+<h3 id="後話">後話</h3>
+<p>整個影片一鏡到底！雖然說應該沒有必要這樣。</p>
+<p>因為懶得剪輯，所以在事先擬好大致的大綱後，決定一次錄完，幸好沒有必須重錄的重大失誤。長度比我預想的要久，因為沒事先預估要說到多細，所以不自覺的話嘮補充，後來才發現連續講了半個小時。</p>
+<p>對於一些特別的實作，不是通例的原理，或許影片示範會比較清晰，如果反應 OK，以後可以多多嘗試這類內容，順利的話其實產出會比寫文章還快。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/make-radar-chart-with-ugui/" title="[Unity] 利用 UI 元件製作雷達圖">http://www.douduck08.com/zh-tw/make-radar-chart-with-ugui/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/video/" rel="tag"># video</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/practicing-of-service-locator/" rel="prev" title="[C#/Unity] 這不叫 Singleton，叫 Service Locator">
+                  <i class="fa fa-chevron-left"></i> [C#/Unity] 這不叫 Singleton，叫 Service Locator
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/start-hexo/" rel="next" title="開始 Hexo">
+                  開始 Hexo <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

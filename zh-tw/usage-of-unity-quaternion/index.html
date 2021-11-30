@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="來聊聊四元數 (Quaternion)，前陣子跟它搏鬥了一段時間，然後 … 恩 … 現在比較沒那麼困惑了。  Unity 中常見的旋轉設定便是物件的 Rotation 屬性 (上圖)，也就是以三個方向為軸的旋轉角。平時在編輯場景時操控旋轉相當直覺，可是當需要從 Script 中用程式碼去控制物件的旋轉時，這時候會發現原來 Rotation 屬性是由 Quaternion 這個類別來處理，身邊的許多">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity 四元數的使用 - usage of Unity Quaternion">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/usage-of-unity-quaternion/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="來聊聊四元數 (Quaternion)，前陣子跟它搏鬥了一段時間，然後 … 恩 … 現在比較沒那麼困惑了。  Unity 中常見的旋轉設定便是物件的 Rotation 屬性 (上圖)，也就是以三個方向為軸的旋轉角。平時在編輯場景時操控旋轉相當直覺，可是當需要從 Script 中用程式碼去控制物件的旋轉時，這時候會發現原來 Rotation 屬性是由 Quaternion 這個類別來處理，身邊的許多">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2016/06/unityrotation.jpg">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2016/06/table-quaternion.png">
+<meta property="article:published_time" content="2016-06-25T17:44:10.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.459Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="Quaternion">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://douduck08.files.wordpress.com/2016/06/unityrotation.jpg">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/usage-of-unity-quaternion/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/usage-of-unity-quaternion/","path":"zh-tw/usage-of-unity-quaternion/","title":"Unity 四元數的使用 - usage of Unity Quaternion"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Unity 四元數的使用 - usage of Unity Quaternion | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Unity-%E7%9A%84%E6%97%8B%E8%BD%89-%E6%AD%90%E6%8B%89%E8%A7%92-%E5%8F%8A-%E5%9B%9B%E5%85%83%E6%95%B8"><span class="nav-number">1.</span> <span class="nav-text">Unity 的旋轉 - 歐拉角 及 四元數</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unity-%E4%B8%AD%E7%9A%84%E5%9B%9B%E5%85%83%E6%95%B8"><span class="nav-number">2.</span> <span class="nav-text">Unity 中的四元數</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%AF%84%E4%BE%8B%EF%BC%9A%E5%B0%87%E9%99%80%E8%9E%BA%E5%84%80%E8%AE%8A%E6%88%90%E4%BD%A0%E7%9A%84%E9%81%8A%E6%88%B2%E6%8E%A7%E5%88%B6%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">小範例：將陀螺儀變成你的遊戲控制器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%8C%E8%A9%B1"><span class="nav-number">4.</span> <span class="nav-text">後話</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%83%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">參考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/usage-of-unity-quaternion/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Unity 四元數的使用 - usage of Unity Quaternion
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2016-06-26 01:44:10" itemprop="dateCreated datePublished" datetime="2016-06-26T01:44:10+08:00">2016-06-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/usage-of-unity-quaternion/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/usage-of-unity-quaternion/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>來聊聊四元數 (Quaternion)，前陣子跟它搏鬥了一段時間，然後 … 恩 … 現在比較沒那麼困惑了。</p>
+<p><img src="https://douduck08.files.wordpress.com/2016/06/unityrotation.jpg" alt="unityrotation"></p>
+<p>Unity 中常見的旋轉設定便是物件的 Rotation 屬性 (上圖)，也就是以三個方向為軸的旋轉角。平時在編輯場景時操控旋轉相當直覺，可是當需要從 Script 中用程式碼去控制物件的旋轉時，這時候會發現原來 Rotation 屬性是由 Quaternion 這個類別來處理，身邊的許多人(包括我)雖然懂得利用一些 Unity Script 去旋轉物件，可是總是一知半解，對於複雜一點的旋轉操作沒有多少把握。於是努力去研究跟學習後，有了這篇初步的心得出現，拋磚引玉。</p>
+<span id="more"></span>
+<h3 id="Unity-的旋轉-歐拉角-及-四元數">Unity 的旋轉 - 歐拉角 及 四元數</h3>
+<p>在 Unity 的場景編輯中，物件的旋轉是由三個角度來設定，使用上相當直覺，而這個定義旋轉的方式被稱為 <strong>歐拉角</strong>(<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Euler_angles">Euler angles</a>)，詳細定義在 wiki 可以找到。在 Unity script 中，可以用 Transform.eulerAngles 來取得或設定物件的旋轉角度，不過歐拉角在先天上有些使用限制，例如 <strong>萬象鎖</strong>。以及因為三個角度的旋轉互相關聯而不獨立，不容易在 Unity script 進行複雜的處理，如果將兩個 歐拉角 進行相加的動作，並不一定會是想像中的組合結果，要取得兩個 歐拉角 之間的連續動作來完成動畫，也不是簡單運算便可以完成的。</p>
+<p>同樣對應於物件的旋轉，利用 Transform.rotation 會取得 Quaternion 這個類別，稱為 <strong>四元數</strong>(<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Quaternion">Quaternion</a>)，是屬於代數領域中的一個存在，數學家發現它可以用來表示一個三維座標中的旋轉動作，而且具有相似於<strong>矩陣</strong>的特性，可以用來做連續旋轉的向量計算，後來廣泛應用於電腦科學中的 3D 繪圖。</p>
+<p>Unity script 也提供 Quaternion 類別許多函式方便進行旋轉的運算，<strong>不過</strong>，Unity 中的 Quaternion 運算方式與代數領域中四元數的計算方式<strong>不完全相同</strong>，所以使用這個類別不需要知道四元數的詳細代數原理，知道相關原理與計算方式也不能直接套用於 Quaternion 類別的使用上。簡單來說，雖然定義相同，但完全不需要把 Unity 中的 Quaternion 類別當作一個代數來使用，它有自己的一套使用方式。</p>
+<p>兩者比較：</p>
+<p><img src="https://douduck08.files.wordpress.com/2016/06/table-quaternion.png" alt="table-quaternion"></p>
+<h3 id="Unity-中的四元數">Unity 中的四元數</h3>
+<p>雖然只是猜測，但我想 Unity 的四元數應該是用矩陣來實作，每當建立一個 Quaternion 類別時，它內部就會有一個 <strong>變換矩陣</strong>(Transformation matrix) 與之對應，用於將一個三維向量(Vector3 類別)變換(旋轉)成另一個三維向量，而這個旋轉的動作是相對的，可以應用任何三維向量之上，做出相同的旋轉動作；同時它也是可疊加的，對一個向量應用兩次四元數運算，就相當於旋轉了兩次，如果先將這兩個先進行相乘，再應用於同一個向量上，也會得到相同的旋轉結果。如果用矩陣乘法的角度來思考，Quaternion 類別的使用方式會容易許多。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Quaternion rotation = Quaternion.Euler (<span class="number">0</span>, <span class="number">90</span>, <span class="number">0</span>);</span><br><span class="line">Vector3 forward = Vector3.forward;</span><br><span class="line">Vector3 resultA = rotation * forward;</span><br><span class="line">Vector3 resultB = rotation * (rotation * forward);</span><br><span class="line">Vector3 resultC = (rotation * rotation) * forward;</span><br></pre></td></tr></table></figure>
+<p>上面是一個簡短的程式碼，因為四元數的參數比較難(數學不好)，我利用 Quaternion.Euler(float, float, float) 這個函式來建立一個四元數，在此利用了歐拉角的易讀性，並為了方便運算，將旋轉的動作儲存為一個 Quaternion 類別，這個四元數所儲存的旋轉動作便是沿著 <strong>正y軸順時針旋轉90度</strong>，或稱 <strong>右轉</strong>。接下來分別用了三行程式碼對一個三維向量進行旋轉的動作，得到了 resultA、resultB、resultC 三個結果，進行四元數與向量的旋轉運算時，必須將四元數置於前方，就像使用變換矩陣與向量之間的乘法時，矩陣必須置於前方一樣。</p>
+<p>起始的向量 Vector3.forward  中內含的值為 (0, 0, 1)，這邊要注意 Unity 的三維坐標系是左手坐標系，也就是右側為X正向，上方為Y正向時，前方為Z正向。經過旋轉後：</p>
+<ul>
+<li>resultA 的值為 (1, 0, 0)，也就是右轉了。</li>
+<li>resultB 的值為 (0, 0, -1)，過程是進行了兩次的右轉，也就是成了向後轉。</li>
+<li>resultC 的值為 (0, 0, -1)，與 resultB 的不同之處，這裡是先將兩個四元數相成為一個四元數後，在應用於向量上，結果與 resultB 相同，驗證了四元數的疊加性。</li>
+</ul>
+<p>操作四元數時，幾個我常用的  Quaternion static 函式：</p>
+<ul>
+<li>Quaternion.Angle(Quaternion, Quaternion)：取得兩個四元數之間的相對角度，也就是兩個旋轉動作之間的 “直線距離”，不知道如此比喻會不會比較好理解。</li>
+<li>Quaternion.Inverse(Quaternion )：取得四元數的反元素，也就是 “倒帶” 的動作，我通常會利用於修正項，後文會再次說明。</li>
+<li>Quaternion.Lerp(Quaternion, Quaternion, float)：取得兩個四元數之間的補間動作，應用相當廣泛，自行控制物件的旋轉時往往會用到。</li>
+</ul>
+<p>還有一個 non-static 函式 Quaternion.ToAngleAxis，用的不多，但對於操作四元數也是一個很必要的函式，可以取得旋轉動作的轉軸跟角度，原本這兩項資訊的取得需要透過代數運算，有了這個函式就真的不需要知道四元數的裡面到底如何運作了，此外這也是使用歐拉角時難以取得的資訊。</p>
+<p>完整的函式內容請看 <a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/Quaternion.html">四元數的官方文件</a>。</p>
+<h3 id="小範例：將陀螺儀變成你的遊戲控制器">小範例：將陀螺儀變成你的遊戲控制器</h3>
+<p>Unity 有提供 API 取得裝置本身陀螺儀的資料，其回傳結果是 Quaternion 類別。剛剛提過，四元數表示的是一個相對的動作，不像向量有一個絕對的坐標系可以參考，所以照理說光是一個四元數是無法表達手持裝置目前的 “姿勢” 才對阿？實際上，手持裝置的陀螺儀預設了一個 “無旋轉的姿勢”，相對於這個預設的方位動作，用四元數表達了手機現在的陀螺儀狀態，不過這個預設值是不可知的，或者說是相當虛無的存在，進而使陀螺儀得回傳值也相當虛無 (不知道起點，所以有了過程也無法知道終點)。</p>
+<p>為了將陀螺儀的資料變成我們可用的資訊，四元數的操作是必要的，我們用下面一個簡短的程式碼來說明。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Quaternion _CurrentGyro;</span><br><span class="line">    <span class="keyword">private</span> Quaternion _OriginGyro;</span><br><span class="line">    <span class="keyword">private</span> Quaternion _OriginGyroInverse;</span><br><span class="line">    <span class="keyword">private</span> Vector3 _Pointer;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// Use this for initialization</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (SystemInfo.supportsGyroscope) &#123;</span><br><span class="line">            Input.gyro.enabled = <span class="literal">true</span>;</span><br><span class="line">            Debug.Log(<span class="string">&quot;Gyro Enabled&quot;</span>);</span><br><span class="line">           _OriginGyro = Input.gyro.attitude;</span><br><span class="line">           _OriginGyroInverse = Quaternion.Inverse(_OriginGyro);</span><br><span class="line">           _Pointer = Vector3.forward;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// Update is called once per frame</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Update</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">        _CurrentGyro = Input.gyro.attitude;</span><br><span class="line">        _Pointer = _CurrentGyro * Vector3.forward;</span><br><span class="line">        Debug.Log(<span class="string">&quot;The Angle of Device Rotation: &quot;</span> + Quaternion.Angle(_CurrentGyro, _OriginGyro));</span><br><span class="line">        Debug.Log(<span class="string">&quot;The Device is pointing: &quot;</span> + _OriginGyroInverse * _Pointer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Line12：啟動陀螺儀，雖說是啟動，但是預設的 “未旋轉” 跟這邊的啟動完全無關，未旋轉的狀態是內建於手持裝置的OS中的。</li>
+<li>Line14：取得當下的陀螺儀數據，這行程式碼運作於 Start() 中，所以就是儲存了腳本啟動當下的數值，當作解下來旋轉動作的原點。</li>
+<li>Line15：計算與儲存 _OriginGyro 反元素，將用於待會的坐標系修正上。</li>
+<li>Line16：嚴格上沒必要初始化，請<strong>將</strong> <strong>_Pointer 想像成手持裝置後置盡頭所對準的方向</strong>，而現在啟動腳本的當下，以裝置鏡頭的角度假設了一個現實中的三維坐標系。舉例來說，如果你現在裝置鏡頭對準著你的正前方，那這個坐標系將會是：右手為正X方向，上方為正Y方向，前方為正Z方向。</li>
+</ul>
+<p>接下來在 Update() 中取得每禎的陀螺儀數據，處理成可用於操控遊戲的資料，</p>
+<ul>
+<li>Line22：取得當下的陀螺儀數據。</li>
+<li>Line23：將陀螺儀的資訊用於旋轉 _Pointer。</li>
+<li>Line24：利用 Quaternion.Angle 這個 static 函式，取得 _CurrentGyro 與 _OriginGyro 之間的角度，這個角度是相對於在腳本啟動時，手機旋轉了多少角度。</li>
+<li>Line25：利用 _OriginGyroInverse 再次旋轉了 _Pointer，這次旋轉的目的是進行修正，讓 _Pointer 真正成為在假設的坐標系中，手持裝置後置鏡頭所對準的方向，原理下述。</li>
+</ul>
+<p>回想一下在三維座標系中的經典問題：如果將原點移至 (10, 0, 0)，那原本座標系上點的舊座標該如何修正為新的座標？答案是：將舊座標<strong>減去原點的變化量</strong>。</p>
+<p>陀螺儀這邊我們應用了相同的邏輯，手持裝置預設了一個 “未旋轉” 的數據，也就表示它預設了一個座標系，一個方向不明的舊座標系。不過我們在腳本啟動時定義了自己的新座標系，同時儲存了當時的陀螺儀數據 _OriginGyro，現在新舊坐標系之間的變化量不是移動一段距離，而是旋轉的一個角度，_OriginGyro 便是這個旋轉變化量。</p>
+<p>當 Line23 運算後的 _Pointer，因為單純是利用陀螺儀數據所旋轉得來的，它所包含的座標是使用了未旋轉的座標系(舊坐標系)，但我們希望知道鏡頭在新座標系中的方向角度呀？所以我們在 Line25 將 _Pointer “減去” 了坐標系的變化量 _OriginGyro。不過，四元數是沒有加減的概念的，相對的正確動作是 “反過來旋轉”，也就是<strong>乘上四元數的反元素</strong>，這就是為什麼一開始我們需要計算 _OriginGyroInverse。</p>
+<p>神奇的事發生了，在我們現實中假設的座標系上，我們現在不只得到了旋轉角度，連旋轉後的 “姿勢” 都有一個向量精確的標明出來。</p>
+<h3 id="後話">後話</h3>
+<p>其實要取得手機的旋轉，還有個重力感傳器可以使用，而且相對簡單容易理解。但是，陀螺儀所包含的資訊更加全面多元，精確度也不會受到手機搖晃所影響，如果能夠學會它，當然要去使用呀！</p>
+<p>另外現在 VR 相當的熱門，許多應用於 VR 的裝置使用四元數來作為回傳的旋轉數據，前陣子才有朋友為了修正  VR 裝置的感應器設置於不同角度時，得到的結果相當混亂而焦頭爛耳，最後放下對於歐拉角的堅持，利用四元數來修正便讓問題顯得相當容易。</p>
+<h3 id="參考">參考</h3>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Euler_angles">https://en.wikipedia.org/wiki/Euler_angles</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Quaternion">https://en.wikipedia.org/wiki/Quaternion</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation">https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/usage-of-unity-quaternion/" title="Unity 四元數的使用 - usage of Unity Quaternion">http://www.douduck08.com/zh-tw/usage-of-unity-quaternion/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/Quaternion/" rel="tag"># Quaternion</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/some-principle-of-object-oriented-design/" rel="prev" title="物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design">
+                  <i class="fa fa-chevron-left"></i> 物件導向中常見的幾個設計原則 - Some Principle of Object Oriented Design
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/a-optimizing-tip-of-uGUI-raycast/" rel="next" title="優化 Unity uGUI 在 Raycast 效能消耗 – A Optimizing Tip of uGUI Raycast">
+                  優化 Unity uGUI 在 Raycast 效能消耗 – A Optimizing Tip of uGUI Raycast <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="Git 是一個被廣泛使用的 版本控制系統(Version Control Systems)，雖然現在有許多圖形化的介面可以使用，但要完全發揮 Git 的各個功能細節，使用 Command 進行操作依舊是相當重要的。 本文重新整理了當初在學習 Git 時所寫的筆記，並另外加入一些新的補充，紀錄了大部分 Git 中常用的 Commit、Branch、Remote 相關指令，做為學習的參考或使用上的備忘">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Git 常用指令筆記(一) 基本操作 - Cheatsheet of Basic Commands of Git">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/cheatsheet-of-basic-commands-of-git/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="Git 是一個被廣泛使用的 版本控制系統(Version Control Systems)，雖然現在有許多圖形化的介面可以使用，但要完全發揮 Git 的各個功能細節，使用 Command 進行操作依舊是相當重要的。 本文重新整理了當初在學習 Git 時所寫的筆記，並另外加入一些新的補充，紀錄了大部分 Git 中常用的 Commit、Branch、Remote 相關指令，做為學習的參考或使用上的備忘">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2017-01-13T16:56:54.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.451Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="git">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/cheatsheet-of-basic-commands-of-git/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/cheatsheet-of-basic-commands-of-git/","path":"zh-tw/cheatsheet-of-basic-commands-of-git/","title":"Git 常用指令筆記(一) 基本操作 - Cheatsheet of Basic Commands of Git"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Git 常用指令筆記(一) 基本操作 - Cheatsheet of Basic Commands of Git | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%9C%E6%96%BC-Commit"><span class="nav-number">1.</span> <span class="nav-text">關於 Commit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%9C%E6%96%BC-Branch"><span class="nav-number">2.</span> <span class="nav-text">關於 Branch</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%9C%E6%96%BC-Remote"><span class="nav-number">3.</span> <span class="nav-text">關於 Remote</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">4.</span> <span class="nav-text">其他</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%83%E8%80%83"><span class="nav-number">5.</span> <span class="nav-text">參考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/cheatsheet-of-basic-commands-of-git/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Git 常用指令筆記(一) 基本操作 - Cheatsheet of Basic Commands of Git
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-01-14 00:56:54" itemprop="dateCreated datePublished" datetime="2017-01-14T00:56:54+08:00">2017-01-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/cheatsheet-of-basic-commands-of-git/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/cheatsheet-of-basic-commands-of-git/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>Git 是一個被廣泛使用的 <strong>版本控制系統(Version Control Systems)</strong>，雖然現在有許多圖形化的介面可以使用，但要完全發揮 Git 的各個功能細節，使用 Command 進行操作依舊是相當重要的。 本文重新整理了當初在學習 Git 時所寫的筆記，並另外加入一些新的補充，紀錄了大部分 Git 中常用的 Commit、Branch、Remote 相關指令，做為學習的參考或使用上的備忘錄。</p>
+<span id="more"></span>
+<h3 id="關於-Commit">關於 Commit</h3>
+<p>在 Git 中，可以自由決定你要進行追蹤 (track) 與版本控制的檔案，並在希望留下紀錄點時使用 Commit 指令來留下紀錄節點。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#檢查專案狀態</span></span><br><span class="line">git status</span><br><span class="line"><span class="comment">#添加新的檔案追蹤 (紀錄 new 跟 modified)</span></span><br><span class="line"><span class="comment">#加上 -u 會紀錄 new、modified 以及 deleted</span></span><br><span class="line">git add &lt;file&gt;</span><br><span class="line">git add -u &lt;file&gt;</span><br><span class="line"><span class="comment">#移除檔案的追蹤並刪除檔案 (紀錄 deleted)</span></span><br><span class="line">git rm &lt;file&gt;</span><br><span class="line"><span class="comment">#移除檔案的追蹤並保留檔案 (紀錄 deleted)</span></span><br><span class="line">git rm --cached &lt;file&gt;</span><br><span class="line"><span class="comment">#記錄所有資料夾中不被 ignore 的變化，需慎用</span></span><br><span class="line">git add .</span><br><span class="line"><span class="comment">#增加commit節點，並留下描述</span></span><br><span class="line"><span class="comment">#加上 -a 會自動紀錄所有 modified 跟 deleted</span></span><br><span class="line">git commit -m &lt;message&gt;</span><br><span class="line">git commit -am &lt;message&gt;</span><br><span class="line"><span class="comment">#取消最後一個commit</span></span><br><span class="line">git reset --soft HEAD^</span><br><span class="line"><span class="comment">#強制恢復到先前commit的版本</span></span><br><span class="line">git reset --hard HEAD</span><br><span class="line">git reset --hard HEAD^</span><br><span class="line">git reset --hard HEAD~2</span><br><span class="line"><span class="comment">#回復特定檔案至特定版本</span></span><br><span class="line">git checkout HEAD^ &lt;file&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="關於-Branch">關於 Branch</h3>
+<p>在很多情境下，會希望同時有多種版本的專案同時開發，可能是為了尚未確定的新功能，或者希望多人合作時不要互相干擾。Branch 指令可以滿足你的需求，但同時也要確實清楚自己的每個操作所代表的意義，以免專案內容大亂。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#顯示所有分支，目前所處在的分支前方會有個 *</span></span><br><span class="line">git branch</span><br><span class="line"><span class="comment">#移動到特定的分支進行工作，若有任何尚未 commit 的變動將會無法移動</span></span><br><span class="line">git checkout &lt;branch_name&gt;</span><br><span class="line"><span class="comment">#由 &lt;branch_name_origin&gt; 建立新分支 &lt;branch_name&gt;，但不移動</span></span><br><span class="line">git branch &lt;branch_name&gt; &lt;branch_name_origin&gt;</span><br><span class="line"><span class="comment">#建立新的分支，同時移動到新分支進行工作</span></span><br><span class="line">git checkout -b &lt;branch_name&gt; &lt;branch_name_origin&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">#合併 &lt;branch_name&gt; 分支到 &lt;branch_name_target&gt; 之上</span></span><br><span class="line"><span class="comment">#千萬要注意必須先 checkout 至要合併的目標分支</span></span><br><span class="line"><span class="comment">#而 --no-ff 模式會保留被合併分支的 commit，並增加一個 merge commit</span></span><br><span class="line">git checkout &lt;branch_name_target&gt;</span><br><span class="line">git merge --no-ff &lt;branch_name&gt;</span><br><span class="line"></span><br><span class="line"><span class="comment">#刪除分支</span></span><br><span class="line">git branch -d &lt;branch_name&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="關於-Remote">關於 Remote</h3>
+<p>Remote 是將 Git 的共享能力加以發揮的重要功能，不論是為了在不同設備上進行開發，與人分享專案跟合作，甚至是為了自動部屬，都是 Remote 功能的應用。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#顯示所有的 Remote</span></span><br><span class="line">git remote -v</span><br><span class="line"><span class="comment">#增加一個 Remote</span></span><br><span class="line">git remote add &lt;remotename&gt; &lt;url&gt;</span><br><span class="line"><span class="comment">#使用 &lt;branch_name&gt; 作為遠端 Branch 的複製</span></span><br><span class="line">git branch -f &lt;branch_name&gt; &lt;shortname&gt;/&lt;remote_branch_name&gt;</span><br><span class="line"><span class="comment">#將工作位置移動至與遠端連結的 Branch，並更新至遠端最新的 Commit</span></span><br><span class="line">git checkout &lt;branch_name&gt;</span><br><span class="line">git pull</span><br><span class="line"><span class="comment">#上傳本地 Commit 紀錄至遠端</span></span><br><span class="line">git push</span><br><span class="line"><span class="comment">#上傳本地 Commit 紀錄至遠端，若無此遠端 Branch 則同時建立一個新的遠端 Branch</span></span><br><span class="line"><span class="comment">#加上 -u 會將本地 Branch&lt;branch_name&gt; 設為遠端 Branch&lt;remote_branch_name&gt; 的複製</span></span><br><span class="line"><span class="comment">#未來才能直接使用 pull/push</span></span><br><span class="line">git checkout &lt;branch_name&gt;</span><br><span class="line">git push -u &lt;remotename&gt; &lt;remote_branch_name&gt;</span><br><span class="line"><span class="comment">#將所有本地 Branch 推送至遠端，慎用</span></span><br><span class="line">git push --all</span><br><span class="line"><span class="comment">#刪除遠端 Branch</span></span><br><span class="line">git push &lt;remotename&gt; :&lt;remote_branch_name&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="其他">其他</h3>
+<ul>
+<li>或許你想知道為何別人的指令長的跟你不大一樣，似乎簡短了一些？下方有指令說明。</li>
+<li>如果你新增了 .gitignore，卻發現有些檔案早先已經不小心加入追蹤了，希望移除追蹤但不移除檔案？下方有指令說明。</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#設定指令縮寫：</span></span><br><span class="line">git config --global alias.st status</span><br><span class="line">git config --global alias.ci commit</span><br><span class="line">git config --global alias.co checkout</span><br><span class="line">git config --global alias.br branch</span><br><span class="line"></span><br><span class="line"><span class="comment">#確認某檔案是否有被追蹤</span></span><br><span class="line">git ls-files | grep &lt;filename&gt;</span><br><span class="line"><span class="comment">#遺忘到所有追蹤對象，可用於重新採用 .gitignore 檔設定</span></span><br><span class="line">git rm -rf --cached .</span><br><span class="line"><span class="comment">#遺忘所有已經追蹤，但應當被忽略的檔案</span></span><br><span class="line">git ls-files -c -i --exclude-standard | xargs git rm --cached</span><br></pre></td></tr></table></figure>
+<ul>
+<li>如果已經開始使用 Branch 做為團隊合作的利器，那可以研究一下 git-flow 這套 Git branching model，了解一個善用 Branch 的例子。文章尾端附有參考連結。</li>
+</ul>
+<p>Git 不只是為一個備份專案的工具，了解 Branch、Remote、Submodule 等更多功能後，方能體會版本控制為開發帶來的強大效果。</p>
+<h3 id="參考">參考</h3>
+<ul>
+<li>Git - Reference - <a target="_blank" rel="noopener" href="https://git-scm.com/docs">https://git-scm.com/docs</a></li>
+<li>A successful Git branching model - <a target="_blank" rel="noopener" href="http://nvie.com/posts/a-successful-git-branching-model/">http://nvie.com/posts/a-successful-git-branching-model/</a></li>
+<li>Git flow 開發流程 - <a target="_blank" rel="noopener" href="https://ihower.tw/blog/archives/5140">https://ihower.tw/blog/archives/5140</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/cheatsheet-of-basic-commands-of-git/" title="Git 常用指令筆記(一) 基本操作 - Cheatsheet of Basic Commands of Git">http://www.douduck08.com/zh-tw/cheatsheet-of-basic-commands-of-git/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/git/" rel="tag"># git</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/dividing-your-game-system-in-unity/" rel="prev" title="[Unity] 應用 Singleton pattern 及 Unity Component 做系統拆分與管理 – Dividing your game system in unity">
+                  <i class="fa fa-chevron-left"></i> [Unity] 應用 Singleton pattern 及 Unity Component 做系統拆分與管理 – Dividing your game system in unity
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/preparing-a-state-pattern-for-unity/" rel="next" title="為 Unity 準備一個泛用的狀態模式 – Preparing a State Pattern for Unity">
+                  為 Unity 準備一個泛用的狀態模式 – Preparing a State Pattern for Unity <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="《Unity のエディター拡張》後所留下的簡單筆記，第六到八章。 前五章以介紹內建的 Editor 功能為主，六到八章開始進入了自訂 EditorGUI 的部分了，然後是 EditorWindow。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[閱讀筆記] Unity のエディター拡張 #2">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/review-extantion-of-unity-editor-part2/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="《Unity のエディター拡張》後所留下的簡單筆記，第六到八章。 前五章以介紹內建的 Editor 功能為主，六到八章開始進入了自訂 EditorGUI 的部分了，然後是 EditorWindow。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2017-07-17T18:33:48.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.454Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="editor">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/review-extantion-of-unity-editor-part2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/review-extantion-of-unity-editor-part2/","path":"zh-tw/review-extantion-of-unity-editor-part2/","title":"[閱讀筆記] Unity のエディター拡張 #2"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[閱讀筆記] Unity のエディター拡張 #2 | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9AEditorGUI"><span class="nav-number">1.</span> <span class="nav-text">第六章：EditorGUI</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9AEditorWindow"><span class="nav-number">2.</span> <span class="nav-text">第七章：EditorWindow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E7%AB%A0%EF%BC%9AMenuItem"><span class="nav-number">3.</span> <span class="nav-text">第八章：MenuItem</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-extantion-of-unity-editor-part2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [閱讀筆記] Unity のエディター拡張 #2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-07-18 02:33:48" itemprop="dateCreated datePublished" datetime="2017-07-18T02:33:48+08:00">2017-07-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/review-extantion-of-unity-editor-part2/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/review-extantion-of-unity-editor-part2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>《Unity のエディター拡張》後所留下的簡單筆記，第六到八章。 前五章以介紹內建的 Editor 功能為主，六到八章開始進入了自訂 EditorGUI 的部分了，然後是 EditorWindow。</p>
+<span id="more"></span>
+<h3 id="第六章：EditorGUI">第六章：EditorGUI</h3>
+<ul>
+<li>EditorGUI 與 EditorGUILayout 這兩個類別與 4.6 以前，用於遊戲 run time 建立<strong>使用者介面</strong>的 GUI 類別功能相近，只是它可被用於 EditorWindow 上。</li>
+<li>相關 API：
+<ul>
+<li>EditorGUI.BeginChangeCheck / EndChangeCheck 用於檢查是否有數值變化，有則回傳 true。</li>
+<li>EditorGUI.BeginDisabledGroup / EndDisabledGroup 用於繪製無法操作的區塊。</li>
+<li>EditorGUILayout.BeginFadeGroup / EndFadeGroup 可以裁切掉特定高度外的 UI 元件。</li>
+<li>EditorGUI.ObjectField 可以產生欄位用於拉動資源形成參照，依照資源類型有不同介面。</li>
+<li>EditorGUI.MultiFloatField 多欄位的浮點數組合。</li>
+<li>EditorGUI.indentLevel 配合 EditorGUILayout 使用，用於調整縮排。</li>
+<li>EditorGUILayout.Knob 繪製旋鈕。(疑？官方文件中沒有這個阿？)</li>
+</ul>
+</li>
+<li>關於 Scope
+<ul>
+<li>用於在特定的彈性範圍內控制 GUI 參數。</li>
+<li>Scope 繼承了 IDisposable 介面，透過 using 來控制影響範圍。</li>
+<li>內建的 Scope 有 HorizontalScope、VerticalScope、ScrollViewScope，實際上利用 EditorGUILayout.BeginHorizontal/EndHorizontal 之類的 API。</li>
+<li>可以繼承 GUI.Scope 來自訂 Scope。</li>
+</ul>
+</li>
+<li>小技巧：
+<ul>
+<li>利用 Toggle 欄位配合 button 的 GUIStyle，可以做出放開滑鼠後不跳起的按鈕開關。</li>
+<li>EditorStyles 中可以呼叫內建各式元件的 GUIStyle，做出各種外觀與功能的組合。</li>
+</ul>
+</li>
+</ul>
+<h3 id="第七章：EditorWindow">第七章：EditorWindow</h3>
+<ul>
+<li>EditorWindow 為 ScriptableObject 的子類別，可以透過 CreateInstance<T> () 來產生類別，也允許複數個相同視窗存在。</li>
+<li>如果只允許單數視窗，可以利用 Singleton pattern 或者使用 EditorWindow.GetWindow<T> () 這個 API。</li>
+<li>其他有關開啟 EditorWindow 的 API：
+<ul>
+<li>ShowUtility () 將使視窗無法被拖動成為 tab。</li>
+<li>ShowPopup () 會使視窗沒有上方工具列 (關閉視窗的按鈕等)，需自行實作關閉視窗的手段。</li>
+<li>ShowAsDropDown () 如選單般會自動調整位置，保證視窗整體都在螢幕內顯示。</li>
+</ul>
+</li>
+<li>其他視窗類別：
+<ul>
+<li>ShowAuxWindow 是與 EditorWindow.ShowUtility () 效果相同的一個視窗類別。</li>
+<li>PopupWindowContent 是一個可以繼承並作為彈出視窗的類別。</li>
+<li>ScriptableWizard 會自動為類別中的 Serialized Field 提供編輯欄位，並不使用 OnGUI 作為 GUI 設定。</li>
+</ul>
+</li>
+<li>PreferenceItem 是一個用於添加選項至設定視窗的 <strong>attribute</strong>，對應的方法中直接編寫 GUI。</li>
+<li>IHasCustomMenu 是一個增加選項至視窗右上方 menu 的 <strong>interface</strong>。</li>
+<li>其他 API：
+<ul>
+<li>EditorWindow.minSize / maxSize 限制視窗的調整。</li>
+<li>EditorWindow.titleContent 可以在標題處加上 icon。</li>
+</ul>
+</li>
+<li>可用 Resources.FindObjectsOfTypeAll<T> 取得其他視窗實體。</li>
+<li>因為 EditorWindow 是 ScriptableObject 的子類別，所以可以在腳本的 inspector 窗口設定 Serialized Field 的預設值。</li>
+</ul>
+<h3 id="第八章：MenuItem">第八章：MenuItem</h3>
+<ul>
+<li>MenuItem 是一個 attribute，對應到 static function，用於在 Unity Editor 的各個部分加上新的選單選項。</li>
+<li>依照添加的路徑，自訂的選項會顯示在不同地方：
+<ul>
+<li>以 Assets 為開頭，會同時增加選項至上方工具列、project 視窗的右鍵選單。</li>
+<li>以 GameObject 為開頭，會同時增加選項至上方工具列、hierarchy 視窗的右鍵選單。</li>
+<li>以 CONTEXT 為開頭，會增加選項至 component 的右上齒輪選單。</li>
+</ul>
+</li>
+<li>priority 的設置：
+<ul>
+<li>小的數字在上方。</li>
+<li>差距超過 11 的選項中間會出現分隔線。</li>
+</ul>
+</li>
+<li>Menu.GetChecked / SetChecked 可以實現選項前方的小勾勾。</li>
+<li>MenuCommand 可以在 component 的右上選單的實作上取得更多資料 (來自何 component 之類的)。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/review-extantion-of-unity-editor-part2/" title="[閱讀筆記] Unity のエディター拡張 #2">http://www.douduck08.com/zh-tw/review-extantion-of-unity-editor-part2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/editor/" rel="tag"># editor</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/review-extantion-of-unity-editor-part1/" rel="prev" title="[閱讀筆記] Unity のエディター拡張 #1">
+                  <i class="fa fa-chevron-left"></i> [閱讀筆記] Unity のエディター拡張 #1
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/review-extantion-of-unity-editor-part3/" rel="next" title="[閱讀筆記] Unity のエディター拡張 #3">
+                  [閱讀筆記] Unity のエディター拡張 #3 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

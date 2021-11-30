@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="前陣子有注意到，大多數的書籍或網站資料在介紹 設計模式(Design Pattern) 時，往往所採用的實作方式都是以 C++ 或 JAVA 為實作基礎，甚至在 Unity 為主題的書籍上，也沒有針對 C# 做進一步說明。 事實上作為一個不斷擴充版本及功能的語言，.NET 的 C# 的使用上提供了更多樣化的類別或介面，可以用不太一樣的方式來實作設計模式，妥善的應用 C# 所帶來的便利。 最明顯的例">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C# 上 Observer pattern 的實作差異 - observer pattern on C#">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/observer-pattern-on-csharp/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="前陣子有注意到，大多數的書籍或網站資料在介紹 設計模式(Design Pattern) 時，往往所採用的實作方式都是以 C++ 或 JAVA 為實作基礎，甚至在 Unity 為主題的書籍上，也沒有針對 C# 做進一步說明。 事實上作為一個不斷擴充版本及功能的語言，.NET 的 C# 的使用上提供了更多樣化的類別或介面，可以用不太一樣的方式來實作設計模式，妥善的應用 C# 所帶來的便利。 最明顯的例">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2017-03-26T14:40:26.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.453Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content="design-pattern">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/observer-pattern-on-csharp/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/observer-pattern-on-csharp/","path":"zh-tw/observer-pattern-on-csharp/","title":"C# 上 Observer pattern 的實作差異 - observer pattern on C#"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>C# 上 Observer pattern 的實作差異 - observer pattern on C# | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%94-class"><span class="nav-number">1.</span> <span class="nav-text">純 class</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Delegate-Action"><span class="nav-number">2.</span> <span class="nav-text">Delegate (Action)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Event-EventHandler"><span class="nav-number">3.</span> <span class="nav-text">Event &amp; EventHandler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">4.</span> <span class="nav-text">其他</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/observer-pattern-on-csharp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          C# 上 Observer pattern 的實作差異 - observer pattern on C#
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-03-26 22:40:26" itemprop="dateCreated datePublished" datetime="2017-03-26T22:40:26+08:00">2017-03-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/observer-pattern-on-csharp/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/observer-pattern-on-csharp/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>前陣子有注意到，大多數的書籍或網站資料在介紹 <strong>設計模式(Design Pattern)</strong> 時，往往所採用的實作方式都是以 C++ 或 JAVA 為實作基礎，甚至在 Unity 為主題的書籍上，也沒有針對 C# 做進一步說明。</p>
+<p>事實上作為一個不斷擴充版本及功能的語言，<strong>.NET 的 C#</strong> 的使用上提供了更多樣化的類別或介面，可以用不太一樣的方式來實作設計模式，妥善的應用 C# 所帶來的便利。</p>
+<p>最明顯的例子，就是利用 C# 的 delegate，可以更加方便的實作 <strong>觀察者模式(Observer pattern)</strong>，甚至讓應用上更加靈活。</p>
+<span id="more"></span>
+<p>本文記錄了三種作法可讓大家比較參考：</p>
+<ul>
+<li>純 class</li>
+<li>Delegate (Action)</li>
+<li>Event &amp; EventHandler</li>
+</ul>
+<h3 id="純-class">純 class</h3>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">Subject</span> &#123;</span><br><span class="line">    List&lt;Observer&gt; m_Observers = <span class="keyword">new</span> List&lt;Observer&gt; ();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Attach</span>(<span class="params">Observer observer</span>)</span> &#123; </span><br><span class="line">        m_Observers.Add (observer);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Detach</span> (<span class="params">Observer observer</span>)</span> &#123;</span><br><span class="line">        m_Observers.Remove (observer);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Notify</span> (<span class="params">System.Object data</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = m_Observers.Count - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            m_Observers\[i\].Update (data);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">Observer</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">Update</span> (<span class="params">System.Object data</span>)</span>;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<p>這是一般很常見的範例內容，其中我加上了 System.Object 作為發出通知時可以額外傳送資料的欄位。</p>
+<p>如果想避免使用 System.Object 造成的 Boxing 消耗，可以改用泛型來設計類別：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">Subject</span>&lt;<span class="title">T</span>&gt; &#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">List</span>&lt;<span class="title">Observer</span>&lt;<span class="title">T</span>&gt;&gt; m_Observers</span> = <span class="keyword">new</span> List&lt;Observer&lt;T&gt;&gt; ();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Attach</span> (<span class="params">Observer&lt;T&gt; observer</span>)</span> &#123;</span><br><span class="line">        m_Observers.Add (observer);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Detach</span> (<span class="params">Observer&lt;T&gt; observer</span>)</span> &#123;</span><br><span class="line">        m_Observers.Remove (observer);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Notify</span> (<span class="params">T data</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="built_in">int</span> i = m_Observers.Count - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">            m_Observers\[i\].Update (data);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">Observer</span>&lt;<span class="title">T</span>&gt; &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">Update</span> (<span class="params">T data</span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>加上泛型，可以避免掉 Boxing 的消耗，但同時也會犧牲掉 Subject 類別的使用彈性，不再能使用 List 的方式來管理大量的主題。</p>
+<h3 id="Delegate-Action">Delegate (Action)</h3>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">SubjectWithDelegate</span>&lt;<span class="title">T</span>&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> System.Action&lt;T&gt; m_Observers = <span class="literal">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Attach</span> (<span class="params">System.Action&lt;T&gt; observer</span>)</span> &#123;</span><br><span class="line">        m_Observers += observer;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Detach</span> (<span class="params">System.Action&lt;T&gt; observer</span>)</span> &#123;</span><br><span class="line">        m_Observers -= observer;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Notify</span> (<span class="params">T data</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (m_Observers != <span class="literal">null</span>) &#123;</span><br><span class="line">            m_Observers (data);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Delegate 是在 C# 相當泛用且強大的功能，先接觸 C++ 的我在一開始並無法靈活使用 Delegate，但是熟悉了之後就不想回去寫要自行管理函式指標的 C++ 了。</p>
+<p>利用 Delegate 來實作 <strong>觀察者模式(Observer pattern)</strong>，可以硬生生的省去一個 Observer 類別。不只減少開發上要不斷繼承的需求，也可以更加靈活的在各處使用觀察者 (畢竟只是再多寫個函式)，在開發 Unity 時可以使用 C# 真是太好了。</p>
+<h3 id="Event-EventHandler">Event &amp; EventHandler</h3>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">SubjectWithEvent</span>&lt;<span class="title">T</span>&gt; <span class="keyword">where</span> <span class="title">T</span> : <span class="title">System.EventArgs</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">event</span> System.EventHandler&lt;T&gt; Observers;</span><br><span class="line">    <span class="comment">// use += on Observers to Attach</span></span><br><span class="line">    <span class="comment">// use -= on Observers to Detach</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Notify</span> (<span class="params">T data</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (Observers != <span class="literal">null</span>) &#123;</span><br><span class="line">            Observers (<span class="keyword">this</span>, data);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再更進一步使用 event 的關鍵字來封裝 Delegate，可以再省去兩個方法的實作，同時因為 C# 的 event 關鍵字對 public delegate member 做了安全上的限制，也不怕會被外部類別誤用。關於 event 的說明可以在我的一篇文章中看到：</p>
+<ul>
+<li>
+<a href="/zh-tw/what-keyword-event-is-doing/" title="[C#筆記] 關鍵字 event 對 delegate 的影響 - what keyword event is doing.">[C#筆記] 關鍵字 event 對 delegate 的影響 - what keyword event is doing.</a>
+</li>
+</ul>
+<p>同時這段程式碼使用了 EventHandler 來代替 Action，如此一來可以使用 EventArgs 這個 .NET 內建的類別作為事件資訊的基礎類別，使類別的架構更加符合設計原則。</p>
+<p>不過使用 EventHandler 有個缺點，他是一個 Action&lt;Object, EventArgs&gt; 形式的 Delegate，所以運作上會有 Boxing 消耗，是否使用需依照情況進行斟酌。</p>
+<h3 id="其他">其他</h3>
+<p>介紹了三個方法，每個方法都有各自的優點跟缺點，目前我最常使用的是混和了第二跟第三種方法的設計，即使用 event 關鍵字但不使用 EventHandler。</p>
+<p>同為設計模式，有很多不同的實作方式可以因使用的語言而產生差異，如何同時善用語言特性跟設計模式，則需要不斷嘗試跟研究，希望我的一些心得可以帶給大家幫助。</p>
+<p>.NET 甚至還有提供以觀察者為名的介面可以直接利用，不過因為我自己沒有使用過，便不多做討論，僅提供官方的文件連結做為參考：</p>
+<ul>
+<li>System.IObservable 和 System.IObserver - <a target="_blank" rel="noopener" href="https://msdn.microsoft.com/zh-tw/library/ee850490(v=vs.110).aspx">https://msdn.microsoft.com/zh-tw/library/ee850490(v=vs.110).aspx</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/observer-pattern-on-csharp/" title="C# 上 Observer pattern 的實作差異 - observer pattern on C#">http://www.douduck08.com/zh-tw/observer-pattern-on-csharp/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/design-pattern/" rel="tag"># design-pattern</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/more-singleton-in-unity/" rel="prev" title="[C#/Unity] 更多 Singleton – More Singleton in Unity">
+                  <i class="fa fa-chevron-left"></i> [C#/Unity] 更多 Singleton – More Singleton in Unity
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/git-fatal-i-dont-handle-protocol-https-solution/" rel="next" title="[git] fatal: I don't handle protocol 'https' 原因與解決">
+                  [git] fatal: I don't handle protocol 'https' 原因與解決 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

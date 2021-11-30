@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="State pattern 是我使用次數最多的設計模式，在 Unity 遊戲的開發中被我用於程式流程的控制、規則的彈性編輯、簡易 AI 的撰寫、腳色控制器的設計等，是應用相當廣泛的模式。 因為次數太多了，索性事先設計好基本的類別，當需要的時候便可以隨時隨地使用 State pattern，本文便是藉機介紹了 State pattern 及我的通用作法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="為 Unity 準備一個泛用的狀態模式 – Preparing a State Pattern for Unity">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/preparing-a-state-pattern-for-unity/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="State pattern 是我使用次數最多的設計模式，在 Unity 遊戲的開發中被我用於程式流程的控制、規則的彈性編輯、簡易 AI 的撰寫、腳色控制器的設計等，是應用相當廣泛的模式。 因為次數太多了，索性事先設計好基本的類別，當需要的時候便可以隨時隨地使用 State pattern，本文便是藉機介紹了 State pattern 及我的通用作法。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/01/450px-finite_state_machine_example_with_comments-svg.png">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/01/uml_state_machine_fig5.png">
+<meta property="article:published_time" content="2017-01-18T12:00:00.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.453Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="design-pattern">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://douduck08.files.wordpress.com/2017/01/450px-finite_state_machine_example_with_comments-svg.png">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/preparing-a-state-pattern-for-unity/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/preparing-a-state-pattern-for-unity/","path":"zh-tw/preparing-a-state-pattern-for-unity/","title":"為 Unity 準備一個泛用的狀態模式 – Preparing a State Pattern for Unity"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>為 Unity 準備一個泛用的狀態模式 – Preparing a State Pattern for Unity | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#State-pattern-%E7%B0%A1%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">State pattern 簡介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#State-pattern-%E5%AF%A6%E8%B8%90%E6%96%B9%E5%90%91"><span class="nav-number">2.</span> <span class="nav-text">State pattern 實踐方向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A6%96%E5%85%88%E6%98%AF%E6%8E%A7%E5%88%B6%E5%99%A8-StateController"><span class="nav-number">3.</span> <span class="nav-text">首先是控制器 StateController</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A5%E8%91%97%E6%98%AF%E7%8B%80%E6%85%8B%E7%9A%84%E4%BB%8B%E9%9D%A2-abstract-class-IState"><span class="nav-number">4.</span> <span class="nav-text">接著是狀態的介面(abstract class) IState</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%8E%E5%B1%A4%E5%BC%8F%E7%9A%84%E7%8B%80%E6%85%8B%E6%A9%9F-Hierarchical-Finite-State-Machine"><span class="nav-number">5.</span> <span class="nav-text">階層式的狀態機 Hierarchical Finite State Machine</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HierarchicalStateController"><span class="nav-number">6.</span> <span class="nav-text">HierarchicalStateController</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#IHierarchicalState"><span class="nav-number">7.</span> <span class="nav-text">IHierarchicalState</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/preparing-a-state-pattern-for-unity/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          為 Unity 準備一個泛用的狀態模式 – Preparing a State Pattern for Unity
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-01-18 20:00:00" itemprop="dateCreated datePublished" datetime="2017-01-18T20:00:00+08:00">2017-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/preparing-a-state-pattern-for-unity/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/preparing-a-state-pattern-for-unity/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>State pattern 是我使用次數最多的設計模式，在 Unity 遊戲的開發中被我用於<strong>程式流程的控制、規則的彈性編輯、簡易 AI 的撰寫、腳色控制器</strong>的設計等，是應用相當廣泛的模式。</p>
+<p>因為次數太多了，索性事先設計好基本的類別，當需要的時候便可以隨時隨地使用 State pattern，本文便是藉機介紹了 State pattern 及我的通用作法。</p>
+<span id="more"></span>
+<h3 id="State-pattern-簡介">State pattern 簡介</h3>
+<p>聽到 State pattern 大家應該會聯想到有限狀態機 (FSM，finite-state machine)，但兩者嚴格來說是不完全相同的，FSM 本身是個設計概念，被應用在諸多領域，實作方式百百種；而 State pattern 只是 FSM 在物件導向中的一個實現方案。</p>
+<p>用一句話來形容 State pattern 就是「透過不同狀態的切換，讓類別展現不同的行為」，這句話之中可以看出 State pattern 的兩個面向，<strong>分離不同的行為模式</strong>以及<strong>整合(切換)不同的行為狀態</strong>。</p>
+<p>使用 State pattern (或狀態機) 的好處是：</p>
+<ul>
+<li>方便拆分程式碼，讓單一份程式只需專注在他當下的工作。</li>
+<li>容易改動運作流程 – 只要適當使用，狀態之間的轉移次序是相當彈性的。</li>
+<li>管理資源容易 – 每個狀態所使用的資源，可以在狀態結束前自行釋放。</li>
+</ul>
+<p>而缺點是：</p>
+<ul>
+<li>不易從程式方面限制使用方式，需要開發者主動遵守狀態機的規格，錯誤使用的狀態機可能會失去上述所有優點。特別在合作開發時更要注意不同人對於狀態機的使用是否達成共識。</li>
+<li>每多一個狀態都要增加一個類別，可能會有類別數量狂增的情況。</li>
+</ul>
+<h3 id="State-pattern-實踐方向">State pattern 實踐方向</h3>
+<p>要實踐一個 State pattern 的通用作法，就相當於要設計一個簡易的 FSM。</p>
+<p><img src="https://douduck08.files.wordpress.com/2017/01/450px-finite_state_machine_example_with_comments-svg.png" alt="FSM"></p>
+<blockquote>
+<p>上圖取自 Wiki – Finite-state_machine 條目</p>
+</blockquote>
+<p>在物件導向程式設計中，FSM 沒有一個公認的實作方式，有些比較嚴謹的實作方式會定義轉移路徑，也有些實作方式會暫存所有狀態，而我希望的是一個最簡化的設計，只為了隨時可以使用 State pattern，所以只準備了以下三個設計目標：</p>
+<ul>
+<li>有一個控制器 (Controller) 負責管理與切換狀態。</li>
+<li>每個狀態 (State) 都有三個階段 – 進入、運作、離開。</li>
+<li>控制器 (Controller) 必須被注入狀態 (State) 之中，避免當狀態決定執行切換時無從呼叫控制器。</li>
+</ul>
+<h3 id="首先是控制器-StateController">首先是控制器 StateController</h3>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title">DouduckGame</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">StateController</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> IState m_oCurrentState = <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">public</span> IState CurrentState &#123;</span><br><span class="line">            <span class="keyword">get</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> m_oCurrentState;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">private</span> <span class="built_in">bool</span> m_bStarted = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="built_in">bool</span> m_bTerminated = <span class="literal">false</span>;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">StateController</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">StateController</span>(<span class="params">IState oStartState</span>) : <span class="title">this</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            Start(oStartState);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params">IState oState</span>)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_bTerminated) &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[StateController] has been terminated&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (m_bStarted) &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[StateController] has been started&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            Debug.Log(<span class="string">&quot;[StateController] Start: &quot;</span> + oState.ToString());</span><br><span class="line">            m_bStarted = <span class="literal">true</span>;</span><br><span class="line">            m_oCurrentState = oState;</span><br><span class="line">            m_oCurrentState.SetProperty(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Terminate</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_oCurrentState != <span class="literal">null</span>) &#123;</span><br><span class="line">                m_oCurrentState.StateEnd();</span><br><span class="line">                m_oCurrentState = <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            m_bTerminated = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TransTo</span>(<span class="params">IState oState</span>)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_bTerminated) &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[StateController] has been terminated&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!m_bStarted) &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[StateController] need to be started first&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            Debug.Log(<span class="string">&quot;[StateController] TransTo: &quot;</span> + oState.ToString());</span><br><span class="line">            <span class="keyword">if</span> (m_oCurrentState != <span class="literal">null</span>) &#123;</span><br><span class="line">                m_oCurrentState.StateEnd();</span><br><span class="line">            &#125;</span><br><span class="line">            m_oCurrentState = oState;</span><br><span class="line">            m_oCurrentState.SetProperty(<span class="keyword">this</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">StateUpdate</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_bTerminated || !m_bStarted) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (m_oCurrentState != <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="keyword">if</span> (m_oCurrentState.AtStateBegin) &#123;</span><br><span class="line">                    m_oCurrentState.TouchStateBegin();</span><br><span class="line">                    m_oCurrentState.StateBegin();</span><br><span class="line">                    <span class="keyword">if</span> (m_oCurrentState == <span class="literal">null</span>) &#123;</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                m_oCurrentState.StateUpdate();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>StateController 總共設計了四個 public 方法：</p>
+<ul>
+<li><code>void Start(IState)</code> – 傳入一個狀態，作為最初的狀態開始狀態機的運作。必須呼叫此方法後，才能使用其他方法。</li>
+<li><code>void Terminate()</code> – 終止當前狀態，結束狀態機的運作，將不再可以使用其他三個方法。</li>
+<li><code>void TransTo(IState)</code> – 傳入一個狀態，則切換到該狀態，同時會執行上個狀態的 StateEnd()。</li>
+<li><code>void StateUpdate()</code> – 更新與執行狀態機的運作，會視需要呼叫當前狀態的 StateBegin()，並固定呼叫當前狀態的 StateUpdate()。</li>
+</ul>
+<p>通常會搭配一個 Monobehaviour 腳本封裝 StateController ，然後再由 Monobehaviour.Update() 呼叫 StateUpdate() 來持續更新狀態機。</p>
+<h3 id="接著是狀態的介面-abstract-class-IState">接著是狀態的介面(abstract class) IState</h3>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title">DouduckGame</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">IState</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> StateController m_StateController;</span><br><span class="line">        <span class="keyword">protected</span> StateController Controller &#123;</span><br><span class="line">            <span class="keyword">get</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> m_StateController;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">private</span> <span class="built_in">bool</span> m_bAtStateBegin = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="built_in">bool</span> AtStateBegin &#123;</span><br><span class="line">            <span class="keyword">get</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> m_bAtStateBegin;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetProperty</span>(<span class="params">StateController oController</span>)</span> &#123;</span><br><span class="line">            m_StateController = oController;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TouchStateBegin</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            m_bAtStateBegin = <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">TransTo</span>(<span class="params">IState oState</span>)</span> &#123;</span><br><span class="line">            m_StateController.TransTo(oState);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">StateBegin</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">StateUpdate</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">StateEnd</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="built_in">string</span> <span class="title">ToString</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">string</span>.Format (<span class="string">&quot;&lt;IState&gt;&quot;</span> + <span class="keyword">this</span>.GetType().Name);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>作為狀態的主要功能，共有三個 public virtual 方法：</p>
+<ul>
+<li><code>void StateBegin()</code> – 狀態的預備動作，會在第一次執行 StateUpdate() 之前執行一次。</li>
+<li><code>void StateUpdate()</code> – 狀態運作的核心，由 StateController.StateUpdate() 負責呼叫，使用邏輯與 Unity Monobehaviour 的 Update() 相似。</li>
+<li><code>void StateEnd()</code> – 當狀態即將被取代或結束時會呼叫，通常用於狀態的收尾工作、退訂 (反註冊) 事件系統、釋放相關資源等。</li>
+</ul>
+<p>其實狀態的三個 virtual 方法使用邏輯便是對應到 Monobehaviour 的 Start()、Update() 及 OnDestory() 之間的關係，但由於透過 State pattern 進行了拆分，可以讓一個類別或者 Monobehaviour 依照情況扮演不同的腳色與功能。</p>
+<p>除了三個主要功能，IState 也被**相依注入(Dependency Injection)**了負責控制的 StateController 本體，所以可以在狀態之中直接控制狀態的切換，不須使用 Singleton 或其他手段由外部取得控制。為了方便也實作了<code>IState.TransTo(IState)</code>可以直接呼叫。</p>
+<p>剩餘未介紹的類別成員與方法，則是為了實作 StateController 而設計的 Flag 以及注入方法，有興趣的人可以再自行閱讀程式碼了解。</p>
+<h3 id="階層式的狀態機-Hierarchical-Finite-State-Machine">階層式的狀態機 Hierarchical Finite State Machine</h3>
+<p><img src="https://douduck08.files.wordpress.com/2017/01/uml_state_machine_fig5.png" alt="HFSM"></p>
+<blockquote>
+<p>上圖取自 Wiki – Finite-state_machine 條目</p>
+</blockquote>
+<p>原本為了實現上方巢狀設計的最簡單方法，就是另外放一個 StateController 在 IState 之中，實現父子關係般的狀態機結構。</p>
+<p>不過經過測試與修改，我決定不直接採用巢狀的資料結構，而是自行實作 Stack 結構來儲存所有的狀態 (IHierarchicalState)，為此而外設計了 HierarchicalStateController，總共兩個全新的類別。</p>
+<p>使用 Stack 儲存狀態，在執行時與巢狀結構並無差異，皆是有著 LIFO 的特性，這點可以將狀態機的 UML 圖表重繪成 Tree graph 來輕易看出。而在有相同執行結果的情況下，Stack 儲存可以避開多餘的方法呼叫，避免在每一次 StateUpdate() 時產生遞迴一般的呼叫次序，降低執行上的負擔。</p>
+<p>下方是兩個新類別的程式碼，其中在 HierarchicalStateController.TransTo() 中我使用 Level 參數來決定是否深入建立子狀態機，由 0 作為第一層的狀態，每建構一層子狀態機 Level 則加一。剩餘部分則與普通狀態機大同小異。</p>
+<h3 id="HierarchicalStateController">HierarchicalStateController</h3>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title">DouduckGame</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">HierarchicalStateController</span> &#123;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">private</span> List&lt;IHierarchicalState&gt; m_oCurrentState = <span class="literal">null</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="built_in">bool</span> m_bAtStateBegin = <span class="literal">false</span>;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">private</span> <span class="built_in">bool</span> m_bStarted = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">private</span> <span class="built_in">bool</span> m_bTerminated = <span class="literal">false</span>;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">HierarchicalStateController</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            m_oCurrentState = <span class="keyword">new</span> List&lt;IHierarchicalState&gt; ();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">HierarchicalStateController</span>(<span class="params">IHierarchicalState oStartState</span>) : <span class="title">this</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            Start(oStartState);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params">IHierarchicalState oState</span>)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_bTerminated) &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[HStateController] has been terminated&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (m_bStarted) &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[HStateController] has been started&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            Debug.Log(<span class="string">&quot;[HStateController] Start: &quot;</span> + oState.ToString());</span><br><span class="line">            m_bStarted = <span class="literal">true</span>;</span><br><span class="line">            m_oCurrentState.Add(oState);</span><br><span class="line">            m_oCurrentState[<span class="number">0</span>].SetProperty(<span class="keyword">this</span>, <span class="number">0</span>);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Terminate</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> i = m_oCurrentState.Count - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">                m_oCurrentState[i].StateEnd();</span><br><span class="line">            &#125;</span><br><span class="line">            m_oCurrentState.Clear();</span><br><span class="line">            m_bTerminated = <span class="literal">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TransTo</span>(<span class="params"><span class="built_in">int</span> iLevel, IHierarchicalState oState</span>)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_bTerminated) &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[StateController] has been terminated&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (!m_bStarted) &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[StateController] need to be started first&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (iLevel &gt; m_oCurrentState.Count) &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[StateController] Level is too big&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">            Debug.Log(<span class="built_in">string</span>.Format(<span class="string">&quot;[StateController] Level &#123;0:&#125; transTo: &#123;1:&#125;&quot;</span>, iLevel, oState.ToString()));</span><br><span class="line">            <span class="keyword">if</span> (iLevel == m_oCurrentState.Count) &#123;</span><br><span class="line">                m_oCurrentState.Add(oState);</span><br><span class="line">                m_oCurrentState [iLevel].SetProperty(<span class="keyword">this</span>, iLevel);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="built_in">int</span> i = m_oCurrentState.Count - <span class="number">1</span>; i &gt;= iLevel; i--) &#123;</span><br><span class="line">                    m_oCurrentState [i].StateEnd ();</span><br><span class="line">                    m_oCurrentState.RemoveAt (i);</span><br><span class="line">                &#125;</span><br><span class="line">                m_oCurrentState.Add(oState);</span><br><span class="line">                m_oCurrentState [iLevel].SetProperty(<span class="keyword">this</span>, iLevel);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">StateUpdate</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_bTerminated || !m_bStarted) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; m_oCurrentState.Count; i++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (m_oCurrentState[i].AtStateBegin) &#123;</span><br><span class="line">                    m_oCurrentState[i].TouchStateBegin();</span><br><span class="line">                    m_oCurrentState[i].StateBegin();</span><br><span class="line">                    <span class="keyword">if</span> (m_oCurrentState == <span class="literal">null</span>) &#123;</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                m_oCurrentState[i].StateUpdate();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="IHierarchicalState">IHierarchicalState</h3>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title">DouduckGame</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">IHierarchicalState</span> &#123;</span><br><span class="line">        <span class="keyword">private</span> HierarchicalStateController m_StateController;</span><br><span class="line">        <span class="keyword">protected</span> HierarchicalStateController Controller &#123;</span><br><span class="line">            <span class="keyword">get</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> m_StateController;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">private</span> <span class="built_in">int</span> m_iLevel = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">protected</span> <span class="built_in">int</span> StateLevel &#123;</span><br><span class="line">            <span class="keyword">get</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> m_iLevel;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">private</span> <span class="built_in">bool</span> m_bAtStateBegin = <span class="literal">true</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="built_in">bool</span> AtStateBegin &#123;</span><br><span class="line">            <span class="keyword">get</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> m_bAtStateBegin;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">SetProperty</span>(<span class="params">HierarchicalStateController oController, <span class="built_in">int</span> iLevel</span>)</span> &#123;</span><br><span class="line">            m_StateController = oController;</span><br><span class="line">            m_iLevel = iLevel;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">TouchStateBegin</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            m_bAtStateBegin = <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">TransTo</span>(<span class="params">IHierarchicalState oState</span>)</span> &#123;</span><br><span class="line">            m_StateController.TransTo(m_iLevel, oState);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">TransTo</span>(<span class="params"><span class="built_in">int</span> iLevel, IHierarchicalState oState</span>)</span> &#123;</span><br><span class="line">            m_StateController.TransTo(iLevel, oState);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">AddSubState</span>(<span class="params">IHierarchicalState oState</span>)</span> &#123;</span><br><span class="line">            m_StateController.TransTo(m_iLevel + <span class="number">1</span>, oState);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">StateBegin</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">StateUpdate</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">StateEnd</span>(<span class="params"></span>)</span> &#123;&#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="built_in">string</span> <span class="title">ToString</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">string</span>.Format (<span class="string">&quot;&lt;IHState&gt;&quot;</span> + <span class="keyword">this</span>.GetType().Name);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/preparing-a-state-pattern-for-unity/" title="為 Unity 準備一個泛用的狀態模式 – Preparing a State Pattern for Unity">http://www.douduck08.com/zh-tw/preparing-a-state-pattern-for-unity/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/design-pattern/" rel="tag"># design-pattern</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/cheatsheet-of-basic-commands-of-git/" rel="prev" title="Git 常用指令筆記(一) 基本操作 - Cheatsheet of Basic Commands of Git">
+                  <i class="fa fa-chevron-left"></i> Git 常用指令筆記(一) 基本操作 - Cheatsheet of Basic Commands of Git
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/the-effectiveness-of-three-kinds-of-creating-methods-of-class/" rel="next" title="[Unity/C#] 三種類別實體化方法的效能比較 - the Effectiveness of 3 Kinds of Creating Methods of Class">
+                  [Unity/C#] 三種類別實體化方法的效能比較 - the Effectiveness of 3 Kinds of Creating Methods of Class <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

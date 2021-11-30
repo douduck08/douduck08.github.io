@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="在使用 Unity 開發遊戲的時候，為了實現各種功能，往往會不斷衍伸出一個又一個的系統，分別執掌不同的任務，可能是為了管理 UI 介面，也可能是為了建立連線，又或者是為了管理存檔。一個個的系統往往又為了方便而採用 Singleton pattern，或者互相注入，最後的結果就是系統之間的關係複雜，程式碼不易維護及重複使用。 於是乎我就一直思考著如何將一個巨大的系統架構，拆分成一個個獨立且靈活的小系">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Unity] 應用 Singleton pattern 及 Unity Component 做系統拆分與管理 – Dividing your game system in unity">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/dividing-your-game-system-in-unity/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="在使用 Unity 開發遊戲的時候，為了實現各種功能，往往會不斷衍伸出一個又一個的系統，分別執掌不同的任務，可能是為了管理 UI 介面，也可能是為了建立連線，又或者是為了管理存檔。一個個的系統往往又為了方便而採用 Singleton pattern，或者互相注入，最後的結果就是系統之間的關係複雜，程式碼不易維護及重複使用。 於是乎我就一直思考著如何將一個巨大的系統架構，拆分成一個個獨立且靈活的小系">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/01/gamesystemmanager.jpg">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/01/line_p201719_142419.jpg">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/01/1483943452274.jpg">
+<meta property="article:published_time" content="2017-01-09T12:00:00.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.451Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="design-pattern">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://douduck08.files.wordpress.com/2017/01/gamesystemmanager.jpg">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/dividing-your-game-system-in-unity/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/dividing-your-game-system-in-unity/","path":"zh-tw/dividing-your-game-system-in-unity/","title":"[Unity] 應用 Singleton pattern 及 Unity Component 做系統拆分與管理 – Dividing your game system in unity"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Unity] 應用 Singleton pattern 及 Unity Component 做系統拆分與管理 – Dividing your game system in unity | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%90%E7%B3%BB%E7%B5%B1%E5%9F%BA%E5%BA%95-%E2%80%93-IGameSystemMono"><span class="nav-number">1.</span> <span class="nav-text">子系統基底 – IGameSystemMono</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%90%E7%B3%BB%E7%B5%B1%E7%AE%A1%E7%90%86%E5%99%A8-%E2%80%93-GameSystemManager"><span class="nav-number">2.</span> <span class="nav-text">子系統管理器 – GameSystemManager</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%87%E7%AE%A1%E7%90%86%E5%99%A8%E5%8C%85%E8%A3%9D%E6%88%90%E4%B8%80%E5%80%8B%E7%B0%A1%E5%96%AE%E5%91%BC%E5%8F%AB%E7%9A%84%E5%B7%A5%E5%85%B7-%E2%80%93-DouduckGameCore"><span class="nav-number">3.</span> <span class="nav-text">將管理器包裝成一個簡單呼叫的工具 – DouduckGameCore</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%8C%E8%A9%B1"><span class="nav-number">4.</span> <span class="nav-text">後話</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/dividing-your-game-system-in-unity/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Unity] 應用 Singleton pattern 及 Unity Component 做系統拆分與管理 – Dividing your game system in unity
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-01-09 20:00:00" itemprop="dateCreated datePublished" datetime="2017-01-09T20:00:00+08:00">2017-01-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/dividing-your-game-system-in-unity/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/dividing-your-game-system-in-unity/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在使用 Unity 開發遊戲的時候，為了實現各種功能，往往會不斷衍伸出一個又一個的系統，分別執掌不同的任務，可能是為了管理 UI 介面，也可能是為了建立連線，又或者是為了管理存檔。一個個的系統往往又為了方便而採用 Singleton pattern，或者互相注入，最後的結果就是系統之間的關係複雜，程式碼不易維護及重複使用。</p>
+<p>於是乎我就一直思考著如何將一個巨大的系統架構，拆分成一個個獨立且靈活的小系統，就像電腦與周邊設備可以用 USB 輕易連接與斷開，我也希望我所開發的一個個系統，可以自由自在地安置在不同的開發專案之中。</p>
+<p>如今這是我的初步成果，一套用於拆分以及管理各個子系統的架構：</p>
+<span id="more"></span>
+<p><img src="https://douduck08.files.wordpress.com/2017/01/gamesystemmanager.jpg" alt="game system manager"></p>
+<p>上面的圖片展示了再開始設計這套架構時，所期望達到的幾個特性 (Feature)：</p>
+<ul>
+<li>於 Unity 專案程式 (Application) 啟動當下，可以自動初始化已經採用、不定數量的子系統。</li>
+<li>程式執行中途，可以隨時添加或拆卸子系統。</li>
+<li>程式執行中途，可以在任意時機地點輕易呼叫到特定子系統，有不輸給使用 Singleton pattern 的便利性。</li>
+</ul>
+<p>而這些特性我也一一在架構中實現了，使用的方案接下來依序介紹。</p>
+<h3 id="子系統基底-–-IGameSystemMono">子系統基底 – IGameSystemMono</h3>
+<p>首先準備子系統基礎類別，用來統一所有子系統的基本控制接口：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title">DouduckGame</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">class</span> <span class="title">IGameSystemMono</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">StartGameSystem</span>(<span class="params"></span>)</span>;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">DestoryGameSystem</span>(<span class="params"></span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在 IGameSystemMono  類別的設計中，首先繼承了 MonoBehaviour 這個 Unity component 的基礎類別，如此一來可以得到兩個特性：</p>
+<ul>
+<li>可以在 Unity Inspector 上面看見子系統的 public 參數，在不修改程式碼的情況下進行序列化參數的調整。</li>
+<li>即使沒有使用<strong>子系統管理的架構</strong>，每個子系統也可以做為單純的 Component 應用於專案之中。</li>
+</ul>
+<p>以上這兩個特性可以讓子系統的使用更加靈活，減少改寫程式碼的需求；但反過來也有限制，那就是整個<strong>子系統管理的架構</strong>必須依賴著一個 DontDestoryObject 作為載體才能運作。</p>
+<p><img src="https://douduck08.files.wordpress.com/2017/01/line_p201719_142419.jpg" alt=""></p>
+<p><em>一個掛載的子系統操作參數的方式跟 Component 相當接近</em></p>
+<p>另外，這個<code>IGameSystemMono</code>類別中定義了兩個 abstract method 函式，用來給予<strong>子系統管理器</strong>主動呼叫，分別用於取代 Start() 及 OnDestory() 這兩個原生於 MonoBehaviour 的函式。這樣的設計是為了實現隨時 添加或拆卸子系統 的特性，避免 Start() 及 OnDestory() 沒有在預期的時機生效的錯誤，可以由管理器來決定呼叫的時機。</p>
+<p>不過雖然設計上要避免使用 Start() 及 OnDestory() 兩個 message (已經用 abstract method 函式取代)，但是 Update() 等其他 message 還是可以使用。</p>
+<h3 id="子系統管理器-–-GameSystemManager">子系統管理器 – GameSystemManager</h3>
+<p>接下來是整個系統的核心，用來管理與控制的管理器類別：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title">DouduckGame</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">GameSystemManager</span> &#123;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">private</span> <span class="built_in">bool</span> m_bIsInitialized = <span class="literal">false</span>;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">private</span> GameObject m_oContainer;</span><br><span class="line">        <span class="keyword">private</span> Dictionary&lt;Type, IGameSystemMono&gt; m_GameSystemList;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// Initializaion method</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">GameSystemManager</span>(<span class="params">GameObject oContainer</span>)</span> &#123;</span><br><span class="line">            m_oContainer = oContainer;</span><br><span class="line">            GameObject.DontDestroyOnLoad(m_oContainer);</span><br><span class="line"> </span><br><span class="line">            m_GameSystemList = <span class="keyword">new</span> Dictionary&lt;Type, IGameSystemMono&gt; ();</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">StartInitialSystem</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_bIsInitialized) &#123;</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            m_bIsInitialized = <span class="literal">true</span>;</span><br><span class="line"> </span><br><span class="line">            IGameSystemMono[] systemList_ = m_oContainer.GetComponents&lt;IGameSystemMono&gt;();</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> i = <span class="number">0</span>; i &lt; systemList_.Length; i++) &#123;</span><br><span class="line">                m_GameSystemList.Add(systemList_ [i].GetType(), systemList_ [i]);</span><br><span class="line">                systemList_ [i].StartGameSystem();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// Functional method</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">AddSystem</span>&lt;<span class="title">T</span>&gt; (<span class="params"></span>) <span class="keyword">where</span> T : IGameSystemMono</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_GameSystemList.ContainsKey(<span class="keyword">typeof</span>(T))) &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[GameSystemManager] There was a &quot;</span> + <span class="keyword">typeof</span>(T).Name);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                T gameSys_ = m_oContainer.AddComponent&lt;T&gt; ();</span><br><span class="line">                gameSys_.StartGameSystem ();</span><br><span class="line">                m_GameSystemList.Add(gameSys_.GetType(), gameSys_);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RemoveSystem</span>&lt;<span class="title">T</span>&gt; (<span class="params"></span>) <span class="keyword">where</span> T : IGameSystemMono</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_GameSystemList.ContainsKey(<span class="keyword">typeof</span>(T))) &#123;</span><br><span class="line">                IGameSystemMono gameSys_ = m_GameSystemList [<span class="keyword">typeof</span>(T)];</span><br><span class="line">                m_GameSystemList.Remove(<span class="keyword">typeof</span>(T));</span><br><span class="line">                gameSys_.DestoryGameSystem();</span><br><span class="line">                GameObject.Destroy(gameSys_);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[GameSystemManager] There was no &quot;</span> + <span class="keyword">typeof</span>(T).Name);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">EnableSystem</span>&lt;<span class="title">T</span>&gt; (<span class="params"></span>) <span class="keyword">where</span> T : IGameSystemMono</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_GameSystemList.ContainsKey(<span class="keyword">typeof</span>(T))) &#123;</span><br><span class="line">                m_GameSystemList [<span class="keyword">typeof</span>(T)].enabled = <span class="literal">true</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                Debug.LogError (<span class="string">&quot;[GameSystemManager] There was no &quot;</span> + <span class="keyword">typeof</span>(T).Name);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">DisableSystem</span>&lt;<span class="title">T</span>&gt; (<span class="params"></span>) <span class="keyword">where</span> T : IGameSystemMono</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_GameSystemList.ContainsKey(<span class="keyword">typeof</span>(T))) &#123;</span><br><span class="line">                m_GameSystemList [<span class="keyword">typeof</span>(T)].enabled = <span class="literal">false</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                Debug.LogError (<span class="string">&quot;[GameSystemManager] There was no &quot;</span> + <span class="keyword">typeof</span>(T).Name);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> T <span class="title">GetSystem</span>&lt;<span class="title">T</span>&gt; (<span class="params"></span>) <span class="keyword">where</span> T : IGameSystemMono</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_GameSystemList.ContainsKey(<span class="keyword">typeof</span>(T))) &#123;</span><br><span class="line">                <span class="keyword">return</span> m_GameSystemList [<span class="keyword">typeof</span>(T)] <span class="keyword">as</span> T;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                Debug.LogError (<span class="string">&quot;[GameSystemManager] There was no &quot;</span> + <span class="keyword">typeof</span>(T).Name);</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>這個類別並沒有採用 MonoBehaviour 做為基底，一方面並沒有使用相關功能的必要性；另一方面是希望將類別的功能單純化，讓類別功能專注於子系統的管理，至於如何啟動與呼叫這個管理器將在下一段進行說明。</p>
+<p>子系統管理器除了常態的建構子，需要傳入一個 gameobject 作為子系統的載體外 (因為子系統繼承了 MonoBehaviour，需要有物件掛載)，還有一個 public method 函式 StartInitialSystem() 可以將原本就已經在物件上的子系統進行初始化，將用於實現在<strong>專案程式啟動時自動初始化已掛載子系統</strong>的特性需求。</p>
+<p>另外為了實現<strong>隨時添加或拆卸子系統</strong>特性，準備了四個 public method 函式：</p>
+<ul>
+<li><code>AddSystem()</code> – 增加一個子系統，同時會呼叫子系統的 StartSystem()</li>
+<li><code>RemoveSystem()</code> – 卸除一個子系統，同時會呼叫子系統的 DestorySystem()</li>
+<li><code>EnableSystem()</code> – 將子系統的 MonoBehaviour.enabled 設為 true</li>
+<li><code>DisableSystem()</code> – 將子系統的 MonoBehaviour.enabled 設為 false</li>
+</ul>
+<p>很明顯可以發現，這些函式都使用了泛型，而整個管理器用了一個 Dictionary 來儲存所有的子系統。如此設計的最大好處就是，整個管理器在使用上就跟 getComponent() 等 Unity 原生 API 相似及直觀，不需要額外的 id 或 string 來做為呼叫子系統的 key。</p>
+<p>而最後的 GetSystem 函式，應該不需特別說明，便是取得掛載的子系統之方法。</p>
+<h3 id="將管理器包裝成一個簡單呼叫的工具-–-DouduckGameCore">將管理器包裝成一個簡單呼叫的工具 – DouduckGameCore</h3>
+<p>最後只剩下<strong>容易呼叫</strong>這個特性還沒實現了，原本在開發時我會盡量避免使用 Singleton pattern，以免專案會越來越難維護。不過現在我們有了一個子系統的管理器，這時候即使採用 Singleton pattern，那未來專案也不會持續增加更多的子系統 Singleton，因為所有需要被呼叫的遊戲系統，接統一在這個管理器之下了。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.Events;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title">DouduckGame</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">DouduckGameCore</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">static</span> GameObject InstanceGameObject;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> GameSystemManager m_SystemManager;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="built_in">bool</span> m_bIsInitialized = <span class="literal">false</span>;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Awake</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_bIsInitialized) &#123;</span><br><span class="line">                Debug.LogError(<span class="string">&quot;[DouduckGameCore] was initialized&quot;</span>);</span><br><span class="line">                Object.Destroy(<span class="keyword">this</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                m_bIsInitialized = <span class="literal">true</span>;</span><br><span class="line">                transform.name = <span class="string">&quot;[DouduckGameCore]&quot;</span>;</span><br><span class="line">                GameObject.DontDestroyOnLoad(<span class="keyword">this</span>.gameObject);</span><br><span class="line">                InstanceGameObject = <span class="keyword">this</span>.gameObject;</span><br><span class="line">                m_SystemManager = <span class="keyword">new</span> GameSystemManager (InstanceGameObject);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">Start</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">            m_SystemManager.StartInitialSystem();</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="comment">// *** System manager method ***</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">AddSystem</span>&lt;<span class="title">T</span>&gt; (<span class="params"></span>) <span class="keyword">where</span> T : IGameSystemMono</span> &#123;</span><br><span class="line">            m_SystemManager.AddSystem&lt;T&gt;();</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">RemoveSystem</span>&lt;<span class="title">T</span>&gt; (<span class="params"></span>) <span class="keyword">where</span> T : IGameSystemMono</span> &#123;</span><br><span class="line">            m_SystemManager.RemoveSystem&lt;T&gt;();</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">EnableSystem</span>&lt;<span class="title">T</span>&gt; (<span class="params"></span>) <span class="keyword">where</span> T : IGameSystemMono</span> &#123;</span><br><span class="line">            m_SystemManager.EnableSystem&lt;T&gt;();</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">DisableSystem</span>&lt;<span class="title">T</span>&gt; (<span class="params"></span>) <span class="keyword">where</span> T : IGameSystemMono</span> &#123;</span><br><span class="line">            m_SystemManager.DisableSystem&lt;T&gt;();</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> T <span class="title">GetSystem</span>&lt;<span class="title">T</span>&gt; (<span class="params"></span>) <span class="keyword">where</span> T : IGameSystemMono</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> m_SystemManager.GetSystem&lt;T&gt;();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最後 DouduckGameCore  這個腳本的使用方法，便是在場景中建立一個空物件，並將 DouduckGameCore  與希望一開始就啟動的子系統全掛載於其上即可。</p>
+<p><img src="https://douduck08.files.wordpress.com/2017/01/1483943452274.jpg" alt=""></p>
+<p>這段腳本簡單來說只做了兩件事：</p>
+<ul>
+<li>將 GameSystemManager 重新包裝成 Singleton MonoBehaviour，來達成專案中隨時隨地都可以呼叫的特性。</li>
+<li>在 Awake() 的地方建立 GameSystemManager，並在 Start () 時呼叫 StartInitialSystem() 這個函式，將同樣掛載在這個物件底下的子系統進行初始化，完成<strong>專案程式啟動時自動初始化已掛載子系統</strong>的特性。</li>
+</ul>
+<p>接下來在專案中任何地方需要子系統時，只要一段程式碼即可呼叫：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">DouduckGameCore.GetSystem&lt;MyGameSystem&gt;();</span><br></pre></td></tr></table></figure>
+<h3 id="後話">後話</h3>
+<p>目前這個<strong>子系統管理</strong>的架構還有一些改善的空間，但就目前來說，使用起來的感受已經相當愉快，載開發專案的過程減少了許多打亂程式碼的疑慮。另外就是看到自己的程式碼保留了相當程度的可動性，這件事情本身就帶來了不少成就感。</p>
+<p>如果要說這個架構中使用了甚麼設計模式，除了很明顯的 Singleton pattern 外，就是採用了某種程度上的 Facade pattern 的理念，在 GameSystemManager  實現了子系統的統一取得介面，而 DouduckGameCore  如果加入了其他管理器或功能，則實現了眾管理器的統一介面。</p>
+<p>特別提出設計模式並不是要表達如何透過設計模式去解決問題，而是為了規劃出具有相當維護性的架構，我不知不覺中會聯想到我曾經讀過的模式，進而設計出自己獨有的模式，而不是直接取用書上的方法。</p>
+<p>希望大家也能在規劃程式時有各種體會，不只為了解決問題，同時也能享受在其中。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/dividing-your-game-system-in-unity/" title="[Unity] 應用 Singleton pattern 及 Unity Component 做系統拆分與管理 – Dividing your game system in unity">http://www.douduck08.com/zh-tw/dividing-your-game-system-in-unity/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/design-pattern/" rel="tag"># design-pattern</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/what-benefits-i-get-after-studying-design-pattern/" rel="prev" title="學習設計模式的感想 – what benefits I get after studying design pattern">
+                  <i class="fa fa-chevron-left"></i> 學習設計模式的感想 – what benefits I get after studying design pattern
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/cheatsheet-of-basic-commands-of-git/" rel="next" title="Git 常用指令筆記(一) 基本操作 - Cheatsheet of Basic Commands of Git">
+                  Git 常用指令筆記(一) 基本操作 - Cheatsheet of Basic Commands of Git <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

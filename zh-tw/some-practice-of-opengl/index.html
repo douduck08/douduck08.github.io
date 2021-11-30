@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="完成了一段 OpenGL 的線上課程後，基本上理解了幾個 OpenGL 功能的實作方式，並且試過了從讀取 Model 到渲染至螢幕上的流程。 不過課程中的解說僅止於 “如何做到”，為了能確認 “為何這麼做”，釐清每個 OpenGL API 如何呼叫，我開始了一個練習的新專案。 用這篇文章紀錄一下目前所做出來的練習與心得。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[OpenGL] 一些功能的實作練習 - Some Practice of OpenGL">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/some-practice-of-opengl/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="完成了一段 OpenGL 的線上課程後，基本上理解了幾個 OpenGL 功能的實作方式，並且試過了從讀取 Model 到渲染至螢幕上的流程。 不過課程中的解說僅止於 “如何做到”，為了能確認 “為何這麼做”，釐清每個 OpenGL API 如何呼叫，我開始了一個練習的新專案。 用這篇文章紀錄一下目前所做出來的練習與心得。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/09/r4rnymx.png">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/09/vciht2o.png">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/09/nhnsqbi.png">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/09/oudanqr.png">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/09/fntbvrc.png">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/09/ip4vc0w.png">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/09/f5yv2kb.png">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/09/8hpwsp8.png">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/09/wyx6trt.png">
+<meta property="article:published_time" content="2017-09-28T05:31:39.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.456Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="openGL">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://douduck08.files.wordpress.com/2017/09/r4rnymx.png">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/some-practice-of-opengl/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/some-practice-of-opengl/","path":"zh-tw/some-practice-of-opengl/","title":"[OpenGL] 一些功能的實作練習 - Some Practice of OpenGL"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[OpenGL] 一些功能的實作練習 - Some Practice of OpenGL | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-overview-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/some-practice-of-opengl/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [OpenGL] 一些功能的實作練習 - Some Practice of OpenGL
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-09-28 13:31:39" itemprop="dateCreated datePublished" datetime="2017-09-28T13:31:39+08:00">2017-09-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/openGL/" itemprop="url" rel="index"><span itemprop="name">openGL</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/some-practice-of-opengl/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/some-practice-of-opengl/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>完成了一段 OpenGL 的線上課程後，基本上理解了幾個 OpenGL 功能的實作方式，並且試過了從讀取 Model 到渲染至螢幕上的流程。</p>
+<p>不過課程中的解說僅止於 “如何做到”，為了能確認 “為何這麼做”，釐清每個 OpenGL API 如何呼叫，我開始了一個練習的新專案。</p>
+<p>用這篇文章紀錄一下目前所做出來的練習與心得。</p>
+<span id="more"></span>
+<p>目前實做出來的幾個項目：</p>
+<ul>
+<li>Shader 讀取</li>
+<li>Material 的封裝及覆用</li>
+<li>幾個基本形狀 Mesh 的實時建立、組合</li>
+<li>平行光的模型</li>
+<li>Rendered Texture</li>
+<li>Shadow Map。</li>
+</ul>
+<p>到第三點為止，只是將所知道的步驟整理成幾個 class，方便呼叫、建立與渲染，同時統一幾個傳遞資料到 Shader Program 時的欄位名稱，達成可以隨時重新組合覆用的 Mesh - Material 關聯。</p>
+<p>另外寫一系列方法來 runtime 建立幾種基本形狀的 Mesh，這邊的數學花了不少時間。最後把幾個 Mesh 排列成測試場景，並且組合成單一 Mesh，這樣只要進行一次渲染便可。</p>
+<p><img src="https://douduck08.files.wordpress.com/2017/09/r4rnymx.png" alt="mesh 1"><br>
+<img src="https://douduck08.files.wordpress.com/2017/09/vciht2o.png" alt="mesh 2"></p>
+<p>完成了基本的測試場景，我下一步想加上的是 Lighting。</p>
+<p>一般來說場景中不會只有一個光源，或者一種光源，如何有效的傳遞不同數量與種類的光源資料到不同的 Shader 中，成了必須解決的問題。為此需要一個管理光源的結構，因為對其他功能的實作還不完全確立，覺得馬上開始規劃核心結構有點過早，因此這邊我<strong>只用一個平行光</strong>當作測試。</p>
+<p><img src="https://douduck08.files.wordpress.com/2017/09/nhnsqbi.png" alt="lighting 1"><br>
+<img src="https://douduck08.files.wordpress.com/2017/09/oudanqr.png" alt="lighting 2"></p>
+<p>Rendered Texture 是在線上課程中沒有遇過的功能，同時也是實作陰影所必要的前置動作，這邊要從網路上尋找資料來開始。</p>
+<p>我發現 Rendered Texture 是個很好的練習題材，可以從建立 Frame Buffer 開始了解許多 API，原本這部分是由 GLFW 這個跨平台視窗 Library 代勞所以不必實作的。</p>
+<p>這邊只透過網路上的片面說明，一開始是得到有點錯誤的結果，最後追查後發現如果 Texture 的大小跟視窗不同，需要切換 Viewport 的設定，才能有適當的渲染範圍。</p>
+<p><img src="https://douduck08.files.wordpress.com/2017/09/fntbvrc.png" alt="render texture 1"><br>
+<img src="https://douduck08.files.wordpress.com/2017/09/ip4vc0w.png" alt="render texture 1"><br>
+<img src="https://douduck08.files.wordpress.com/2017/09/f5yv2kb.png" alt="render texture 1"></p>
+<p>Shadow Map 的陰影部分，一樣也是從網路上找了幾份資料來參考後才開始實作。跟光源一樣，每種不同的光源陰影的實作都有些許差異，組合數個光源也會讓情況變得更複雜，還好我目前只有一個平行光！ 大致的過程，是要先用 RenderTexture 取得光源角度的深度紀錄，然後將這份紀錄傳到物體的 Shader 中，在渲染時判斷 fragmant 是否在陰影中。</p>
+<p>目前我只有做到基本的陰影，精細度跟柔邊等細節都沒有做處理，所以在目前的場景看起來效果還行，但換個場景可能就會爆炸了 …</p>
+<p><img src="https://douduck08.files.wordpress.com/2017/09/8hpwsp8.png" alt="shadow 1"><br>
+<img src="https://douduck08.files.wordpress.com/2017/09/wyx6trt.png" alt="shadow 1"></p>
+<p>到目前為止實作的功能可以大致完成一個基本的場景配置，但是專案的類別結構已經開始混亂了。</p>
+<p>接下來預計會梳理一下這幾個功能，整理如何共用、管理資源，場景資料的歸納與傳遞等，讓專案乾淨一點後再繼續其他實作練習。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/some-practice-of-opengl/" title="[OpenGL] 一些功能的實作練習 - Some Practice of OpenGL">http://www.douduck08.com/zh-tw/some-practice-of-opengl/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/openGL/" rel="tag"># openGL</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/review-opengl-online-course/" rel="prev" title="[學習心得] OpenGL 線上課程 - Review OpenGL Online Course">
+                  <i class="fa fa-chevron-left"></i> [學習心得] OpenGL 線上課程 - Review OpenGL Online Course
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/detecting-tricky-null-fields-in-image/" rel="next" title="[Unity] 關於判斷 Image 中參數是否為 null 的小細節 - Detecting Tricky Null Fields in Image">
+                  [Unity] 關於判斷 Image 中參數是否為 null 的小細節 - Detecting Tricky Null Fields in Image <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

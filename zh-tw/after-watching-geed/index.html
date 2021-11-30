@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="最近有在看最新的奧特曼影集《奧特曼Geed》，同時也回頭重看了小時候最後看過的《奧特曼蓋亞》。 這周《奧特曼Geed》第 17 集到了一個劇情階段，剛好《奧特曼蓋亞》也幾乎全部看完了，也看了不少網路上的討論，突然便想來寫篇文章抒發想法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[雜談] 聊聊奧特曼，再扯一點數位市場的變化">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/after-watching-geed/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="最近有在看最新的奧特曼影集《奧特曼Geed》，同時也回頭重看了小時候最後看過的《奧特曼蓋亞》。 這周《奧特曼Geed》第 17 集到了一個劇情階段，剛好《奧特曼蓋亞》也幾乎全部看完了，也看了不少網路上的討論，突然便想來寫篇文章抒發想法。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/sr6n8xJ.jpg">
+<meta property="og:image" content="https://i.imgur.com/103UzGa.jpg">
+<meta property="og:image" content="https://i.imgur.com/FOmYMCe.jpg">
+<meta property="og:image" content="https://i.imgur.com/rmrK1CQ.jpg">
+<meta property="article:published_time" content="2017-10-31T09:57:14.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.450Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="鴨子, 鴨仔, 開發日記, 遊戲開發, 圖形, 圖像, 圖學, douduck08, game develop, graphics, rendering">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/sr6n8xJ.jpg">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/after-watching-geed/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/after-watching-geed/","path":"zh-tw/after-watching-geed/","title":"[雜談] 聊聊奧特曼，再扯一點數位市場的變化"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[雜談] 聊聊奧特曼，再扯一點數位市場的變化 | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%88%E5%A4%9A%E4%BA%BA%E8%AA%AA%EF%BC%9A%E7%8F%BE%E5%9C%A8%E7%9A%84%E5%A5%A7%E7%89%B9%E6%9B%BC%E5%B7%B2%E7%B6%93%E4%B8%8D%E6%98%AF%E4%BB%A5%E5%89%8D%E7%9A%84%E5%A5%A7%E7%89%B9%E6%9B%BC%E4%BA%86"><span class="nav-number">1.</span> <span class="nav-text">很多人說：現在的奧特曼已經不是以前的奧特曼了</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8F%BE%E5%9C%A8%E7%9A%84%E6%95%B8%E4%BD%8D%E5%B8%82%E5%A0%B4%E8%B6%85%E7%B4%9A%E5%9A%B4%E8%8B%9B"><span class="nav-number">2.</span> <span class="nav-text">現在的數位市場超級嚴苛</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/after-watching-geed/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [雜談] 聊聊奧特曼，再扯一點數位市場的變化
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-10-31 17:57:14" itemprop="dateCreated datePublished" datetime="2017-10-31T17:57:14+08:00">2017-10-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/indoor-life/" itemprop="url" rel="index"><span itemprop="name">indoor-life</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/after-watching-geed/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/after-watching-geed/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>最近有在看最新的奧特曼影集《奧特曼Geed》，同時也回頭重看了小時候最後看過的《奧特曼蓋亞》。</p>
+<p>這周《奧特曼Geed》第 17 集到了一個劇情階段，剛好《奧特曼蓋亞》也幾乎全部看完了，也看了不少網路上的討論，突然便想來寫篇文章抒發想法。</p>
+<p><img src="https://i.imgur.com/sr6n8xJ.jpg" alt="geed post"></p>
+<span id="more"></span>
+<h3 id="很多人說：現在的奧特曼已經不是以前的奧特曼了">很多人說：現在的奧特曼已經不是以前的奧特曼了</h3>
+<p>現在回頭看老影集《奧特曼蓋亞》時，真的是充滿了驚喜，更有著所有的畫面都跟小時候的印象對不起來的驚愕，但這會不會是童年與情懷的美化透鏡？</p>
+<p><img src="https://i.imgur.com/103UzGa.jpg" alt="gaia"></p>
+<p>《奧特曼蓋亞》應該是小學時候在電視上看的，當時家裡還有劇場版《超時空大決戰》的 DVD (但應該是盜版)，現在重新看過內容，才發現小時候根本沒看懂。</p>
+<p>老奧特曼《奧特曼蓋亞》，劇情中充滿了對地球環境的反思、人類在大自然的定位困惑、反核能思想、對宇宙生命的想像等內涵；劇場版甚至有學校霸凌、朋友相處的議題。但十歲的我根本看不出這些東西啊！只喜歡看變身跟怪獸被擊敗的過程。</p>
+<p><img src="https://i.imgur.com/FOmYMCe.jpg" alt="geed"></p>
+<p>《奧特曼Geed》作為現在最年輕的奧特曼 (不論劇情腳色的年紀或者影集年紀皆是)，劇情內容少了這些隱藏其中的思想傳達，多了更多用最新技術製造出來的精細畫面、富變化的戰鬥過程、透過畫面與音效音樂烘托出來的熱血氣氛，當然還有更華麗的變身過程跟變身器 (笑)。</p>
+<p>網路上討論常常說，現在的奧特曼根本不是以前的奧特曼，並且在評論中帶有對現今奧特曼的貶意。</p>
+<p>雖然網路上似乎批評大於肯定，但是我自己並不會特別排斥這樣的改變；理性一點去看待，這些改變都是為了適應時代與市場的變化而來的。老奧特曼影集很狂地每部都有 50 集上下；相較之下現在的奧特曼每部大約25集，只有過去的一半，但是有著更大規模的周邊企劃。</p>
+<p>如果說老奧特曼是刻意引入一些思想，反映了那個時代的科技發展，與所有的觀眾一起重新看待事物的變化。那現在的奧特曼，就是在與眾多娛樂媒體競爭下，重新調整客群方向，聚焦在帶給小朋友熱情與夢想的熱血影集 (最好成了大人也能熱血)。</p>
+<h3 id="現在的數位市場超級嚴苛">現在的數位市場超級嚴苛</h3>
+<p>可能是因為作為製作遊戲的開發者，對數位市場的變化有深刻的感受，所以較能理解奧特曼的變化並接受它，甚至對於網路上的批評有點心痛。</p>
+<p>目前的數位內容產業，受到網路發展的影響，付費購買數位資源的作法被各種免費資源打壓或排擠，導致過去電視影集的收益手段開始萎縮，奧特曼的拍攝公司《圆谷株式会社》也因此曾經面臨倒閉。</p>
+<p>現在奧特曼系列重新開始獲得收益，也是改變製作方向後，最重要的正面回饋，畢竟系列要延續，跟公司要延續下去是同樣重要的。將客群轉往小朋友，帶出更多周邊產品來補足影視本體的收益，也是在市場變化下的適應結果。</p>
+<p>現在的遊戲產業，也有很多同樣面臨光靠遊戲本體無法維持下去的作品與公司，為了適應市場的變化而做出巨大改變。我們這些網路論壇的使用者，可能根本不是現在奧特曼的目標客群，所以不合胃口也是可以理解的。</p>
+<p>曾經看過文章提到，如果一個產品過於看重使用者的負面回饋，為了扭轉這些回饋而努力，卻反而忽略了滿意但特別沒有發聲的使用者，可能因此讓產品走向滅亡的方向。</p>
+<p>所幸奧特曼並沒有消失，作為理性的粉絲可以支持，可以失望，大不了一走了之，讓曾經的感動就留在曾經，但對於作品的變化與存續還是要加以祝福才是。這就是為何網路上充滿了對於新奧特曼的失望，祈求過去的浪漫重現，卻不能讓我否定現今奧特曼的一個原因。</p>
+<p>不過我算是新一代奧特曼也看得很爽，不會特別因過去情懷感到失望的觀眾就是了，可能我以前的年紀太小，根本不足以留下情懷吧！每個奧特曼都是最棒的！</p>
+<p><img src="https://i.imgur.com/rmrK1CQ.jpg" alt="ultman"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/after-watching-geed/" title="[雜談] 聊聊奧特曼，再扯一點數位市場的變化">http://www.douduck08.com/zh-tw/after-watching-geed/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/detecting-tricky-null-fields-in-image/" rel="prev" title="[Unity] 關於判斷 Image 中參數是否為 null 的小細節 - Detecting Tricky Null Fields in Image">
+                  <i class="fa fa-chevron-left"></i> [Unity] 關於判斷 Image 中參數是否為 null 的小細節 - Detecting Tricky Null Fields in Image
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/review-of-unite-europe-2017%E2%80%93squeezing-unity/" rel="next" title="[筆記] Review of Unite Europe 2017 – Squeezing Unity">
+                  [筆記] Review of Unite Europe 2017 – Squeezing Unity <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

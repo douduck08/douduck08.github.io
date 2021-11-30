@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="在舊文章 [Unity] 應用 Singleton pattern 及 Unity Component 做系統拆分與管理 – Dividing your game system in unity 中，我開發了一套架構來作為單一 Singleton 的替代方案，用於統一管理會在整個 Unity 專案中使用到的遊戲功能系統。 該篇文章中的 GameSystemMono (即仿 Singlton 的組件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[C#&#x2F;Unity] 更多 Singleton – More Singleton in Unity">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/more-singleton-in-unity/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="在舊文章 [Unity] 應用 Singleton pattern 及 Unity Component 做系統拆分與管理 – Dividing your game system in unity 中，我開發了一套架構來作為單一 Singleton 的替代方案，用於統一管理會在整個 Unity 專案中使用到的遊戲功能系統。 該篇文章中的 GameSystemMono (即仿 Singlton 的組件">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2017-03-14T12:00:00.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.452Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="design-pattern">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/more-singleton-in-unity/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/more-singleton-in-unity/","path":"zh-tw/more-singleton-in-unity/","title":"[C#/Unity] 更多 Singleton – More Singleton in Unity"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[C#/Unity] 更多 Singleton – More Singleton in Unity | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%9A%E7%82%BA-GameModule-%E5%9F%BA%E5%BA%95%E7%9A%84%E4%BB%8B%E9%9D%A2-interface"><span class="nav-number">1.</span> <span class="nav-text">做為 GameModule 基底的介面 (interface)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GameModule-%E7%9A%84%E7%AE%A1%E7%90%86%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">GameModule 的管理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GameSystemMono-%E8%88%87-GameModule-%E7%9A%84%E6%AF%94%E8%BC%83"><span class="nav-number">3.</span> <span class="nav-text">GameSystemMono 與 GameModule 的比較</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%83%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">參考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/more-singleton-in-unity/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [C#/Unity] 更多 Singleton – More Singleton in Unity
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-03-14 20:00:00" itemprop="dateCreated datePublished" datetime="2017-03-14T20:00:00+08:00">2017-03-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/more-singleton-in-unity/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/more-singleton-in-unity/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>在舊文章 <a href="/zh-tw/dividing-your-game-system-in-unity/" title="[Unity] 應用 Singleton pattern 及 Unity Component 做系統拆分與管理 – Dividing your game system in unity">[Unity] 應用 Singleton pattern 及 Unity Component 做系統拆分與管理 – Dividing your game system in unity</a> 中，我開發了一套架構來作為單一 Singleton 的替代方案，用於統一管理會在整個 Unity 專案中使用到的遊戲功能系統。</p>
+<p>該篇文章中的 GameSystemMono (即仿 Singlton 的組件) 繼承了 MonoBehaviour，來實現一些設計上的想法。不過帶來優點的同時也產生了一些限制，經過與他人的討論後，認為還是需要一個不依賴 MonoBehaviour 的 Singleton 組件方案，兩者互相補足，而這個想法終於在最近進行了實作。</p>
+<span id="more"></span>
+<h3 id="做為-GameModule-基底的介面-interface">做為 GameModule 基底的介面 (interface)</h3>
+<p>上一個 Singleton 系統將組件命名 GameSystemMono；而這次的組件我則命名為 GameModule，下文也會如此稱呼與區分。</p>
+<p>而 GameModule 的採用介面 (interface) 來實現，其中 IModular 是必備的，IModuleUpdatable 是有 Update 需求時可以增加的介面。目前只開發了兩個介面，未來如有需要，還能繼續擴充。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title">DouduckGame</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IModular</span> &#123;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">ModuleInitialize</span> (<span class="params"></span>)</span>;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">ModuleUninitialize</span> (<span class="params"></span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IModuleUpdatable</span> &#123;</span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">ModuleUpdate</span> (<span class="params"></span>)</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>採用**介面(interface)<strong>而非</strong>抽象類別(abstract class)**的原因：</p>
+<ul>
+<li>因為並沒有繼承 MonoBehaviour，因此並沒有寫為類別的需要。</li>
+<li>C# 不支援多重繼承 (Multiple Inheritance)，所以如果採用類別，則會降低組件繼承上的靈活性。</li>
+<li>介面可以支援多重組合，而且是可以在繼承之外另外加上的，相當於可以將多種類別都轉換成 GameModule 來使用而不受限。</li>
+</ul>
+<h3 id="GameModule-的管理器">GameModule 的管理器</h3>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">namespace</span> <span class="title">DouduckGame</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">GameModuleManager</span> &#123;</span><br><span class="line"> </span><br><span class="line">        <span class="keyword">private</span> Dictionary&lt;Type, IModular&gt; m_GameModuleList;</span><br><span class="line">        <span class="keyword">private</span> List&lt;IModuleUpdatable&gt; m_GameModuleUpdateList;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">GameModuleManager</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">            m_GameModuleList = <span class="keyword">new</span> Dictionary&lt;Type, IModular&gt; ();</span><br><span class="line">            m_GameModuleUpdateList = <span class="keyword">new</span> List&lt;IModuleUpdatable&gt; ();</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">UpdateModule</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="built_in">int</span> i = m_GameModuleUpdateList.Count - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) &#123;</span><br><span class="line">                m_GameModuleUpdateList[i].ModuleUpdate ();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> T <span class="title">AddModule</span>&lt;<span class="title">T</span>&gt;(<span class="params"></span>) <span class="keyword">where</span> T : <span class="keyword">class</span>, IModular, <span class="keyword">new</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_GameModuleList.ContainsKey (<span class="keyword">typeof</span> (T))) &#123;</span><br><span class="line">                Util.UnityConsole.LogError (<span class="string">&quot;[GameModuleManager] There was a &quot;</span> + <span class="keyword">typeof</span> (T).Name);</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                T newModule_ = <span class="keyword">new</span> T();</span><br><span class="line">                newModule_.ModuleInitialize ();</span><br><span class="line">                m_GameModuleList.Add (newModule_.GetType (), newModule_);</span><br><span class="line">                <span class="keyword">if</span> (newModule_ <span class="keyword">is</span> IModuleUpdatable) &#123;</span><br><span class="line">                    m_GameModuleUpdateList.Add (newModule_ <span class="keyword">as</span> IModuleUpdatable);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> newModule_;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RemoveModule</span>&lt;<span class="title">T</span>&gt;(<span class="params"></span>) <span class="keyword">where</span> T : <span class="keyword">class</span>, IModular</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_GameModuleList.ContainsKey (<span class="keyword">typeof</span> (T))) &#123;</span><br><span class="line">                m_GameModuleList[<span class="keyword">typeof</span> (T)].ModuleUninitialize ();</span><br><span class="line">                <span class="keyword">if</span> (m_GameModuleList[<span class="keyword">typeof</span> (T)] <span class="keyword">is</span> IModuleUpdatable) &#123;</span><br><span class="line">                    m_GameModuleUpdateList.Remove (m_GameModuleList[<span class="keyword">typeof</span> (T)] <span class="keyword">as</span> IModuleUpdatable);</span><br><span class="line">                &#125;</span><br><span class="line">                m_GameModuleList.Remove (<span class="keyword">typeof</span> (T));</span><br><span class="line"> </span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                Util.UnityConsole.LogError (<span class="string">&quot;[GameModuleManager] There was no &quot;</span> + <span class="keyword">typeof</span> (T).Name);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        <span class="function"><span class="keyword">public</span> T <span class="title">GetModule</span>&lt;<span class="title">T</span>&gt;(<span class="params"></span>) <span class="keyword">where</span> T : <span class="keyword">class</span>, IModular</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (m_GameModuleList.ContainsKey (<span class="keyword">typeof</span> (T))) &#123;</span><br><span class="line">                <span class="keyword">return</span> m_GameModuleList[<span class="keyword">typeof</span> (T)] <span class="keyword">as</span> T;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                Util.UnityConsole.LogError (<span class="string">&quot;[GameModuleManager] There was no &quot;</span> + <span class="keyword">typeof</span> (T).Name);</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>管理器的實作方式與 GameSystemMono 的管理器大同小異。</p>
+<p>在 AddModule() 的時候，必須利用 is 運算子檢查是否有額外的介面被新的 GameModule 所使用。比如發現了 IModuleUpdatable 介面，則要做而外的處理。</p>
+<p>對應不同介面，可能也會有特別的 public 方法用於觸發或操作，對於 IModuleUpdatable 介面，我準備了一個 UpdateModule () 來進行觸發。</p>
+<h3 id="GameSystemMono-與-GameModule-的比較">GameSystemMono 與 GameModule 的比較</h3>
+<p><strong>GameSystemMono</strong>的實作採用繼承 MonoBehaviour，優勢是可以在 Inspector 視窗針對每個組件系統進行參數的設定，並且可以直接使用 Update 等 Unity Message Event 進行動作；缺點則是一定要有個 GameObject 進行載體，而且採用類別繼承的設計，會導致一些彈性上的限制，不需要 MonoBehaviour 功能的組件也會被迫繼承相關特性。</p>
+<p><strong>GameModule</strong>的實作採用介面 (interface)，優勢是可以跟繼承關係並存，切依照需求選擇需要的而外功能介面進行擴充，彈性較高；缺點則是所有的初始化工作就都必須撰寫腳本來完成，而且沒有可以在 Inspector 調整追蹤參數的手段。</p>
+<p>就上述的筆記可以看出來，<strong>GameSystemMono</strong>與<strong>GameModule</strong>其實是相互補的兩個 Singleton 註冊架構，可以在一個專案中同時採用，依照組件的需求吉特，來決定要包裝成<strong>GameSystemMono</strong>或是<strong>GameModule</strong>來管理。</p>
+<p>另外還有單一獨立的 Singleton 實作 (如參考所附)，如果組件沒有與其他組件互動的需求，只是單單最為一個被呼叫的子系統，也可以採用做為一個簡單易用的方法</p>
+<p><strong>單例模式 (Singleton pattern)</strong> 是一個相對有較多爭議的設計模式，為了避免在使用的時候會將 Singleton 的缺點凸顯出來，更多的設計考量與深入了解是難免要面對的。</p>
+<h3 id="參考">參考</h3>
+<ul>
+<li>Singleton in Unity – <a target="_blank" rel="noopener" href="http://wiki.unity3d.com/index.php/Singleton">http://wiki.unity3d.com/index.php/Singleton</a></li>
+<li>Generic Singleton – <a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/2319075/generic-singletont">http://stackoverflow.com/questions/2319075/generic-singletont</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/more-singleton-in-unity/" title="[C#&#x2F;Unity] 更多 Singleton – More Singleton in Unity">http://www.douduck08.com/zh-tw/more-singleton-in-unity/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/design-pattern/" rel="tag"># design-pattern</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/what-keyword-event-is-doing/" rel="prev" title="[C#筆記] 關鍵字 event 對 delegate 的影響 - what keyword event is doing.">
+                  <i class="fa fa-chevron-left"></i> [C#筆記] 關鍵字 event 對 delegate 的影響 - what keyword event is doing.
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/observer-pattern-on-csharp/" rel="next" title="C# 上 Observer pattern 的實作差異 - observer pattern on C#">
+                  C# 上 Observer pattern 的實作差異 - observer pattern on C# <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

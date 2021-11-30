@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="我在製作遊戲 UI，或者場景中有些會不斷在顯示、隱藏之間切換的物件時，會利用物件的 SetActive() 來進行操作；或者有其他原因，會在場景中佈置一些關閉的物件，之後再依據遊戲流程重新啟動。 在這樣的情境下，我常常發生一個失誤：在編輯場景時為了確認某個效果，而將應該關閉的物件啟動，或者將應該啟動的物件關閉，最後忘記復原就進行了儲存與遊戲建置，然後理所當然地出錯了。 但畢竟場景配置不像程式碼撰寫">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Unity] 設計可以在建置前自我檢查的場景 - Make GameObject Check Itself">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/make-gameobject-check-itself/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="我在製作遊戲 UI，或者場景中有些會不斷在顯示、隱藏之間切換的物件時，會利用物件的 SetActive() 來進行操作；或者有其他原因，會在場景中佈置一些關閉的物件，之後再依據遊戲流程重新啟動。 在這樣的情境下，我常常發生一個失誤：在編輯場景時為了確認某個效果，而將應該關閉的物件啟動，或者將應該啟動的物件關閉，最後忘記復原就進行了儲存與遊戲建置，然後理所當然地出錯了。 但畢竟場景配置不像程式碼撰寫">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2017-04-16T10:57:59.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.452Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="editor">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/make-gameobject-check-itself/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/make-gameobject-check-itself/","path":"zh-tw/make-gameobject-check-itself/","title":"[Unity] 設計可以在建置前自我檢查的場景 - Make GameObject Check Itself"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Unity] 設計可以在建置前自我檢查的場景 - Make GameObject Check Itself | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%A9%9F%E4%B8%80%EF%BC%9A%E5%9C%A8%E5%84%B2%E5%AD%98%E5%A0%B4%E6%99%AF%E7%9A%84%E6%99%82%E5%80%99%E8%87%AA%E5%8B%95%E5%9F%B7%E8%A1%8C%E4%B8%80%E6%AE%B5%E6%AA%A2%E6%9F%A5%E8%85%B3%E6%9C%AC"><span class="nav-number">1.</span> <span class="nav-text">步驟一：在儲存場景的時候自動執行一段檢查腳本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%AD%A5%E9%A9%9F%E4%BA%8C%EF%BC%9A%E5%9C%A8%E9%9C%80%E8%A6%81%E6%AA%A2%E6%9F%A5%E7%9A%84%E7%89%A9%E4%BB%B6%E4%B8%8A%E5%8A%A0%E4%B8%8A%E5%B0%8D%E6%87%89%E7%9A%84%E4%BB%8B%E9%9D%A2%E8%88%87%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">步驟二：在需要檢查的物件上加上對應的介面與方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E5%A4%9A%E7%9A%84%E8%AA%AA%E6%98%8E"><span class="nav-number">3.</span> <span class="nav-text">更多的說明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%83%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">參考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/make-gameobject-check-itself/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Unity] 設計可以在建置前自我檢查的場景 - Make GameObject Check Itself
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-04-16 18:57:59" itemprop="dateCreated datePublished" datetime="2017-04-16T18:57:59+08:00">2017-04-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/make-gameobject-check-itself/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/make-gameobject-check-itself/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>我在製作遊戲 UI，或者場景中有些會不斷在顯示、隱藏之間切換的物件時，會利用物件的 SetActive() 來進行操作；或者有其他原因，會在場景中佈置一些關閉的物件，之後再依據遊戲流程重新啟動。</p>
+<p>在這樣的情境下，我常常發生一個失誤：在編輯場景時為了確認某個效果，而將應該關閉的物件啟動，或者將應該啟動的物件關閉，最後忘記復原就進行了儲存與遊戲建置，然後理所當然地出錯了。</p>
+<p>但畢竟場景配置不像程式碼撰寫，會在失誤時提示錯誤。於是這次就嘗試建立一套機制，可以對場景配置進行自動檢查，來避免人為的失誤造成遊戲運行的錯誤。</p>
+<span id="more"></span>
+<h3 id="步驟一：在儲存場景的時候自動執行一段檢查腳本">步驟一：在儲存場景的時候自動執行一段檢查腳本</h3>
+<p>這邊利用的是 AssetModificationProcessor.OnWillCreateAsset 這個 Unity 所提供的 API 接口，這段腳本必須放在 Editor 資料夾中：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.SceneManagement;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">SceneSaveProcessor</span> : <span class="title">UnityEditor.AssetModificationProcessor</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="built_in">string</span>[] <span class="title">OnWillSaveAssets</span> (<span class="params"><span class="built_in">string</span>[] paths</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">foreach</span> (GameObject obj <span class="keyword">in</span> SceneManager.GetActiveScene ().GetRootGameObjects ()) &#123;</span><br><span class="line">            DoTaskInTransform (obj.transform);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> paths;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">DoTaskInTransform</span> (<span class="params">Transform parent</span>)</span> &#123;</span><br><span class="line">        Task (parent);</span><br><span class="line">        <span class="keyword">foreach</span> (Transform trans <span class="keyword">in</span> parent.GetComponentsInChildren&lt;Transform&gt; (<span class="literal">true</span>)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (trans != parent.transform) &#123;</span><br><span class="line">                DoTaskInTransform (trans);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Task</span>(<span class="params">Transform trans</span>)</span> &#123;</span><br><span class="line">        Component[] components = trans.GetComponents&lt;Component&gt; ();</span><br><span class="line">        <span class="keyword">foreach</span> (Component component <span class="keyword">in</span> components) &#123;</span><br><span class="line">            <span class="keyword">if</span> (component <span class="keyword">is</span> IBeforeSaveScene) &#123;</span><br><span class="line">                (component <span class="keyword">as</span> IBeforeSaveScene).BeforeSaveScene ();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>這段程式碼會在有 Asset 被儲存時由 Unity 自動執行，其中也包括場景儲存時。</p>
+<p>當這段程式碼被執行時，首先會利用 <code>SceneManager.GetActiveScene ().GetRootGameObjects ()</code> 將當前場景的所有 <strong>根物件(Root GameObject)</strong> 找出來，並進一步利用 <strong>遞迴(Recursion)</strong> 找出所有場景中不論啟動或關閉的物件，針對物件執行 Task ()。</p>
+<blockquote>
+<p>為了找出關閉的物件，<code>GetComponentsInChildren (true)</code> 必須加上 true。</p>
+</blockquote>
+<p>每當 Task () 被執行了，便會找出當下物件中的所有 Component，並對有 IBeforeSaveScene 介面的 Component 執行 BeforeSaveScene () 方法。</p>
+<p>IBeforeSaveScene 介面的設計如下，這段腳本<strong>不必</strong>放在 Editor 資料夾中：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">interface</span> <span class="title">IBeforeSaveScene</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">BeforeSaveScene</span> (<span class="params"></span>)</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>這個介面在任何 Component 都可以添加繼承，用於給 Task () 進行辨認以及轉型後的呼叫。如果有需要，也可以依照專案需求更動方法，或者再添加其他介面，只要 Task () 有對應進行呼叫的修改即可。</p>
+<h3 id="步驟二：在需要檢查的物件上加上對應的介面與方法">步驟二：在需要檢查的物件上加上對應的介面與方法</h3>
+<p>自動檢查的動作有了，再來就是要依照需求在特定物件上加上檢查條件與對應動作，這邊我舉兩個可行例子進行說明，但一定還有更多的應用可以被發揮。</p>
+<ul>
+<li>固定於場景中關閉物件：</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\[code language=<span class="string">&quot;csharp&quot;</span>\] <span class="keyword">using</span> UnityEngine; <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">AlwaysInactiveOnSave</span> : <span class="title">MonoBehaviour</span>, <span class="title">IBeforeSaveScene</span> &#123; <span class="keyword">public</span> <span class="built_in">bool</span> AlwaysInactive = <span class="literal">true</span>; <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">BeforeSaveScene</span> (<span class="params"></span>)</span> &#123; <span class="keyword">if</span> (AlwaysInactive &amp;&amp; <span class="keyword">this</span>.gameObject.activeSelf) &#123; Debug.Log (<span class="keyword">this</span>.gameObject.name + <span class="string">&quot; is automatically turn off&quot;</span>); <span class="keyword">this</span>.gameObject.SetActive (<span class="literal">false</span>); &#125; &#125; &#125; \[/code\]</span><br></pre></td></tr></table></figure>
+<p>以上腳本被掛載於物件上時，物件將在儲存時被檢查是否關閉，若未關閉則顯示一條 Log 並自動關閉。</p>
+<p>這個檢查的目的是針對因為需求，而預設關閉的物件，確保沒有因為測試而被人為失誤開啟，反之也可以撰寫腳本檢查物件是否有啟動。</p>
+<ul>
+<li>自動更新 List：</li>
+</ul>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">BeforeSceneSaveTest</span> : <span class="title">MonoBehaviour</span>, <span class="title">IBeforeSaveScene</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">BeforeSaveScene</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">        HaveGameObjectList targetComponent = GameObject.FindObjectOfType&lt;HaveGameObjectList&gt; ();</span><br><span class="line">        <span class="keyword">if</span> (targetComponent.gameObjectList.Find(p =&gt; p.transform == <span class="keyword">this</span>.transform) == <span class="literal">null</span>) &#123;</span><br><span class="line">            targetComponent.gameObjectList.Add (<span class="keyword">this</span>.gameObject);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>這段腳本的使用情境是，物件會自行檢查自身是否有被參照於另一個特定的腳本之中，若沒有在對方的 List 則自動補上。</p>
+<p>通常為了管理大量物件的共同動作，可能會在某個腳本中儲存了一系列的物件參照，可是當場景編輯過程中物件有被刪減，卻未必會記得對相關的物件參照進行更新，這個檢查便可以將相關動作自動化，避免人為失誤。</p>
+<h3 id="更多的說明">更多的說明</h3>
+<p>這段機制設計之目的，是希望將一些場景的檢查工作從人工處理換成自動處理，是在自動化建置與專案管理中的一環。同樣的工作其實也可以將所有檢查設定撰寫於 OnWillSaveAssets() 方法之中，而非逐一分散於每個物件之上。</p>
+<p><strong>分散式設計</strong>的好處是，如果檢查的對象有所變動，並不一定要對整套檢查的腳本進行修改，只要替換對應的腳本即可。甚至在不同專案之中，同樣的檢查腳本可以不斷被重複應用，有著更高的彈性與可利用性。</p>
+<p>但相對有個缺點是，檢查的動作之間是平行的工作而非有次序的工作，對於一些有先後次序要求的檢查工作可能較難以勝任。另外就是專案中的腳本數量可能會應為檢查工作大量增加。</p>
+<p>最近發現 Unity 提供的一些 Asset Processor 相關接口充滿著各種可能性，目前這套機制對我來說尚已足夠，或許未來有新的需要可能會再進一步調整。</p>
+<p>希望這篇心得可以讓期待將許多工作自動化的你得到一些幫助。</p>
+<h3 id="參考">參考</h3>
+<ul>
+<li>AssetModificationProcessor - <a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/AssetModificationProcessor.html">https://docs.unity3d.com/ScriptReference/AssetModificationProcessor.html</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/make-gameobject-check-itself/" title="[Unity] 設計可以在建置前自我檢查的場景 - Make GameObject Check Itself">http://www.douduck08.com/zh-tw/make-gameobject-check-itself/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/editor/" rel="tag"># editor</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/unity-instantiate-vs-setacive/" rel="prev" title="[測試] Unity Instantiate 與 SetAcive 的效能差異? - Unity Instantiate v.s. SetAcive?">
+                  <i class="fa fa-chevron-left"></i> [測試] Unity Instantiate 與 SetAcive 的效能差異? - Unity Instantiate v.s. SetAcive?
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/review-unity-shader-for-beginner-part1/" rel="next" title="[閱讀筆記] Unity shader 入門精要 #1">
+                  [閱讀筆記] Unity shader 入門精要 #1 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="此篇文章是《從零開始的 Unity 學習心得》系列的第二篇文章，這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。完整系列的目錄可以參考：   [Unity] 從零開始的學習心得 #0 – 起頭 &amp; 目錄    這次主要重點放在 場景、物件、組件 的關係，以及撰寫 MonoBehaiour 腳">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Unity] 從零開始的學習心得 #2 – Unity 的基本組成">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/unity-learning-totally-review-2/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="此篇文章是《從零開始的 Unity 學習心得》系列的第二篇文章，這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。完整系列的目錄可以參考：   [Unity] 從零開始的學習心得 #0 – 起頭 &amp; 目錄    這次主要重點放在 場景、物件、組件 的關係，以及撰寫 MonoBehaiour 腳">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/XnPmZHt.jpg">
+<meta property="article:published_time" content="2018-01-19T12:43:34.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.458Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="unity">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/XnPmZHt.jpg">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/unity-learning-totally-review-2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/unity-learning-totally-review-2/","path":"zh-tw/unity-learning-totally-review-2/","title":"[Unity] 從零開始的學習心得 #2 – Unity 的基本組成"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Unity] 從零開始的學習心得 #2 – Unity 的基本組成 | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Unity-%E7%9A%84%E8%B7%A8%E5%B9%B3%E5%8F%B0%E7%89%B9%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">Unity 的跨平台特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unity-%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%B5%84%E6%88%90-%E5%A0%B4%E6%99%AF%E3%80%81%E7%89%A9%E4%BB%B6%E3%80%81%E7%B5%84%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">Unity 的基本組成 - 場景、物件、組件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A0%B4%E6%99%AF-Scene"><span class="nav-number">2.1.</span> <span class="nav-text">場景(Scene)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%A9%E4%BB%B6-GameObject"><span class="nav-number">2.2.</span> <span class="nav-text">物件(GameObject)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B5%84%E4%BB%B6-Component"><span class="nav-number">2.3.</span> <span class="nav-text">組件(Component)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B5%84%E4%BB%B6%E8%85%B3%E6%9C%AC%E7%9A%84%E5%9F%BA%E6%9C%AC%E9%A1%9E%E5%88%A5-MonoBehaviour"><span class="nav-number">3.</span> <span class="nav-text">組件腳本的基本類別 - MonoBehaviour</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/unity-learning-totally-review-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Unity] 從零開始的學習心得 #2 – Unity 的基本組成
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2018-01-19 20:43:34" itemprop="dateCreated datePublished" datetime="2018-01-19T20:43:34+08:00">2018-01-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/unity-learning-totally-review-2/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/unity-learning-totally-review-2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="https://i.imgur.com/XnPmZHt.jpg" alt="unity-learning-totally-review-2"></p>
+<blockquote>
+<p>此篇文章是《從零開始的 Unity 學習心得》系列的第二篇文章，這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。完整系列的目錄可以參考：</p>
+<ul>
+<li>
+<a href="/zh-tw/unity-learning-totally-review-0/" title="[Unity] 從零開始的學習心得 #0 – 起頭 &amp; 目錄">[Unity] 從零開始的學習心得 #0 – 起頭 &amp; 目錄</a>
+</li>
+</ul>
+</blockquote>
+<p>這次主要重點放在 <strong>場景、物件、組件</strong> 的關係，以及撰寫 MonoBehaiour 腳本時可能會用上的一些經驗談。</p>
+<span id="more"></span>
+<h3 id="Unity-的跨平台特性">Unity 的跨平台特性</h3>
+<p>Unity 作為商業引擎的一個特色，就是它並不止針對一個系統平台去設計，一個 Unity 專案可以在極小的變動下，就分別發布到電腦 (Windows、OSX)、行動裝置 (Android、iOS)，甚至掌上遊樂機 (PSV)、家用主機 (XBox) 都在 Unity 的守備範圍內。雖然做不到不改動就可以無痛轉換，但跨平台算是 Unity 的一大特色。</p>
+<p>簡單解釋這個跨平台特性的原理，可以把 Unity 輸出的遊戲可分成兩個部分：Unity Player 以及 Unity Assets。</p>
+<p>就像播放器之於影片一般，在不同的平台上用上的不同的播放器，可以播放同一段影片，呈現出基本相同的內容；Unity 在輸出專案時，會針對平台提供一個 Unity Player 作為啟動器，並將專案內容打包成一份或數份 Unity 專屬的 Assets 檔案，作為播放的內容。</p>
+<p>所以將 Unity，或者說所有的遊戲當成可以互動的影片，是很直觀的想像。</p>
+<h3 id="Unity-的基本組成-場景、物件、組件">Unity 的基本組成 - 場景、物件、組件</h3>
+<p>初接觸 Unity 開發，有幾個項目是會早期會先認識到的：</p>
+<ul>
+<li>場景(Scene)</li>
+<li>物件(GameObject)</li>
+<li>組件(Component)</li>
+</ul>
+<h4 id="場景-Scene">場景(Scene)</h4>
+<p>在 Unity 遊戲執行時，都會有個運作中的場景。在編輯器之中，可以看到遊戲的3D模型、攝影機與燈光等物件會被佈置在場景中，<strong>場景(Scene)</strong> 就像是影像拍攝的片場一般，是作為 Unity 運作的根基。</p>
+<p>場景可以被儲存為一個檔案，使遊戲進行能在數個場景間切換，也因此在遊戲打包輸出時也需要指定一個初始場景。而 Unity 遊戲被啟動時，會先載入並啟動初始場景的運作，<strong>遊戲迴圈(Game Loop)</strong> 也會在場景完成載入後開始生效，如果沒有場景的存在，接下來提到的 物件(GameObject) 及 組件(Component) 便沒辦法加入遊戲迴圈中發生作用。</p>
+<h4 id="物件-GameObject">物件(GameObject)</h4>
+<p>物件是在編輯器中，可以被看見與操作的主要實體。在場景中佈置物件，就像是在佈置舞台劇的道具一般，不同的物件會在場景中發揮不同的作用：可以打光的 Light物件、形成實體的 Mesh物件、將場景拍攝為遊戲畫面的 Camera物件。</p>
+<p>各式各樣的的功能物件，我們都可以通一稱為 <strong>GameObject</strong>，雖然很難表達這些 GameObject 在軟體原理上的地位，但可以把它想成&quot;事物的載體&quot;，用來表達一個遊戲中的&quot;存在&quot;之標的。一個最單純的 GameObject，就只是一個遊戲中的&quot;存在&quot;，它會在場景中有個位置，成為 Unity Game Loop 的一部分，但不代表實際的作用，實際作用的部分要由 <strong>組件(Component)</strong> 來說明。</p>
+<h4 id="組件-Component">組件(Component)</h4>
+<p>我們在編輯器選取了任何一個 GameObject，就會在 <strong>Inspector 視窗</strong> 中看到一連串的欄位跟資訊，每個 GameObject 擁有的欄位跟資訊有些相同，又有些不同。</p>
+<p>這些是稱為 <strong>組件(Component)</strong> 的重要元素，用哲學一點的話來說，是它們為 GameObject 這&quot;存在&quot;賦予了&quot;功能與意義&quot;。有些組件是每個物件都有的，如 Transform；有些組件是賦予物件特殊地位的，如 Camera。我們可以從選單創建各式各樣的物件，而這些物件之所以不同，就是因為它們一開始所擁有的組件不同。</p>
+<p>用比較虛幻飄渺的用詞來比喻，場景代表了虛擬的&quot;絕對空間&quot;，物件代表了空間中的&quot;存在&quot;，組件則賦予了各自不同的&quot;作用與身份&quot;。</p>
+<h3 id="組件腳本的基本類別-MonoBehaviour">組件腳本的基本類別 - MonoBehaviour</h3>
+<p>雖然 Unity 已經內建了超多 Component 可以使用，但要靠這些 Component 做出所有期望的遊戲規則與設計還是有點強人所難，所以一般開發 Unity 遊戲都會需要自行撰寫程式碼腳本，設計自己所需要的 Component。</p>
+<p>自己設計 Component 最主要的目的是為了自訂遊戲的邏輯，屬於 Game Loop 中 Update 的一環，也是不同遊戲之間差別最巨大的部分；另外也有可能是為了為了將 Unity 提供的 Input Trigger (玩家輸入的觸發器) 銜接到自訂的 Update 邏輯，或者針對 Unity 的 Rendering 階段進行調整或補充，呈現特別的特效等。</p>
+<p>在上一篇文章說明 Game Loop 時有提到，Unity 就像在引擎的運作流程中留下許多空格，交由開發只去填入希望的邏輯，或者連接對應的玩皆輸入，變成期望的遊戲成品。為了能適當且合理的使用 Unity MonoBehaviour 提供的空格欄位 - <strong>Unity Event Function</strong>，閱讀文件並了解相關的運作順序有著相當大的意義。</p>
+<blockquote>
+<blockquote>
+<p>說明 Update 流程的官方文件：<a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/ExecutionOrder.html">https://docs.unity3d.com/Manual/ExecutionOrder.html</a></p>
+</blockquote>
+</blockquote>
+<p>可以稱為百大錯誤之首的 Unity 執行意外：<strong>Null Reference Exception</strong>，除了場景設置不完善，最普遍的發生原因便是因為忽略了 MonoBehaviour 中各個事件 (Event) 的執行時機，在 runtime 時調用了還未準備完成的對象或資源。</p>
+<p>以最常使用的 Awake、Start、Update 來說明：</p>
+<ul>
+<li>對單一組件來說 Awake 必定先於 Start，然後是 Update。</li>
+<li>場景中的預先擺設物件之間， Awake 必定會在任何 Start 之前完成；也就是 Awake 會是整個場景執行完畢，然後才輪到任何 Start。</li>
+<li>用腳本 Instantiate Prefab 物件不會依照上一點邏輯。</li>
+</ul>
+<p>以這兩點來說，便可以知道 Awake 要避免去呼叫不同的物件資源，避開物件之間的互動；而 Start 可以進行物件之間的互動，但互動雙方要將事前準備工作在 Awake 全部完成。</p>
+<p>當使用到的 <strong>Unity Event Function</strong> 越多，這些內建於 Unity 的細節便有可能使你開發的遊戲產生問題。所以我會告訴一些初心者：</p>
+<blockquote>
+<p>Unity 沒有讀心晶片，只有你先去理解它的細節，並適當地傳達你的邏輯(寫好腳本，寫對程式)，Unity 才會回應你的期待。</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/unity-learning-totally-review-2/" title="[Unity] 從零開始的學習心得 #2 – Unity 的基本組成">http://www.douduck08.com/zh-tw/unity-learning-totally-review-2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/unity-learning-totally-review-1/" rel="prev" title="[Unity] 從零開始的學習心得 #1 – 遊戲如何動起來">
+                  <i class="fa fa-chevron-left"></i> [Unity] 從零開始的學習心得 #1 – 遊戲如何動起來
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/unity-learning-totally-review-3/" rel="next" title="[Unity] 從零開始的學習心得 #3 – 物理系統的陷阱">
+                  [Unity] 從零開始的學習心得 #3 – 物理系統的陷阱 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

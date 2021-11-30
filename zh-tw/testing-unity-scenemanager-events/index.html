@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="最近與朋友討論了如何在 Unity 切換場景完的瞬間，立刻執行某些特定工作。嘗試了幾個方式後，發現基本上是不可能的。不過如果要在Awake 之後， Start 之前進行某些工作，則可以利用 Unity SceneManager 類別底下預設的幾個事件 (Event) 來達成。 不過 Unity 官方文件對於 SceneManager 預設事件的說明可以說是沒有，所以還是得自行測試過才能確定功能。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Unity] 測試如何在場景切換過程安插工作 - Testing Unity SceneManager Events">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/testing-unity-scenemanager-events/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="最近與朋友討論了如何在 Unity 切換場景完的瞬間，立刻執行某些特定工作。嘗試了幾個方式後，發現基本上是不可能的。不過如果要在Awake 之後， Start 之前進行某些工作，則可以利用 Unity SceneManager 類別底下預設的幾個事件 (Event) 來達成。 不過 Unity 官方文件對於 SceneManager 預設事件的說明可以說是沒有，所以還是得自行測試過才能確定功能。">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://douduck08.files.wordpress.com/2017/02/scenemanager.jpg">
+<meta property="article:published_time" content="2017-02-28T14:05:06.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.456Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="unity">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://douduck08.files.wordpress.com/2017/02/scenemanager.jpg">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/testing-unity-scenemanager-events/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/testing-unity-scenemanager-events/","path":"zh-tw/testing-unity-scenemanager-events/","title":"[Unity] 測試如何在場景切換過程安插工作 - Testing Unity SceneManager Events"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Unity] 測試如何在場景切換過程安插工作 - Testing Unity SceneManager Events | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E6%AC%A1%E6%B8%AC%E8%A9%A6%E7%94%A8%E8%85%B3%E6%9C%AC"><span class="nav-number">1.</span> <span class="nav-text">本次測試用腳本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B8%AC%E8%A9%A6%E7%B5%90%E6%9E%9C"><span class="nav-number">2.</span> <span class="nav-text">測試結果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%8C%E8%A9%B1"><span class="nav-number">3.</span> <span class="nav-text">後話</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/testing-unity-scenemanager-events/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Unity] 測試如何在場景切換過程安插工作 - Testing Unity SceneManager Events
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-02-28 22:05:06" itemprop="dateCreated datePublished" datetime="2017-02-28T22:05:06+08:00">2017-02-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/testing-unity-scenemanager-events/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/testing-unity-scenemanager-events/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>最近與朋友討論了如何在 Unity 切換場景完的瞬間，立刻執行某些特定工作。嘗試了幾個方式後，發現基本上是不可能的。不過如果要在Awake 之後， Start 之前進行某些工作，則可以利用 Unity SceneManager 類別底下預設的幾個事件 (Event) 來達成。</p>
+<p>不過 Unity 官方文件對於 SceneManager 預設事件的說明可以說是沒有，所以還是得自行測試過才能確定功能。</p>
+<p>正好前陣子測試了 MonoBehaviour 時，在轉換場景的部分沒有測試完全，便趁這機會與 Unity SceneManager 一並做些測試，確定在切換場景的過程中所有流程 (Flow)，未來依據不同需求便可以在不同階段安插希望執行的工作了。</p>
+<span id="more"></span>
+<h3 id="本次測試用腳本">本次測試用腳本</h3>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> UnityEngine.SceneManagement;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">SceneLoader</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        GameObject.DontDestroyOnLoad(<span class="keyword">this</span>.gameObject);</span><br><span class="line">        SceneManager.sceneLoaded += SceneLoaded;</span><br><span class="line">        SceneManager.sceneUnloaded += SceneUnloaded;</span><br><span class="line">        SceneManager.activeSceneChanged += ActiveSceneChanged;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">SceneLoaded</span> (<span class="params">Scene scene, LoadSceneMode mode</span>)</span> &#123;</span><br><span class="line">        Debug.Log(<span class="string">&quot;SceneLoaded&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">SceneUnloaded</span>(<span class="params">Scene scene</span>)</span> &#123;</span><br><span class="line">        Debug.Log(<span class="string">&quot;SceneUnoaded&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ActiveSceneChanged</span>(<span class="params">Scene sceneA, Scene sceneB</span>)</span> &#123;</span><br><span class="line">        Debug.Log(<span class="string">&quot;ActiveSceneChanged&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ReloadScene</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        Debug.Log(<span class="string">&quot;=== ReloadScene Start ===&quot;</span>); StartCoroutine(StartLoadScene(<span class="string">&quot;main&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> IEnumerator <span class="title">StartLoadScene</span>(<span class="params"><span class="built_in">string</span> sSceneName</span>)</span> &#123;</span><br><span class="line">        AsyncOperation op = SceneManager.LoadSceneAsync(sSceneName, LoadSceneMode.Single);</span><br><span class="line">        <span class="keyword">while</span> (!op.isDone) &#123;</span><br><span class="line">            <span class="keyword">yield</span> <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        Debug.Log(<span class="string">&quot;=== ReloadScene End ===&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>除了上方的主要腳本，另外場景中還準備了在上週直播時所使用的 TestUnit，用於確認 MonoBehaviour 的事件執行狀況，同時有一個按鈕用於切換動作。</p>
+<p>完整的測試專案可以在我的 github 找到，連結如下：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/douduck08/UnityTest-MonoBehaviour">https://github.com/douduck08/UnityTest-MonoBehaviour</a></li>
+</ul>
+<h3 id="測試結果">測試結果</h3>
+<p><img src="https://douduck08.files.wordpress.com/2017/02/scenemanager.jpg" alt="scenemanager"></p>
+<p>假設我們是從場景A切換至場景B，則可以紀錄整個流程為：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">=== ReloadScene Start ===</span><br><span class="line"><span class="comment"># Coroutine 的起點 </span></span><br><span class="line"><span class="comment"># 場景A 的 OnDisable </span></span><br><span class="line"><span class="comment"># 場景A 的 OnDistroy SceneUnoaded </span></span><br><span class="line"><span class="comment"># SceneManager 事件 </span></span><br><span class="line"><span class="comment"># 場景B 的 Awake </span></span><br><span class="line"><span class="comment"># 場景B 的 OnEnable SceneLoaded </span></span><br><span class="line"><span class="comment"># SceneManager 事件 ActiveSceneChanged</span></span><br><span class="line"><span class="comment"># SceneManager 事件 </span></span><br><span class="line"><span class="comment"># 場景B 的 Start </span></span><br><span class="line"><span class="comment"># 場景B 的 Update</span></span><br><span class="line">=== ReloadScene End ===</span><br><span class="line"><span class="comment"># Coroutine 的終點</span></span><br><span class="line"><span class="comment"># 場景B 的 LateUpdate \[/code\]</span></span><br></pre></td></tr></table></figure>
+<p>從結果可以看出，SceneManager 各個事件的執行時機，以及 MonoBehaviour 的相關事件何時執行。</p>
+<p>其中 SceneManager.activeSceneChanged 可能會在切換場景以外的功能觸發，所以建議場景切換時，只要使用 SceneManager.sceneLoaded 以及 SceneManager.sceneUnloaded 就好。</p>
+<p>另外可以發現，因為 Coroutine 的運算時間是在 Update 之後，所以收尾的動作會在<strong>新場景的物件之 Start 之後</strong>執行，並不會在場景切換後立刻執行，這點於開發中相對重要。</p>
+<h3 id="後話">後話</h3>
+<p>這次文章算是把直播所提出的 MonoBehaviour 議題做了一個收尾，也是我第一次使用 SceneManager.sceneLoaded 等事件。</p>
+<p>透過這次測試，可以整理出一個簡易的場景切換工具，方便在各個時間點插入工作，用於精確進行新場景的初始化，以及 Loading 畫面的處理等，頗有收穫。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/testing-unity-scenemanager-events/" title="[Unity] 測試如何在場景切換過程安插工作 - Testing Unity SceneManager Events">http://www.douduck08.com/zh-tw/testing-unity-scenemanager-events/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/some-common-and-useful-unity-attribute/" rel="prev" title="[筆記] Unity 中常用的 Attribute - Some Common and Useful Unity Attribute">
+                  <i class="fa fa-chevron-left"></i> [筆記] Unity 中常用的 Attribute - Some Common and Useful Unity Attribute
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/testing-gc-of-component-in-unity/" rel="next" title="[Unity] 關於 Component 的 GC 測試，出現了大問題！ – Testing GC of Component in Unity">
+                  [Unity] 關於 Component 的 GC 測試，出現了大問題！ – Testing GC of Component in Unity <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

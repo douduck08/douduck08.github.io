@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="《Unity shader 入門精要》的讀書筆記，五到八章。 這幾章說明基本的 shader，並以簡單的光照、貼圖、透明混色等實作進行基礎應用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[閱讀筆記] Unity shader 入門精要 #2">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part2/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="《Unity shader 入門精要》的讀書筆記，五到八章。 這幾章說明基本的 shader，並以簡單的光照、貼圖、透明混色等實作進行基礎應用。">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2017-05-29T08:43:16.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.455Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="shader">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part2/","path":"zh-tw/review-unity-shader-for-beginner-part2/","title":"[閱讀筆記] Unity shader 入門精要 #2"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[閱讀筆記] Unity shader 入門精要 #2 | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E7%AB%A0%EF%BC%9A%E5%9F%BA%E6%9C%AC%E8%AA%9E%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">第五章：基本語法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E7%AB%A0%EF%BC%9A%E5%9F%BA%E7%A4%8E%E5%85%89%E7%85%A7"><span class="nav-number">2.</span> <span class="nav-text">第六章：基礎光照</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E7%AB%A0%EF%BC%9A%E5%9F%BA%E7%A4%8E%E7%B4%8B%E7%90%86%E8%B2%BC%E5%9C%96-texture"><span class="nav-number">3.</span> <span class="nav-text">第七章：基礎紋理貼圖 (texture)</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [閱讀筆記] Unity shader 入門精要 #2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-05-29 16:43:16" itemprop="dateCreated datePublished" datetime="2017-05-29T16:43:16+08:00">2017-05-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/review-unity-shader-for-beginner-part2/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/review-unity-shader-for-beginner-part2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>《Unity shader 入門精要》的讀書筆記，五到八章。 這幾章說明基本的 shader，並以簡單的光照、貼圖、透明混色等實作進行基礎應用。</p>
+<span id="more"></span>
+<h3 id="第五章：基本語法">第五章：基本語法</h3>
+<ul>
+<li>一段 Pass 的結構</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Pass &#123;</span><br><span class="line">    [Name][Tags][RenderSetup]</span><br><span class="line">    CGPROGRAM </span><br><span class="line">    #pragma vertex vert </span><br><span class="line">    #pragma fragment frag</span><br><span class="line">    // vert and frag function code</span><br><span class="line">    ENDCG </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>#pragma</code> 用於指定兩種 shader 的 function name</li>
+<li>Vertex shader 可用的傳入資料：
+<ul>
+<li>POSITION、NORMAL、TEXCOORD0~3、TANGENT、COLOR</li>
+<li><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-VertexProgramInputs.html">https://docs.unity3d.com/Manual/SL-VertexProgramInputs.html</a></li>
+</ul>
+</li>
+<li>Vertex shader 可傳遞給 Fragment Shader 的資料
+<ul>
+<li>SV_POSITION 必備</li>
+<li>另有 NORMAL、TEXCOORD0~7、COLOR0~1 等</li>
+<li><a target="_blank" rel="noopener" href="http://wiki.unity3d.com/index.php?title=Shader_Code">http://wiki.unity3d.com/index.php?title=Shader_Code</a></li>
+</ul>
+</li>
+<li>Fragment Shader 的輸出需要有 SV_Target</li>
+<li>在 Unity shader 定義的 properties 要在 CGPROGRAM 區塊中使用，需要再次宣告對應的型別、相同名稱的變數</li>
+<li>UnityCG.cginc 有內建結構跟方法可以調用
+<ul>
+<li>檔案位於 Unity 安裝處，CGIncludes 之中</li>
+<li>5.3.2 版：<a target="_blank" rel="noopener" href="https://gist.github.com/whaison/3e42351ceb828ec91075">https://gist.github.com/whaison/3e42351ceb828ec91075</a></li>
+</ul>
+</li>
+<li>其他
+<ul>
+<li>用 <code>#if UNITY_UV_START+AT_TOP #endif</code> 可以進行平台判斷</li>
+<li>部分功能要用 <code>#pragma target x.0</code> 來指定版本，避免運行時錯誤</li>
+</ul>
+</li>
+</ul>
+<h3 id="第六章：基礎光照">第六章：基礎光照</h3>
+<ul>
+<li>一般光照模型分常四部分：自發光、環境光、漫射光、高光反射光。</li>
+<li>逐頂點光照效率較高，逐像素光照細節較佳。</li>
+<li>計算 world normal：<code>normalize(mul(v.normal, (float3x3)_World2Object))</code>
+<ul>
+<li>使用 _Object2World 的轉置反矩陣運算，相當於用 _World2Object 進行左乘法。</li>
+</ul>
+</li>
+<li>與光照相關的一些內建變數：
+<ul>
+<li>UNITY_LIGHTMODEL_AMBIENT 環境光變數 。</li>
+<li>_LightColor0、_WorldSpaceLightPos0 與當下 Pass 相關的光照參數，需要加上對應的 LightMode Tag 才能使用</li>
+<li>_WorldSpaceCameraPos 世界座標下的攝影機位置</li>
+</ul>
+</li>
+<li>與光照相關的一些內建方法：
+<ul>
+<li>WorldSpaceViewDir 輸入物件空間下的頂點座標，取得頂點往攝影機的方向向量 (世界空間座標)</li>
+<li>ObjSpaceViewDir 輸入物件空間下的頂點座標，取得頂點往攝影機的方向向量 (物件空間座標)</li>
+<li>UnityWorldSpaceViewDir 輸入世界座標，取得該點往攝影機的方向向量 (世界空間座標)</li>
+<li>UnityObjectToWorldNormal、UnityObjectToWorldDir、UnityWorldToObjectDir 轉換向量的所在座標空間，回傳值不為單位向量</li>
+<li>WorldSpaceLightDir、ObjSpaceLightDir、UnityWorldSpaceLightDir 取得往光照的方向，不需要考慮光照類型</li>
+</ul>
+</li>
+</ul>
+<h3 id="第七章：基礎紋理貼圖-texture">第七章：基礎紋理貼圖 (texture)</h3>
+<ul>
+<li>Unity uv 座標以左下為原點，右上為 (1, 1)。</li>
+<li>一個 2D shader property 可以對應到兩個 CGPROGRAM 變數
+<ul>
+<li><code>_MainTex (&quot;Name&quot;, 2D) = &quot;white&quot; &#123;&#125;</code> 對應</li>
+<li><code>sampler2D _MainTex</code> 及 <code>float4 _MainTex_ST</code></li>
+<li><code>_MainTex_ST</code> 用於縮放及平移，如：<code>o.uv = v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw;</code></li>
+<li>或者使用內建方法：<code>o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);</code></li>
+</ul>
+</li>
+<li>凹凸映射/凹凸貼圖 Bump mapping：實現表面位移 (displacement) 的技術
+<ul>
+<li>高度貼圖 height map</li>
+<li>法線貼圖 normal map</li>
+</ul>
+</li>
+<li>漸變紋理貼圖：用一張漸變貼圖替代漫射光照的明暗，呈現不同的繪圖風格，此時貼圖採用 Clamp 設置。</li>
+<li>遮罩紋理貼圖：利用一張貼圖特定通道的資訊，對物體表面的渲染進行局部調整，例如：調整物體局部的反光效果。</li>
+<li>與紋理貼圖相關的一些內建變數：
+<ul>
+<li>TANGENT_SPACE_ROTATION 由物件座標旋轉至切線座標</li>
+</ul>
+</li>
+<li>與紋理貼圖相關的一些內建方法：
+<ul>
+<li>TRANSFORM_TEX(texcoord, sampler2D) 貼圖 uv 的縮放及平移</li>
+<li>tex2D (sampler2D, float2) 由貼圖中依照 uv 進行採樣，回傳一個 float4</li>
+<li>UnpackNormal (flaot4) 將貼圖從 rbg 對應成 normal map 向量，Asset 設定須為 Normal map</li>
+</ul>
+</li>
+</ul>
+<p>第八章：透明處理</p>
+<ul>
+<li>使用 Alpha test 時，只會有完全透明與不透明兩種結果，但不會關閉深度寫入 (ZWrite)，所以不影響深度測試 (Depth test) 檢查渲染順序。
+<ul>
+<li>通常會用上 clip(x)，x 有任何分量為負則捨棄渲染</li>
+</ul>
+</li>
+<li>使用 Alpha blending 時，該物件的深度寫入 (ZWrite) 會被關閉，所以要對渲染順序進行控制。</li>
+<li>Unity 定義了五個渲染順序 Queue 的值，數字越小的越早渲染
+<ul>
+<li>Background = 1000</li>
+<li>Geomtry = 2000，預設值</li>
+<li>AlphaTest = 2450</li>
+<li>Transparent = 3000，透明混和 (Alpha blending) 應該為於此處</li>
+<li>Overlay = 4000</li>
+</ul>
+</li>
+<li>所以透明處理的 Shader 應如此設定：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">// Alpha Test Subshader </span><br><span class="line">&#123; </span><br><span class="line">    Tags &#123; &quot;Queue&quot;=&quot;AlphaTest&quot; &quot;IgnoreProjector&quot;=&quot;True&quot; &quot;RenderType&quot;=&quot;TransparentCutout&quot; &#125; </span><br><span class="line">    Pass &#123; &#125; </span><br><span class="line">&#125; </span><br><span class="line">// Alpha Blending Subshader </span><br><span class="line">&#123; </span><br><span class="line">    Tags &#123; &quot;Queue&quot;=&quot;Transparent&quot; &quot;IgnoreProjector&quot;=&quot;True&quot; &quot;RenderType&quot;=&quot;Transparent&quot; &#125; </span><br><span class="line">    Pass &#123; ZWrite Off Blend SrcAlpha OneMinusSrcAlpha &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>
+<p>Unity 的 Blend 命令：Result = SrcFactor * SrcColor + DstFactor * DstColor</p>
+<ul>
+<li>Blend Off 沒有開啟混和，顏色會在緩衝中直接覆蓋</li>
+<li>Blend SrcFactor DstFactor 設定混和參數</li>
+<li>Blend SrcFactor DstFactor SrcFactorA DstFactorA 可以額外設定透明通道</li>
+<li>BlendOp BlendOperation</li>
+<li>不同的寫入參數比較：<a target="_blank" rel="noopener" href="https://github.com/ted10401/UnityBlending">https://github.com/ted10401/UnityBlending</a></li>
+<li>各種BlendOp：<a target="_blank" rel="noopener" href="https://docs.unity3d.com/ScriptReference/Rendering.BlendOp.html">https://docs.unity3d.com/ScriptReference/Rendering.BlendOp.html</a></li>
+</ul>
+</li>
+<li>
+<p>關閉深度寫入的透明效果 Shader 在比較複雜的模型上會出現呈現錯誤，可以加上一個額外的 Pass 在透明 shader 之前，**先 **進行深度寫入</p>
+<ul>
+<li>ZWrite On 開啟深度寫入</li>
+<li>ColorMask 0 關閉所有顏色通道</li>
+<li>不過依照我的理解，另外開啟 ZWrite 只是讓單一模型渲染正常，半透明模型之間的渲染還是會有機會出錯</li>
+</ul>
+</li>
+<li>
+<p>如果要讓模型呈現更好的透明效果，可能會需要開啟雙面渲染</p>
+<ul>
+<li>Cull Off 指令會關閉單面渲染的剔除，但這樣不能保證渲染順序合理</li>
+<li>可分成兩個 Pass，先渲染背面 (Cull Front)，再渲染正面 (Cull Back)</li>
+<li><a target="_blank" rel="noopener" href="https://docs.unity3d.com/Manual/SL-CullAndDepth.html">https://docs.unity3d.com/Manual/SL-CullAndDepth.html</a></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part2/" title="[閱讀筆記] Unity shader 入門精要 #2">http://www.douduck08.com/zh-tw/review-unity-shader-for-beginner-part2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/shader/" rel="tag"># shader</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/review-unity-shader-for-beginner-part1/" rel="prev" title="[閱讀筆記] Unity shader 入門精要 #1">
+                  <i class="fa fa-chevron-left"></i> [閱讀筆記] Unity shader 入門精要 #1
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/review-unity-shader-for-beginner-part3/" rel="next" title="[閱讀筆記] Unity shader 入門精要 #3">
+                  [閱讀筆記] Unity shader 入門精要 #3 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

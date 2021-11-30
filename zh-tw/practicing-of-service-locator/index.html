@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="過去在[C#&#x2F;Unity] 更多 Singleton – More Singleton in Unity這篇文章中，實作了一個名為 Singleton manager 的物件來做 Singleton 的註冊與使用。 但最近在研讀 相依性注入 (Dependency Injection) 相關文章時，才發現有個叫做 Service Locator 的設計模式，基本上就是我過去所實作的 Si">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[C#&#x2F;Unity] 這不叫 Singleton，叫 Service Locator">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/practicing-of-service-locator/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="過去在[C#&#x2F;Unity] 更多 Singleton – More Singleton in Unity這篇文章中，實作了一個名為 Singleton manager 的物件來做 Singleton 的註冊與使用。 但最近在研讀 相依性注入 (Dependency Injection) 相關文章時，才發現有個叫做 Service Locator 的設計模式，基本上就是我過去所實作的 Si">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2017-11-04T16:27:34.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.453Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content="unity">
+<meta property="article:tag" content="design-pattern">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/practicing-of-service-locator/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/practicing-of-service-locator/","path":"zh-tw/practicing-of-service-locator/","title":"[C#/Unity] 這不叫 Singleton，叫 Service Locator"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[C#/Unity] 這不叫 Singleton，叫 Service Locator | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-Locator-%E7%B0%A1%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">Service Locator 簡介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service-Locator-%E5%AF%A6%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">Service Locator 實作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BE%8C%E8%A9%B1%E8%88%87%E5%AE%8C%E6%95%B4%E7%A8%8B%E5%BC%8F%E7%A2%BC%E9%80%A3%E7%B5%90"><span class="nav-number">3.</span> <span class="nav-text">後話與完整程式碼連結</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%83%E8%80%83%E9%80%A3%E7%B5%90"><span class="nav-number">4.</span> <span class="nav-text">參考連結</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/practicing-of-service-locator/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [C#/Unity] 這不叫 Singleton，叫 Service Locator
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2017-11-05 00:27:34" itemprop="dateCreated datePublished" datetime="2017-11-05T00:27:34+08:00">2017-11-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">coding</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/practicing-of-service-locator/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/practicing-of-service-locator/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>過去在<a href="/zh-tw/more-singleton-in-unity/" title="[C#&#x2F;Unity] 更多 Singleton – More Singleton in Unity">[C#&#x2F;Unity] 更多 Singleton – More Singleton in Unity</a>這篇文章中，實作了一個名為 Singleton manager 的物件來做 Singleton 的註冊與使用。</p>
+<p>但最近在研讀 相依性注入 (Dependency Injection) 相關文章時，才發現有個叫做 Service Locator 的設計模式，基本上就是我過去所實作的 Singleton manager。再加上一些關於抽象化的觀念又比當初更成熟了，因此便想趁機改善當初的設計，同時正名為 Service Locator。</p>
+<span id="more"></span>
+<h3 id="Service-Locator-簡介">Service Locator 簡介</h3>
+<p>典型 Service Locator 模式的主體是一個 static class，內含有一個私有 Dictionary 儲存 Type 與物件本體 的關聯，以及兩個公開方法：註冊 (Register) 與 取得 (GetService)。被存在其中的物件被稱為 Service。</p>
+<ul>
+<li>註冊 (Register) 是個將物件存入 Dictionary 的方法，會檢查避免有相同 Type 的物件被存入，是使用 取得 前的必要動作。</li>
+<li>取得 (GetService) 是以 Type 為區別，直接取得存於 Service Locator 的 Service  的方法。<br>
+因為是 static 方法，所以透過 Service Locator 可以在任何地方存取已經註冊的 Service；加上使用 Dictionary 來儲存，所以每個 Type 只能有一個物件。綜合起來說，Service 具有唯一、容易存取的特性，這跟 Singleton 相似。</li>
+</ul>
+<p>不同於 Singleton 的地方，Service 本身可以適用 interface 作為 key 值的情況，只有在 註冊 時被 注入 實體，所以 Service Locator 也被歸類為 相依性注入 的一種實作模式。</p>
+<p>雖然可以解除 被呼叫對象 跟 呼叫者 之間的實作關聯，改為抽象關聯，降低耦合。但是卻會使 呼叫者 跟 Service Locator 產生耦合，不算是完全的解除耦合，是這個模式的主要缺點。</p>
+<p>更詳細的優缺點可以參考維基百科：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Service_locator_pattern">Service locator pattern</a></p>
+<h3 id="Service-Locator-實作">Service Locator 實作</h3>
+<p>為避免不必要的篇幅，這邊只有程式碼的節錄配合說明，完整的程式碼再最後另外附上。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">sealed</span> <span class="keyword">class</span> <span class="title">ServiceLocator</span> : <span class="title">SingletonMono</span>&lt;<span class="title">ServiceLocator</span>&gt; &#123;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">Dictionary</span>&lt;<span class="title">Type</span>, <span class="title">IService</span>&gt; m_serviceDictionary</span> = <span class="keyword">new</span> Dictionary&lt;Type, IService&gt; ();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">List</span>&lt;<span class="title">IUpdatable</span>&gt; m_updatableList</span> = <span class="keyword">new</span> List&lt;IUpdatable&gt; ();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">List</span>&lt;<span class="title">IFixedUpdatable</span>&gt; m_FixedUpdatableList</span> = <span class="keyword">new</span> List&lt;IFixedUpdatable&gt; ();</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">List</span>&lt;<span class="title">ILateUpdatable</span>&gt; m_lateUpdatableList</span> = <span class="keyword">new</span> List&lt;ILateUpdatable&gt; ();</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>這個實作希望可以跟 Unity 的 MonoBehaviour 有互動，所以這邊我不是用單純的 static class，而是 Singleton MonoBehaviour 來作為基底，SingletonMono 的程式碼可以在參考連結找到。</p>
+<p>因應變化，儲存的 Dictionary 不再需要作為 static 成員。同時增加數個跟 MonoBehaviour Update 相關的 interface List。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Register</span>&lt;<span class="title">T</span>&gt; (<span class="params">T service, InitialzeArgs initialzeArgs = <span class="literal">null</span></span>) <span class="keyword">where</span> T : IService</span> &#123;</span><br><span class="line">    Type serviceType_ = <span class="keyword">typeof</span>(T);</span><br><span class="line">    <span class="keyword">if</span> (Instance.m_serviceDictionary.ContainsKey (<span class="keyword">typeof</span> (T))) &#123;</span><br><span class="line">          <span class="keyword">throw</span> <span class="keyword">new</span> InvalidOperationException (<span class="built_in">string</span>.Format(<span class="string">&quot;[ServiceLocator] There was a service &lt;&#123;0&#125;&gt;&quot;</span>, serviceType_.Name));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    IUpdatable updatable_ = service <span class="keyword">as</span> IUpdatable;</span><br><span class="line">    <span class="keyword">if</span> (updatable_ != <span class="literal">null</span>) &#123;</span><br><span class="line">      Instance.m_updatableList.Add (updatable_);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Register</span>&lt;<span class="title">T</span>&gt; (<span class="params">InitialzeArgs initialzeArgs = <span class="literal">null</span></span>) <span class="keyword">where</span> T : IService, <span class="keyword">new</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    ServiceLocator.Register&lt;T&gt; (<span class="keyword">new</span> T(), initialzeArgs);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">RegisterMono</span>&lt;<span class="title">T</span>&gt; (<span class="params">InitialzeArgs initialzeArgs = <span class="literal">null</span></span>) <span class="keyword">where</span> T : MonoBehaviour, IService</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    T service_ = Instance.gameObject.AddComponent&lt;T&gt;();</span><br><span class="line">    ServiceLocator.Register&lt;T&gt; (service_, initialzeArgs);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>註冊相關的方法保持 static。內容會在加入 Dictionary 前檢查是否有重複的 Type，同時也會檢查是否有 IUpdatable 等介面，若有則要另外儲存一份副本到 List 之中作為備用。</p>
+<p>除了典型的注入實體進行註冊，另外實作了會自動用 <code>new ()</code> 來進行實體化的版本，以及用於 MonoBehaviour 的版本。</p>
+<p>先看到 MonoBehaviour 的版本 RegisterMono。不同於要將注入實體作為參數傳入，這個方法是在作為 Singleton 的 GameObject 上 AddComponent 來進行實體化，如此才能符合 Unity 的運作機制。</p>
+<p>相對用 <code>new ()</code> 來主動進行實體化，必須確認使用的類別不是 MonoBehaviour 的子類別，來避免錯誤發生。這個主動實體化的方法一般 Service Locator 中並不存在，只是相對於 RegisterMono 另外增加的實作。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> T <span class="title">GetService</span>&lt;<span class="title">T</span>&gt; (<span class="params"></span>) <span class="keyword">where</span> T : <span class="keyword">class</span>, IService</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (Instance.m_serviceDictionary.ContainsKey (<span class="keyword">typeof</span> (T))) &#123;</span><br><span class="line">        <span class="keyword">return</span> Instance.m_serviceDictionary[<span class="keyword">typeof</span> (T)] <span class="keyword">as</span> T;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然後是普通的 GetService 方法。除了要透過 Singleton 的 Instance 來存取，跟普通的實作並沒有太大的差異。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">void Update () &#123;</span><br><span class="line">    for (int i = m_updatableList.Count - 1; i &gt;= 0; i--) &#123;</span><br><span class="line">        m_updatableList[i].OnUpdate ();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">// ...</span><br></pre></td></tr></table></figure>
+<p>最後是將 <code>IUpdatable</code> 這個介面串聯到 MonoBehaviour event 上。這樣即使沒有繼承 MonoBehaviur，普通的 Service 物件也能共同進行 Update 週期，也就是為何一開始要另外準備 List 儲存副本的原因所在。</p>
+<h3 id="後話與完整程式碼連結">後話與完整程式碼連結</h3>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ServiceLocator.Register &lt;ITestService&gt; (<span class="keyword">new</span> TestServiceA());</span><br><span class="line">ServiceLocator.GetService &lt;ITestService&gt; ().num = <span class="number">5</span>;</span><br></pre></td></tr></table></figure>
+<p>如果要使用 Service Locator，大概就會是這個樣子。在 Unity 比較需要注意的是如何確保註冊跟取得之間的順序不會有錯，跨場景或腳本時要特別注意。</p>
+<p>這次不同於之前將 Singleton 分成有無 MonoBehaviour 的兩個管理器，透過將所有欄位抽象介面化，實現了共用管理器的結構。</p>
+<p>雖然相對犧牲了部分功能，不能直接註冊已經先配置好的場景物件，但是目前我會比較喜歡這個做法。之後有計畫再做更多相依性注入的探討，現在的做法更單純、容易銜接其他模式。</p>
+<blockquote>
+<p>最後附上完整程式碼給大家參考：<br>
+<a target="_blank" rel="noopener" href="https://gist.github.com/douduck08/9fec275e9539d9be970ef8989ac62df6">https://gist.github.com/douduck08/9fec275e9539d9be970ef8989ac62df6</a></p>
+</blockquote>
+<h3 id="參考連結">參考連結</h3>
+<ul>
+<li>Service locator pattern – <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Service_locator_pattern">https://en.wikipedia.org/wiki/Service_locator_pattern</a></li>
+<li>Singleton in Unity – <a target="_blank" rel="noopener" href="http://wiki.unity3d.com/index.php/Singleton">http://wiki.unity3d.com/index.php/Singleton</a></li>
+<li>A Beginner’s Tutorial For Service Locator – <a target="_blank" rel="noopener" href="http://rahulrajatsingh.com/2016/01/a-beginners-tutorial-for-understanding-and-implementing-service-locator-pattern/">http://rahulrajatsingh.com/2016/01/a-beginners-tutorial-for-understanding-and-implementing-service-locator-pattern/</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/practicing-of-service-locator/" title="[C#&#x2F;Unity] 這不叫 Singleton，叫 Service Locator">http://www.douduck08.com/zh-tw/practicing-of-service-locator/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/C/" rel="tag"># C#</a>
+              <a href="/tags/unity/" rel="tag"># unity</a>
+              <a href="/tags/design-pattern/" rel="tag"># design-pattern</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/review-of-unite-europe-2017%E2%80%93squeezing-unity/" rel="prev" title="[筆記] Review of Unite Europe 2017 – Squeezing Unity">
+                  <i class="fa fa-chevron-left"></i> [筆記] Review of Unite Europe 2017 – Squeezing Unity
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/make-radar-chart-with-ugui/" rel="next" title="[Unity] 利用 UI 元件製作雷達圖">
+                  [Unity] 利用 UI 元件製作雷達圖 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

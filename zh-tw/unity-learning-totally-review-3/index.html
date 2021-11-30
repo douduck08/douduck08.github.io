@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+<meta name="description" content="此篇文章是《從零開始的 Unity 學習心得》系列的第三篇文章，這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。完整系列的目錄可以參考：   [Unity] 從零開始的學習心得 #0 – 起頭 &amp; 目錄    上篇文章說明了幾個 Unity 的基本組成，並且開始接觸 MonoBehaviou">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[Unity] 從零開始的學習心得 #3 – 物理系統的陷阱">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/unity-learning-totally-review-3/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="此篇文章是《從零開始的 Unity 學習心得》系列的第三篇文章，這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。完整系列的目錄可以參考：   [Unity] 從零開始的學習心得 #0 – 起頭 &amp; 目錄    上篇文章說明了幾個 Unity 的基本組成，並且開始接觸 MonoBehaviou">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:image" content="https://i.imgur.com/1oHQriF.jpg">
+<meta property="article:published_time" content="2018-01-20T12:43:34.000Z">
+<meta property="article:modified_time" content="2021-11-30T11:37:47.459Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="unity">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.imgur.com/1oHQriF.jpg">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/unity-learning-totally-review-3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/unity-learning-totally-review-3/","path":"zh-tw/unity-learning-totally-review-3/","title":"[Unity] 從零開始的學習心得 #3 – 物理系統的陷阱"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Unity] 從零開始的學習心得 #3 – 物理系統的陷阱 | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">鴨子開發日記</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
+        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
+        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
+        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
+        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A6%8B%E7%9A%84%E7%89%A9%E4%BB%B6%E4%BA%92%E5%8B%95%E6%89%8B%E6%AE%B5-%E7%89%A9%E7%90%86%E7%B3%BB%E7%B5%B1"><span class="nav-number">1.</span> <span class="nav-text">常見的物件互動手段 - 物理系統</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%99%E4%BA%9B%E7%8B%80%E6%B3%81%E5%8F%AF%E8%83%BD%E9%83%BD%E8%B7%9F%E7%89%A9%E7%90%86%E7%B3%BB%E7%B5%B1%E6%9C%89%E9%97%9C"><span class="nav-number">2.</span> <span class="nav-text">這些狀況可能都跟物理系統有關</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%95%AB%E9%9D%A2%E9%96%83%E5%8B%95%E6%84%8F%E5%A4%96"><span class="nav-number">2.1.</span> <span class="nav-text">畫面閃動意外</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9C%A8%E7%89%86%E9%82%8A%E9%A1%AB%E6%8A%96%E7%9A%84%E7%89%A9%E4%BB%B6"><span class="nav-number">2.2.</span> <span class="nav-text">在牆邊顫抖的物件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%85%B3%E8%89%B2%E6%88%96%E7%89%A9%E4%BB%B6%E5%99%B4%E9%A3%9B"><span class="nav-number">2.3.</span> <span class="nav-text">腳色或物件噴飛</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/unity-learning-totally-review-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [Unity] 從零開始的學習心得 #3 – 物理系統的陷阱
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2018-01-20 20:43:34" itemprop="dateCreated datePublished" datetime="2018-01-20T20:43:34+08:00">2018-01-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/unity/" itemprop="url" rel="index"><span itemprop="name">unity</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/unity-learning-totally-review-3/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/unity-learning-totally-review-3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="https://i.imgur.com/1oHQriF.jpg" alt="unity-learning-totally-review-3"></p>
+<blockquote>
+<p>此篇文章是《從零開始的 Unity 學習心得》系列的第三篇文章，這個系列是記錄我對 Unity 的開發及學習心得，包含我用何種方式去理解 Unity 的運作，並且在我所知的範圍內盡可能說明相關原理與開發要點。完整系列的目錄可以參考：</p>
+<ul>
+<li>
+<a href="/zh-tw/unity-learning-totally-review-0/" title="[Unity] 從零開始的學習心得 #0 – 起頭 &amp; 目錄">[Unity] 從零開始的學習心得 #0 – 起頭 &amp; 目錄</a>
+</li>
+</ul>
+</blockquote>
+<p>上篇文章說明了幾個 Unity 的基本組成，並且開始接觸 MonoBehaviour。這篇文章將延續話題，聊聊我對於 Unity 物理系統 – 一個最常用在與 MonoBehaviour 共築遊戲邏輯的系統 – 的理解。</p>
+<span id="more"></span>
+<h3 id="常見的物件互動手段-物理系統">常見的物件互動手段 - 物理系統</h3>
+<p>Unity 內建了一套物理模擬系統給開發者利用，包括物理慣性運動、重力場、摩擦阻力、碰撞與觸發等功能。雖然作為物理模擬，Unity 的內建系統稱不上精確與穩定，偶爾會有令人噴飯的意外狀況，但是如果理解它的原理與適用範圍，仍舊是在遊戲開發上相當方便的內建系統。</p>
+<p>Unity 物理系統的使用網路上有相當資訊可以查詢，要一一說明也要不少的篇幅，這邊我想提的是關於 <strong>FixedUpdate</strong> 這個 Event 的三兩事。</p>
+<p>物理系統的模擬跟現實有個最大的差距：時間的連續性是無法在軟體中完美重現的，不論何種物理模擬，都只能盡量縮短模擬的時間間隔，來提高近似度與精準度，不可能真正的重現物理。而在遊戲中我們不可能無限制的提升模擬結果的精準度，因為與之相對的軟硬體效能是相當有限的。</p>
+<p>Unity 的模擬間隔可以在 Project Setting 去設定，預設值是 0.02 秒；而 <strong>FixedUpdate</strong> 辨識與之對應，每次模擬時會呼叫到的 Unity Event Function，預設每秒呼叫 50 次。</p>
+<p>光從呼叫的時間點就可以看出 <strong>FixedUpdate</strong> 與 <strong>Update</strong> 是處在兩個截然不同的時間軸上，一個是物理的循環；另一個是畫面更新的循環 (同時也是 Game Loop)。要建立橫跨兩個時間軸的遊戲邏輯，便很容易遇到奇奇怪怪的狀況，輕則畫面閃動，重則腳色直接噴飛。</p>
+<h3 id="這些狀況可能都跟物理系統有關">這些狀況可能都跟物理系統有關</h3>
+<h4 id="畫面閃動意外">畫面閃動意外</h4>
+<p>如果在 FixedUpdate 之中對物體進行強制定位 (設定Postiion)，即使是配合了 <code>Time.fixedDeltaTime</code> 想製作平滑的移動，也無法避免畫面閃動的問題。因為 <strong>FixedUpdate</strong> 與 <strong>Update</strong> 的更新頻率不相同，所以 Update 每隔一段時間，就會連續執行兩次，然後才發生 FixedUpdate，本來應該平滑移動的物件，便在這瞬間發生了&quot;突然停止移動&quot;，也就使畫面產生卡頓或閃動。</p>
+<p>除了在物體本身發生閃動，也有可能是在兩個物體之間產生不同步，比如跑步的腳色跟追隨的 Camera 之間。解決方法很簡單，就是只要畫面中有牽涉到物理系統的任何組件，便要避免用 <code>Time.fixedDeltaTime</code> 與 <code>Time.deltaTime</code> 來設定位置，應該採用 <code>AddForce</code> 或者取用 <code>rigidbody</code> 的參數來設定物理運動。</p>
+<h4 id="在牆邊顫抖的物件">在牆邊顫抖的物件</h4>
+<p>一般來說腳色會有被障礙擋住的情況，此時玩家即使不斷按住前進鍵，腳色也應該停在原地做太空漫步，而不是瘋狂顫抖。這發生的原因是因為玩家的 輸入(Input) 在 Update 進行接收與使用，但物理的碰撞卻是在 FixedUpdate 更新，所以腳色便重複進行著 “走進牆內、被擠出牆外” 的循環，畫面上看起來就像在顫抖一般。</p>
+<p>解決方式可以視情況去做設計，常見的做法之一是在接收到玩家輸入後，還要利用 Raycast 檢查是否撞到障礙，然後才決定是否前進，而不是直接依賴碰撞框來阻止腳色的移動範圍。</p>
+<h4 id="腳色或物件噴飛">腳色或物件噴飛</h4>
+<p>這也是跟 <strong>FixedUpdate</strong> 與 <strong>Update</strong> 的更新頻率不相同有關，Unity 在實現物理模擬時，所有的運算都在 FixedUpdate 的迴圈中運作，如果你在 Update 裡面對物理狀態進行了更動，那要注意 Update 可能會跑得比 FixedUpdate 快的問題，一不小心累積了兩倍分量的物理操作，在下一個 FixedUpdate 之後，你的腳色可能就不知道飛到哪裡去了。</p>
+<p>另外有個可能不是因為你 Update 的操作有誤，而是物體的移動速度過快，所以數個物件&quot;過度深入&quot;對方，產生的碰撞力道超乎預期，那物件可能也會噴飛；或者因為速度過快，根本來不及檢查出物件碰撞，物件穿透了應當產生阻擋效果的物件，這又是另一種噴飛了。</p>
+<p>噴飛的原因百百種，所以解決方式也各不一定。物理系統本身不是完美的 (上面有提到原因，這不全是 Unity 的錯)，所以理解它的原理跟極限，不要抱有太過度的期待，你才能順利的控制你的遊戲作品。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/unity-learning-totally-review-3/" title="[Unity] 從零開始的學習心得 #3 – 物理系統的陷阱">http://www.douduck08.com/zh-tw/unity-learning-totally-review-3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/unity/" rel="tag"># unity</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/unity-learning-totally-review-2/" rel="prev" title="[Unity] 從零開始的學習心得 #2 – Unity 的基本組成">
+                  <i class="fa fa-chevron-left"></i> [Unity] 從零開始的學習心得 #2 – Unity 的基本組成
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/zh-tw/unity-learning-totally-review-4/" rel="next" title="[Unity] 從零開始的學習心得 #4 – Unity 與外部資源">
+                  [Unity] 從零開始的學習心得 #4 – Unity 與外部資源 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>
