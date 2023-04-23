@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/avatar16x16.png">
+  <link rel="mask-icon" href="/images/avatar32x32.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="PBR全稱Physically Based Rendering，是我接觸到Unity shader開發後不斷接觸到的名詞。為了解決在Unity開發中面對到的各種畫面問題，圖學知識用很破碎的方式在累積著，PBR的知識片段也是其中之一，但主要理解還停在如何使用，而不是原理。 最近又試著閱讀相關原理的資料，發現比起兩年前更能理解其中的內容了，於是想再做一遍較完整的學習，並留下筆記作為日後檢視與再深入的材">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[PBR] 學習筆記 #1 - 資料蒐集">
+<meta property="og:url" content="http://www.douduck08.com/zh-tw/pbr-study-1/index.html">
+<meta property="og:site_name" content="鴨子開發日記">
+<meta property="og:description" content="PBR全稱Physically Based Rendering，是我接觸到Unity shader開發後不斷接觸到的名詞。為了解決在Unity開發中面對到的各種畫面問題，圖學知識用很破碎的方式在累積著，PBR的知識片段也是其中之一，但主要理解還停在如何使用，而不是原理。 最近又試著閱讀相關原理的資料，發現比起兩年前更能理解其中的內容了，於是想再做一遍較完整的學習，並留下筆記作為日後檢視與再深入的材">
+<meta property="og:locale" content="zh_TW">
+<meta property="article:published_time" content="2021-12-22T06:03:30.000Z">
+<meta property="article:modified_time" content="2022-01-07T12:17:01.492Z">
+<meta property="article:author" content="douduck08">
+<meta property="article:tag" content="rendering">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.douduck08.com/zh-tw/pbr-study-1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-tw","comments":true,"permalink":"http://www.douduck08.com/zh-tw/pbr-study-1/","path":"zh-tw/pbr-study-1/","title":"[PBR] 學習筆記 #1 - 資料蒐集"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[PBR] 學習筆記 #1 - 資料蒐集 | 鴨子開發日記</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-73254781-1"></script>
+  <script class="next-config" data-name="google_analytics" type="application/json">{"tracking_id":"UA-73254781-1","only_pageview":false}</script>
+  <script src="/js/third-party/analytics/google-analytics.js"></script>
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切換導航欄" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">鴨子開發日記</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li><li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li><li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目錄
+        </li>
+        <li class="sidebar-nav-overview">
+          本站概要
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#PBR-%E7%B0%A1%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">PBR 簡介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B3%87%E6%96%99%E8%92%90%E9%9B%86"><span class="nav-number">2.</span> <span class="nav-text">資料蒐集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B8%E7%B1%8D"><span class="nav-number">2.1.</span> <span class="nav-text">書籍</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SIGGRAPH%E6%BC%94%E8%AC%9B"><span class="nav-number">2.2.</span> <span class="nav-text">SIGGRAPH演講</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B6%B2%E8%B7%AF%E6%96%87%E7%AB%A0"><span class="nav-number">2.3.</span> <span class="nav-text">網路文章</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="douduck08"
+      src="/images/avatar180x180.png">
+  <p class="site-author-name" itemprop="name">douduck08</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">56</span>
+          <span class="site-state-item-name">文章</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分類</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">標籤</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener me" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-tw">
+    <link itemprop="mainEntityOfPage" href="http://www.douduck08.com/zh-tw/pbr-study-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar180x180.png">
+      <meta itemprop="name" content="douduck08">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="鴨子開發日記">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[PBR] 學習筆記 #1 - 資料蒐集 | 鴨子開發日記">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [PBR] 學習筆記 #1 - 資料蒐集
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">發表於</span>
+
+      <time title="創建時間：2021-12-22 14:03:30" itemprop="dateCreated datePublished" datetime="2021-12-22T14:03:30+08:00">2021-12-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分類於</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/" itemprop="url" rel="index"><span itemprop="name">game-develop</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/game-develop/rendering/" itemprop="url" rel="index"><span itemprop="name">rendering</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Disqus：</span>
+    
+    <a title="disqus" href="/zh-tw/pbr-study-1/#disqus_thread" itemprop="discussionUrl">
+      <span class="post-comments-count disqus-comment-count" data-disqus-identifier="zh-tw/pbr-study-1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>PBR全稱Physically Based Rendering，是我接觸到Unity shader開發後不斷接觸到的名詞。為了解決在Unity開發中面對到的各種畫面問題，圖學知識用很破碎的方式在累積著，PBR的知識片段也是其中之一，但主要理解還停在如何使用，而不是原理。</p>
+<p>最近又試著閱讀相關原理的資料，發現比起兩年前更能理解其中的內容了，於是想再做一遍較完整的學習，並留下筆記作為日後檢視與再深入的材料。</p>
+<span id="more"></span>
+<h3 id="PBR-簡介">PBR 簡介</h3>
+<p>Physically Based Rendering(PBR) 指的是一套用來根據光照進行物體繪製的方法，就如名字所示，應用了很多物理上的研究，為的是要盡可能貼近現實物體的光影表現。</p>
+<p>PBR 與 Physically Based Shading(PBS) 通常被一並提起，所指的理論也基本屬於同一個範圍，兩者差異在於想專門討論的範疇。</p>
+<p>依照我的理解，PBS 是針對一個物體如何繪製，討論範圍主要屬於Local Illumination；而 PBR 在這之上又包含了如何模擬真實光源、攝影機鏡頭、多物件之間的光影影響等。依照以上理解，兩者關係我會寫成 <strong>PBR ~ PBS + Global Illumination + Image-Space Effects and more</strong>。</p>
+<p>因為硬體限制，圖像渲染技術的新應用往往是影視產業會先於遊戲產業。而遊戲產業開始推動realtime PBR的契機，大概是受Disney 2012發表的一篇論文所啟發：</p>
+<blockquote>
+<p>[SIGGRAPH 2012] Physically-Based Shading at Disney (Brent Burley)<br>
+<a target="_blank" rel="noopener" href="https://www.disneyanimation.com/publications/physically-based-shading-at-disney/">https://www.disneyanimation.com/publications/physically-based-shading-at-disney/</a></p>
+</blockquote>
+<p>各大商業引擎在2012之後幾年間先後引入了PBR作為材質球的標準，並持續改進推廣至今。從UE4內建了PBR開始，PBR成為所有遊戲開發者都能輕易接觸到的技術領域。</p>
+<blockquote>
+<p>[SIGGRAPH 2013] Real Shading in Unreal Engine 4 (Brian Karis)<br>
+<a target="_blank" rel="noopener" href="https://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_slides.pdf">https://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_slides.pdf</a><br>
+[SIGGRAPH 2014] Moving Frostbite to PBR (Sébastien Lagarde &amp; Charles de Rousiers)<br>
+<a target="_blank" rel="noopener" href="https://blog.selfshadow.com/publications/s2014-shading-course/frostbite/s2014_pbs_frostbite_slides.pdf">https://blog.selfshadow.com/publications/s2014-shading-course/frostbite/s2014_pbs_frostbite_slides.pdf</a><br>
+[Unite 2014] Mastering Physically Based Shading<br>
+<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=eoXb-f_pNag">https://www.youtube.com/watch?v=eoXb-f_pNag</a></p>
+</blockquote>
+<p>PBR 基礎的核心概念，主要有</p>
+<ul>
+<li><strong>BRDF (bidirectional reflectance distribution function，雙向反射分佈函數)</strong>：描述一個表面，如果從特定角度射入光線，則會以怎樣的比例反射到不同的角度上。</li>
+<li><strong>Fresnel Reflectance (菲涅耳效應)</strong>：描述光線從不同角度射入表面，會導致不同的反射率與折射率。</li>
+<li><strong>Microfacet Theory</strong>：將物體表面解釋為由微觀上的許多小平面組成，這些小平面各自為理想平面，但方向各異，在宏觀上形成不同粗糙程度的表面。</li>
+</ul>
+<p>組合以上的概念，從比一個像素還小很多很多的微觀表面開始，以數學分析的方法，來建構起繪製單一像素的渲染方程式。不同的材質，在個別環節有著不同的模型理論，經過實際測量的方式來對數學模型進行驗證，最後才有了真實且易用的PBR。</p>
+<h3 id="資料蒐集">資料蒐集</h3>
+<p>這裡列出我認為還不錯的資料，雖然目前還沒有全部都看過，也給需要的人做為參考。</p>
+<h4 id="書籍">書籍</h4>
+<p>《Real-Time Rendering 4th》這本書作為知名的圖學書籍，其中的第9章 Physically Based Rendering 可以為PBS的理解定下很好的基礎，也可以根據書中列出的引用去找進一步深入閱讀。</p>
+<p>《Physically Based Rendering》<br>
+<a target="_blank" rel="noopener" href="https://www.pbr-book.org/3ed-2018/contents">https://www.pbr-book.org/3ed-2018/contents</a></p>
+<h4 id="SIGGRAPH演講">SIGGRAPH演講</h4>
+<p>SIGGRAPH自2010起，連續好幾年都有一系列以《Physically Based Shading》為題的講座：</p>
+<ul>
+<li>Physically Based Shading in Theory and Practice (SIGGRAPH 2020)</li>
+<li>Physically Based Shading in Theory and Practice (SIGGRAPH 2017)</li>
+<li>Physically Based Shading in Theory and Practice (SIGGRAPH 2016)</li>
+<li>Physically Based Shading in Theory and Practice (SIGGRAPH 2015)</li>
+<li>Physically Based Shading in Theory and Practice (SIGGRAPH 2014)</li>
+<li>Physically Based Shading in Theory and Practice (SIGGRAPH 2013)</li>
+<li>Practical Physically Based Shading in Film and Game Production (SIGGRAPH 2012)</li>
+<li>Physically-Based Shading Models in Film and Game Production (SIGGRAPH 2010)</li>
+</ul>
+<p>Disney(2012)與Unreal Engine 4(2013)分別發表的PBR實作細節，也包含在這些講座之中。</p>
+<blockquote>
+<p>SIGGRAPH 2012起的講座資料<br>
+<a target="_blank" rel="noopener" href="https://blog.selfshadow.com/publications/">https://blog.selfshadow.com/publications/</a><br>
+SIGGRAPH 2010的講座資料<br>
+<a target="_blank" rel="noopener" href="http://renderwonk.com/publications/s2010-shading-course/">http://renderwonk.com/publications/s2010-shading-course/</a></p>
+</blockquote>
+<h4 id="網路文章">網路文章</h4>
+<p>毛星雲所寫的【基于物理的渲染（PBR）白皮书】系列：</p>
+<ul>
+<li>（一）开篇：PBR核心知识体系总结与概览 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/53086060">https://zhuanlan.zhihu.com/p/53086060</a></li>
+<li>（二）PBR核心理论与渲染光学原理总结 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/56967462">https://zhuanlan.zhihu.com/p/56967462</a></li>
+<li>（三）迪士尼原则的BRDF与BSDF相关总结 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/60977923">https://zhuanlan.zhihu.com/p/60977923</a></li>
+<li>（四）法线分布函数相关总结 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/69380665">https://zhuanlan.zhihu.com/p/69380665</a></li>
+<li>（五）几何函数相关总结 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/81708753">https://zhuanlan.zhihu.com/p/81708753</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>作者： </strong>douduck08
+  </li>
+  <li class="post-copyright-link">
+      <strong>文章連結：</strong>
+      <a href="http://www.douduck08.com/zh-tw/pbr-study-1/" title="[PBR] 學習筆記 #1 - 資料蒐集">http://www.douduck08.com/zh-tw/pbr-study-1/</a>
+  </li>
+  <li class="post-copyright-license">
+      <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/rendering/" rel="tag"># rendering</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/zh-tw/why-dx11-need-matrix-transpose-before-cbuffer-mapping/" rel="prev" title="[自問自答] 為何 DirectX11 傳遞矩陣到 Constant Buffers 前需要進行轉置">
+                  <i class="fa fa-chevron-left"></i> [自問自答] 為何 DirectX11 傳遞矩陣到 Constant Buffers 前需要進行轉置
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    
+  <div class="comments" id="disqus_thread">
+    <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+  </div>
+  
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2016 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">douduck08</span>
+</div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+<script class="next-config" data-name="disqus" type="application/json">{"enable":true,"shortname":"douduck-hexo-blog","count":true,"i18n":{"disqus":"disqus"}}</script>
+<script src="/js/third-party/comments/disqus.js"></script>
+
+</body>
+</html>

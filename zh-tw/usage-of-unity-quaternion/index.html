@@ -3,9 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
-
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/images/avatar180x180.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/avatar32x32.png">
@@ -16,10 +14,12 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.8.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
-<meta name="description" content="來聊聊四元數 (Quaternion)，前陣子跟它搏鬥了一段時間，然後 … 恩 … 現在比較沒那麼困惑了。  Unity 中常見的旋轉設定便是物件的 Rotation 屬性 (上圖)，也就是以三個方向為軸的旋轉角。平時在編輯場景時操控旋轉相當直覺，可是當需要從 Script 中用程式碼去控制物件的旋轉時，這時候會發現原來 Rotation 屬性是由 Quaternion 這個類別來處理，身邊的許多">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.douduck08.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜尋...","empty":"我們無法找到任何有關 ${query} 的搜索結果","hits_time":"${hits} 找到 ${time} 個結果","hits":"找到 ${hits} 個結果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="來聊聊四元數 (Quaternion)，前陣子跟它搏鬥了一段時間，然後 … 恩 … 現在比較沒那麼困惑了。  Unity 中常見的旋轉設定便是物件的 Rotation 屬性 (上圖)，也就是以三個方向為軸的旋轉角。平時在編輯場景時操控旋轉相當直覺，可是當需要從 Script 中用程式碼去控制物件的旋轉時，這時候會發現原來 Rotation 屬性是由 Quaternion 這個類別來處理，身邊的許多">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Unity 四元數的使用 - usage of Unity Quaternion">
 <meta property="og:url" content="http://www.douduck08.com/zh-tw/usage-of-unity-quaternion/index.html">
@@ -53,17 +53,25 @@
 
 
 
+
+
+
+
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
 
-<body itemscope itemtype="http://schema.org/WebPage">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
   <div class="headband"></div>
 
   <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
   <div class="site-nav-toggle">
     <div class="toggle" aria-label="切換導航欄" role="button">
         <span class="toggle-line"></span>
@@ -76,14 +84,14 @@
 
     <a href="/" class="brand" rel="start">
       <i class="logo-line"></i>
-      <h1 class="site-title">鴨子開發日記</h1>
+      <p class="site-title">鴨子開發日記</p>
       <i class="logo-line"></i>
     </a>
       <p class="site-subtitle" itemprop="description">一個遊戲開發者的隨筆 – ABOUT A GAME DEVELOPER</p>
   </div>
 
   <div class="site-nav-right">
-    <div class="toggle popup-trigger">
+    <div class="toggle popup-trigger" aria-label="搜尋" role="button">
     </div>
   </div>
 </div>
@@ -91,27 +99,16 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li>
-        <li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li>
-        <li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li>
-        <li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li>
-        <li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首頁</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>關於</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>歸檔</a></li><li class="menu-item menu-item-series-of-articles"><a href="/series-of-articles/" rel="section"><i class="fa fa-th fa-fw"></i>系列文章</a></li><li class="menu-item menu-item-book-review"><a href="/book-review/" rel="section"><i class="fa fa-th fa-fw"></i>閱讀筆記</a></li>
   </ul>
 </nav>
 
 
 
 
-</div>
+</header>
         
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
   <aside class="sidebar">
 
     <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
@@ -132,65 +129,53 @@
         <!--/noindex-->
 
         <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <img class="site-author-image" itemprop="image" alt="douduck08"
       src="/images/avatar180x180.png">
   <p class="site-author-name" itemprop="name">douduck08</p>
   <div class="site-description" itemprop="description"></div>
 </div>
-<div class="site-state-wrap site-overview-item animated">
+<div class="site-state-wrap animated">
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">53</span>
+          <span class="site-state-item-count">56</span>
           <span class="site-state-item-name">文章</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">分類</span></a>
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">標籤</span></a>
       </div>
   </nav>
 </div>
-  <div class="links-of-author site-overview-item animated">
+  <div class="links-of-author animated">
       <span class="links-of-author-item">
-        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+        <a href="https://github.com/douduck08" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;douduck08" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
       </span>
       <span class="links-of-author-item">
-        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
+        <a href="https://www.facebook.com/douduck08develop" title="FB Page → https:&#x2F;&#x2F;www.facebook.com&#x2F;douduck08develop" rel="noopener me" target="_blank"><i class="fab fa-facebook fa-fw"></i>FB Page</a>
       </span>
   </div>
-  <div class="cc-license site-overview-item animated" itemprop="license">
-    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
   </div>
-
-
 
         </div>
       </div>
     </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
 
     
-  <div class="back-to-top" role="button" aria-label="回到頂端">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
+  </aside>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+    </div>
 
     <div class="main-inner post posts-expand">
 
@@ -208,11 +193,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar180x180.png">
       <meta itemprop="name" content="douduck08">
-      <meta itemprop="description" content="">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="鴨子開發日記">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Unity 四元數的使用 - usage of Unity Quaternion | 鴨子開發日記">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -298,7 +288,7 @@
 <h3 id="小範例：將陀螺儀變成你的遊戲控制器">小範例：將陀螺儀變成你的遊戲控制器</h3>
 <p>Unity 有提供 API 取得裝置本身陀螺儀的資料，其回傳結果是 Quaternion 類別。剛剛提過，四元數表示的是一個相對的動作，不像向量有一個絕對的坐標系可以參考，所以照理說光是一個四元數是無法表達手持裝置目前的 “姿勢” 才對阿？實際上，手持裝置的陀螺儀預設了一個 “無旋轉的姿勢”，相對於這個預設的方位動作，用四元數表達了手機現在的陀螺儀狀態，不過這個預設值是不可知的，或者說是相當虛無的存在，進而使陀螺儀得回傳值也相當虛無 (不知道起點，所以有了過程也無法知道終點)。</p>
 <p>為了將陀螺儀的資料變成我們可用的資訊，四元數的操作是必要的，我們用下面一個簡短的程式碼來說明。</p>
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Quaternion _CurrentGyro;</span><br><span class="line">    <span class="keyword">private</span> Quaternion _OriginGyro;</span><br><span class="line">    <span class="keyword">private</span> Quaternion _OriginGyroInverse;</span><br><span class="line">    <span class="keyword">private</span> Vector3 _Pointer;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// Use this for initialization</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (SystemInfo.supportsGyroscope) &#123;</span><br><span class="line">            Input.gyro.enabled = <span class="literal">true</span>;</span><br><span class="line">            Debug.Log(<span class="string">&quot;Gyro Enabled&quot;</span>);</span><br><span class="line">           _OriginGyro = Input.gyro.attitude;</span><br><span class="line">           _OriginGyroInverse = Quaternion.Inverse(_OriginGyro);</span><br><span class="line">           _Pointer = Vector3.forward;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// Update is called once per frame</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Update</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">        _CurrentGyro = Input.gyro.attitude;</span><br><span class="line">        _Pointer = _CurrentGyro * Vector3.forward;</span><br><span class="line">        Debug.Log(<span class="string">&quot;The Angle of Device Rotation: &quot;</span> + Quaternion.Angle(_CurrentGyro, _OriginGyro));</span><br><span class="line">        Debug.Log(<span class="string">&quot;The Device is pointing: &quot;</span> + _OriginGyroInverse * _Pointer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> UnityEngine;</span><br><span class="line"><span class="keyword">using</span> System.Collections;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Test</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">    <span class="keyword">private</span> Quaternion _CurrentGyro;</span><br><span class="line">    <span class="keyword">private</span> Quaternion _OriginGyro;</span><br><span class="line">    <span class="keyword">private</span> Quaternion _OriginGyroInverse;</span><br><span class="line">    <span class="keyword">private</span> Vector3 _Pointer;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// Use this for initialization</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span> ()</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (SystemInfo.supportsGyroscope) &#123;</span><br><span class="line">            Input.gyro.enabled = <span class="literal">true</span>;</span><br><span class="line">            Debug.Log(<span class="string">&quot;Gyro Enabled&quot;</span>);</span><br><span class="line">           _OriginGyro = Input.gyro.attitude;</span><br><span class="line">           _OriginGyroInverse = Quaternion.Inverse(_OriginGyro);</span><br><span class="line">           _Pointer = Vector3.forward;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">// Update is called once per frame</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Update</span> ()</span> &#123;</span><br><span class="line">        _CurrentGyro = Input.gyro.attitude;</span><br><span class="line">        _Pointer = _CurrentGyro * Vector3.forward;</span><br><span class="line">        Debug.Log(<span class="string">&quot;The Angle of Device Rotation: &quot;</span> + Quaternion.Angle(_CurrentGyro, _OriginGyro));</span><br><span class="line">        Debug.Log(<span class="string">&quot;The Device is pointing: &quot;</span> + _OriginGyroInverse * _Pointer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>Line12：啟動陀螺儀，雖說是啟動，但是預設的 “未旋轉” 跟這邊的啟動完全無關，未旋轉的狀態是內建於手持裝置的OS中的。</li>
 <li>Line14：取得當下的陀螺儀數據，這行程式碼運作於 Start() 中，所以就是儲存了腳本啟動當下的數值，當作解下來旋轉動作的原點。</li>
@@ -345,7 +335,7 @@
       <a href="http://www.douduck08.com/zh-tw/usage-of-unity-quaternion/" title="Unity 四元數的使用 - usage of Unity Quaternion">http://www.douduck08.com/zh-tw/usage-of-unity-quaternion/</a>
   </li>
   <li class="post-copyright-license">
-    <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
+      <strong>版權聲明： </strong>本網誌所有文章除特別聲明外，均採用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 許可協議。轉載請註明出處！
   </li>
 </ul>
 </div>
@@ -392,7 +382,7 @@
 
 <div class="copyright">
   &copy; 2016 – 
-  <span itemprop="copyrightYear">2021</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
@@ -403,11 +393,21 @@
   </footer>
 
   
-  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/next-boot.js"></script>
+  <div class="back-to-top" role="button" aria-label="回到頂端">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
 
   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
 
+  
 
 
 
